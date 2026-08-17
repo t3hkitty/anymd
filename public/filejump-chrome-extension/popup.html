@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; width: 280px; padding: 14px; margin: 0; }
+    h3 { font-size: 14px; margin: 0 0 8px 0; color: #38bdf8; }
+    p { font-size: 11px; color: #94a3b8; margin-bottom: 12px; leading-height: 1.4; }
+    button { width: 100%; padding: 10px; background: #0284c7; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    button:hover { background: #0369a1; }
+  </style>
+</head>
+<body>
+  <h3>🚀 Filejump Extractor</h3>
+  <p>1-Click scrape all .epub, .pdf, and .md filenames from current Filejump tab into clipboard.</p>
+  <button id="extractBtn">📋 Copy Filenames to Clipboard</button>
+
+  <script>
+    document.getElementById('extractBtn').addEventListener('click', async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          const names = Array.from(document.querySelectorAll('.file-name,.filename,[data-filename],td,a,span'))
+            .map(e => e.innerText.trim())
+            .filter(t => t.endsWith('.epub') || t.endsWith('.pdf') || t.endsWith('.md') || t.endsWith('.txt'))
+            .filter((v, i, a) => a.indexOf(v) === i)
+            .join('\n');
+          if (!names) {
+            alert('No ebook files (.epub, .pdf, .md) found on this page.');
+            return;
+          }
+          navigator.clipboard.writeText(names);
+          alert('✅ Extracted ' + names.split('\n').length + ' ebook filenames to clipboard!');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
