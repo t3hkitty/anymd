@@ -1,22 +1,79 @@
-// Library Companion MD - Sovereign Side Panel & Kindle Inspector
+// Library Companion MD - Sovereign Side Panel & Sidecar Studio
 
 const BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
 
 let currentScannedData = null;
+let generatedSidecarMd = '';
 let breakHits = [];
 
 /**
- * Executes a live DOM scanner in the active tab to extract Kindle, Amazon, Twitch, AO3, or webnovel details
+ * Generates a clean sovereign markdown sidecar with YAML frontmatter
+ */
+function buildSidecarMarkdown(data) {
+  const nowIso = new Date().toISOString();
+  const dateStr = nowIso.split('T')[0];
+  const safeTitle = (data.title || 'Untitled Document').replace(/"/g, '\\"');
+  const safeAuthor = (data.author || 'Unknown Creator').replace(/"/g, '\\"');
+  const mediaType = (data.type === 'twitch' || data.type === 'youtube') ? 'vod' : 'book';
+
+  let tagList = ['sovereign-vault'];
+  if (data.type === 'kindle_reader') tagList.push('kindle', 'ebook', 'reading-now');
+  else if (data.type === 'amazon_kindle_book') tagList.push('amazon', 'kindle-store', 'wishlist');
+  else if (data.type === 'twitch') tagList.push('vod', 'stream', 'twitch', 'tcg-break');
+  else if (data.type === 'youtube') tagList.push('vod', 'youtube', 'video');
+  else if (data.type === 'ao3_fic') tagList.push('fanfiction', 'ao3');
+  else if (data.type === 'novelupdates') tagList.push('webnovel', 'translated');
+  else if (data.type === 'goodreads') tagList.push('goodreads', 'reading-list');
+
+  if (data.extra && Array.isArray(data.extra.tags)) {
+    tagList = tagList.concat(data.extra.tags.map(t => t.toLowerCase().replace(/[^a-z0-9_-]/g, '')));
+  }
+
+  let bodyNotes = '';
+  if (data.type === 'kindle_reader') {
+    bodyNotes = `## 📖 Reading Status & Highlights\n\n- **Location / Progress:** \`${data.progress || 'Current Progress'}\`\n- **Date Scanned:** \`${dateStr}\`\n\n${data.extra && data.extra.highlightedQuote ? `### 📝 Captured Highlight\n> "${data.extra.highlightedQuote}"\n` : '*No text currently selected in Kindle reader.*'}`;
+  } else if (data.type === 'amazon_kindle_book') {
+    bodyNotes = `## 🛒 Book Details & Synopsis\n\n- **Rating:** \`${data.extra?.rating || '4.5'}\`\n- **Cover URL:** ${data.cover || 'N/A'}\n\n### 📝 Synopsis\n${data.extra?.description || 'Cataloged from Amazon Kindle store.'}`;
+  } else if (data.type === 'twitch' || data.type === 'youtube') {
+    bodyNotes = `## 🎬 Stream Information\n\n- **Channel / Streamer:** **${safeAuthor}**\n- **Source URL:** [Open Native Stream](${data.url})\n\n### 📑 Chapter Anchors\n- ⏱️ **[\`[00:00]\` Stream Start](${data.url})**`;
+  } else {
+    bodyNotes = `## 📝 Companion Notes\n\nCataloged from [${data.url}](${data.url}) on ${dateStr}.`;
+  }
+
+  return `---
+title: "${safeTitle}"
+author: "${safeAuthor}"
+media_type: "${mediaType}"
+source_url: "${data.url}"
+date_cataloged: "${nowIso}"
+tags: [${Array.from(new Set(tagList)).map(t => `"${t}"`).join(', ')}]
+---
+
+# ${mediaType === 'vod' ? '🎬' : '📖'} ${data.title}
+
+> **Creator:** **${data.author}** &bull; **Type:** \`${data.type.toUpperCase()}\`
+> ↗ **Source Link:** [Open in Native Window](${data.url})
+
+---
+
+${bodyNotes}
+`;
+}
+
+/**
+ * Executes a live DOM scanner in the active tab
  */
 async function scanActiveTab() {
   const titleEl = document.getElementById('detected-title');
   const subEl = document.getElementById('detected-sub');
   const extraEl = document.getElementById('detected-extra');
   const badgeEl = document.getElementById('tab-platform-badge');
+  const previewEl = document.getElementById('sidecar-preview');
 
   titleEl.textContent = 'Scanning active page...';
   subEl.textContent = 'Inspecting document DOM and metadata...';
   extraEl.textContent = '';
+  previewEl.textContent = 'Analyzing active window...';
 
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -36,7 +93,6 @@ async function scanActiveTab() {
       return;
     }
 
-    // Execute in-page content scanner
     const results = await chrome.scripting.executeScript({
       target: { tabId },
       func: () => {
@@ -135,7 +191,6 @@ async function scanActiveTab() {
           author = creatorEl ? creatorEl.innerText.trim() : 'YouTube Creator';
         }
 
-        // Default Fallback
         if (!title) title = docTitle.replace(/[\-–—|].*/, '').trim() || 'Untitled Web Resource';
         if (!author) author = 'Web Creator';
 
@@ -172,17 +227,20 @@ async function scanActiveTab() {
       if (data.progress) {
         extraEl.textContent = `📍 Reading Location: ${data.progress}`;
       } else if (data.extra && data.extra.rating) {
-        extraEl.textContent = `★ ${data.extra.rating} &bull; Amazon Kindle Edition`;
+        extraEl.textContent = `★ ${data.extra.rating} • Amazon Kindle Edition`;
       } else if (data.extra && data.extra.highlightedQuote) {
-        extraEl.textContent = `📝 Selected: "${data.extra.highlightedQuote.slice(0, 60)}..."`;
+        extraEl.textContent = `📝 Quote: "${data.extra.highlightedQuote.slice(0, 50)}..."`;
       } else {
         extraEl.textContent = `URL: ${data.url.slice(0, 50)}...`;
       }
+
+      generatedSidecarMd = buildSidecarMarkdown(data);
+      previewEl.textContent = generatedSidecarMd;
     }
   } catch (err) {
     console.error('Scan error:', err);
     titleEl.textContent = 'Active Tab Detected';
-    subEl.textContent = 'Click "Import" to save current tab to your Sovereign Vault.';
+    subEl.textContent = 'Click "Copy Markdown Sidecar" to copy sidecar.';
   }
 }
 
@@ -245,7 +303,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // Rescan active tab
   document.getElementById('btn-refresh-tab')?.addEventListener('click', scanActiveTab);
 
-  // Grab active tab to vault
+  // 1. Copy Markdown Sidecar to clipboard
+  document.getElementById('btn-copy-sidecar')?.addEventListener('click', () => {
+    if (!generatedSidecarMd && currentScannedData) {
+      generatedSidecarMd = buildSidecarMarkdown(currentScannedData);
+    }
+    if (generatedSidecarMd) {
+      navigator.clipboard.writeText(generatedSidecarMd).then(() => {
+        const btn = document.getElementById('btn-copy-sidecar');
+        const oldText = btn.textContent;
+        btn.textContent = '✓ Copied Sidecar Markdown!';
+        setTimeout(() => { btn.textContent = oldText; }, 2000);
+      });
+    }
+  });
+
+  // 2. Download .md File directly
+  document.getElementById('btn-download-md')?.addEventListener('click', () => {
+    if (!generatedSidecarMd && currentScannedData) {
+      generatedSidecarMd = buildSidecarMarkdown(currentScannedData);
+    }
+    if (generatedSidecarMd) {
+      const filename = `${(currentScannedData?.title || 'sidecar').replace(/[^a-zA-Z0-9_-]/g, '_')}.sidecar.md`;
+      const blob = new Blob([generatedSidecarMd], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  // 3. Open & Save in Vault
   document.getElementById('btn-grab-active')?.addEventListener('click', () => {
     if (!currentScannedData) {
       scanActiveTab().then(() => {
@@ -254,15 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     openVaultWithData(currentScannedData);
-  });
-
-  // Grab Kindle button
-  document.getElementById('btn-grab-kindle')?.addEventListener('click', () => {
-    scanActiveTab().then(() => {
-      if (currentScannedData) {
-        openVaultWithData(currentScannedData);
-      }
-    });
   });
 
   function openVaultWithData(data) {
@@ -298,6 +379,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') {
       document.getElementById('btn-add-hit')?.click();
     }
+  });
+
+  // Copy Break Markdown
+  document.getElementById('btn-copy-break-md')?.addEventListener('click', () => {
+    const url = (currentScannedData && currentScannedData.url) || 'https://www.twitch.tv/undiisclosed';
+    const streamTitle = (currentScannedData && currentScannedData.title) || 'undiisclosed TCG Break';
+    const chaptersText = breakHits.map(h => `- ⏱️ **[\`[${h.time}]\` ${h.title}](${url}?t=${h.time.replace(':', 'm')}s)**`).join('\n');
+    const nowIso = new Date().toISOString();
+
+    const md = `---
+title: "${streamTitle}"
+creator: "undiisclosed"
+media_type: "vod"
+platform: "twitch"
+stream_url: "${url}"
+tags: ["vod", "twitch", "tcg-break", "card-opening", "pokemon"]
+date_cataloged: "${nowIso}"
+---
+
+# 🎬 ${streamTitle}
+
+> **Streamer:** **undiisclosed** &bull; **Platform:** \`TWITCH\`
+> ↗ **Stream URL:** [Watch on Twitch](${url})
+
+---
+
+## 📑 Break Hits & Card Pulls
+
+${chaptersText || '*No card pulls recorded.*'}
+
+---
+
+## 📝 Break Notes
+
+Live TCG box break session cataloged with timestamped pulls.
+`;
+
+    navigator.clipboard.writeText(md).then(() => {
+      const btn = document.getElementById('btn-copy-break-md');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied Break Markdown!';
+      setTimeout(() => { btn.textContent = old; }, 2000);
+    });
   });
 
   // Save Complete Break Sidecar

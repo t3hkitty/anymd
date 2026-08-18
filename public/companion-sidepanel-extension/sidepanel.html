@@ -118,12 +118,12 @@
     .btn-primary:hover {
       background: #4f46e5;
     }
-    .btn-kindle {
-      background: #f59e0b;
-      color: #0f172a;
+    .btn-success {
+      background: #10b981;
+      color: #fff;
     }
-    .btn-kindle:hover {
-      background: #d97706;
+    .btn-success:hover {
+      background: #059669;
     }
     .btn-break {
       background: #ef4444;
@@ -175,6 +175,19 @@
       padding: 0;
       margin: -14px;
     }
+    pre.code-preview {
+      background: #050811;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 10.5px;
+      color: #94a3b8;
+      max-height: 160px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -182,7 +195,7 @@
   <header>
     <div class="brand">
       <span>📚 LC-MD</span>
-      <span class="badge">LIVE COMPANION</span>
+      <span class="badge">SIDECAR DOCK</span>
     </div>
     <button id="btn-open-full" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">
       ↗ Full Vault
@@ -190,56 +203,62 @@
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="tab-quick">⚡ Live Page Inspector</button>
-    <button class="tab-btn" data-tab="tab-break">🎴 TCG Break Logger</button>
+    <button class="tab-btn active" data-tab="tab-sidecar">⚡ Active Sidecar</button>
+    <button class="tab-btn" data-tab="tab-break">🎴 TCG Break</button>
     <button class="tab-btn" data-tab="tab-app">📱 Live Vault App</button>
   </nav>
 
   <main>
-    <!-- TAB 1: LIVE PAGE INSPECTOR (KINDLE, AMAZON, TWITCH, WEBNOVELS) -->
-    <div id="tab-quick" class="tab-content" style="display: flex; flex-direction: column; gap: 12px;">
+    <!-- TAB 1: INSTANT SIDECAR GENERATOR & COPY (REPLACES BOOKMARKLETS) -->
+    <div id="tab-sidecar" class="tab-content" style="display: flex; flex-direction: column; gap: 12px;">
       
-      <!-- Live Detected Context Card -->
+      <!-- Detected Target Card -->
       <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
         <div class="card-title">
-          <span>🎯 Active Window / Tab Scanner</span>
+          <span>🎯 Active Window / Book</span>
           <span id="tab-platform-badge" class="pill">Scanning...</span>
         </div>
         
-        <!-- Detected Details Container -->
         <div id="tab-detected-box" style="background: #050811; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px;">
           <div id="detected-title" style="font-weight: bold; color: #f1f5f9; font-size: 12px; word-break: break-word;">
             Checking active window...
           </div>
           <div id="detected-sub" style="font-size: 11px; color: #94a3b8;">
-            Click 'Scan Active Window' below to extract details.
+            Auto-scanning Kindle, Amazon, Twitch, or Goodreads...
           </div>
           <div id="detected-extra" style="font-size: 10px; color: #818cf8;"></div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;">
-            📥 Import Book / Video to Vault
-          </button>
-          <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;" title="Re-scan active window">
-            🔄 Scan
-          </button>
+        <!-- 3 Instant Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; gap: 6px;">
+            <button id="btn-copy-sidecar" class="btn btn-success" style="flex: 1;" title="Copy clean Markdown sidecar with YAML frontmatter to clipboard">
+              📋 Copy Markdown Sidecar
+            </button>
+            <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;" title="Re-scan active window">
+              🔄 Scan
+            </button>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;" title="Import into Sovereign Vault">
+              📥 Open &amp; Save in Vault
+            </button>
+            <button id="btn-download-md" class="btn btn-secondary" style="flex: 1;" title="Download .md file directly">
+              💾 Save .md File
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Live Kindle Reading Tracker Section -->
-      <div class="card" style="border-color: rgba(245, 158, 11, 0.4);">
+      <!-- Live Generated Sidecar Markdown Preview -->
+      <div class="card" style="border-color: rgba(148, 163, 184, 0.2);">
         <div class="card-title">
-          <span style="color: #fbbf24;">📖 Kindle &amp; Web Reader Sync</span>
-          <span class="pill" style="color: #fbbf24; background: rgba(245, 158, 11, 0.15);">read.amazon.com</span>
+          <span>📄 Live Sidecar Preview</span>
+          <span style="font-size: 10px; color: #64748b;">Ready to copy / export</span>
         </div>
-        <p style="font-size: 11px; color: #94a3b8;">
-          Reading Kindle in the main window? The dock captures your book title, author, reading progress, and selected text highlights with 1 click!
-        </p>
-        <button id="btn-grab-kindle" class="btn btn-kindle" style="width: 100%;">
-          ✨ Grab Kindle Details &amp; Quote to Sidecar
-        </button>
+        <pre id="sidecar-preview" class="code-preview">Scanning active page...</pre>
       </div>
+
     </div>
 
     <!-- TAB 2: LIVE TCG BREAK LOGGER -->
@@ -250,7 +269,7 @@
           <span class="pill" style="color: #f87171; background: rgba(239, 68, 68, 0.15);">undiisclosed / Twitch</span>
         </div>
         <p style="font-size: 11px; color: #94a3b8;">
-          Watch the stream on your main monitor and log hits, pack pulls, and timestamp chapters here live without switching tabs!
+          Watch the break on your main monitor and log card pulls, pack numbers, and timestamps here live without switching tabs!
         </p>
 
         <div style="display: flex; gap: 6px;">
@@ -264,9 +283,14 @@
           <div style="font-size: 11px; color: #64748b; font-style: italic;">No card pulls logged yet. Click '+ Log Hit' as packs open!</div>
         </div>
 
-        <button id="btn-export-break" class="btn btn-secondary" style="width: 100%; font-size: 11px;">
-          💾 Save Complete Break Sidecar to Vault
-        </button>
+        <div style="display: flex; gap: 6px;">
+          <button id="btn-copy-break-md" class="btn btn-success" style="flex: 1;">
+            📋 Copy Break Sidecar
+          </button>
+          <button id="btn-export-break" class="btn btn-secondary" style="flex: 1;">
+            💾 Save to Vault
+          </button>
+        </div>
       </div>
     </div>
 
