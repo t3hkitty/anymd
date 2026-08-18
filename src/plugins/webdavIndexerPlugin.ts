@@ -117,6 +117,79 @@ export async function fetchWebDAVDirectoryItems(
     }
   }
 
+  // Direct TorBox REST API v1 Directory Fetching
+  if (account?.presetId === 'torbox' || fullUrl.includes('torbox.app')) {
+    const apiKey = (account?.apiKey || account?.tokenOrPassword || '').trim();
+    if (!apiKey) {
+      return {
+        items: [],
+        xmlText: '',
+        error: 'TorBox Auth Error: Please enter your TorBox API Token from https://torbox.app/settings in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      const items: WebDAVFileItem[] = [];
+
+      // 1. Fetch torrents and inner files
+      const torRes = await fetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      });
+
+      if (torRes.ok) {
+        const torData = await torRes.json();
+        (torData.data || []).forEach((t: any) => {
+          if (t.files && t.files.length > 0) {
+            t.files.forEach((f: any) => {
+              items.push({
+                filename: f.name || `${t.name}/file_${f.id}`,
+                size: f.size || t.size || 0,
+                lastModified: t.updated_at ? t.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+                isDir: false
+              });
+            });
+          } else {
+            items.push({
+              filename: t.name || `torrent_${t.id}`,
+              size: t.size || 0,
+              lastModified: t.updated_at ? t.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+              isDir: true
+            });
+          }
+        });
+      }
+
+      // 2. Fetch web downloads (debrid)
+      const webRes = await fetch('https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      });
+
+      if (webRes.ok) {
+        const webData = await webRes.json();
+        (webData.data || []).forEach((w: any) => {
+          items.push({
+            filename: w.name || `webdl_${w.id}`,
+            size: w.size || 0,
+            lastModified: w.updated_at ? w.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+            isDir: false
+          });
+        });
+      }
+
+      const mockXml = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${items.map(i => `<d:response><d:href>${i.filename}</d:href><d:propstat><d:prop><d:getcontentlength>${i.size}</d:getcontentlength></d:prop></d:propstat></d:response>`).join('')}</d:multistatus>`;
+
+      return { items, xmlText: mockXml, statusCode: 200 };
+    } catch (err: any) {
+      return {
+        items: [],
+        xmlText: '',
+        error: `TorBox API Error: ${err.message || 'Failed to fetch TorBox directory listing.'}`
+      };
+    }
+  }
+
   const headers: Record<string, string> = {
     'Depth': '1',
     'Content-Type': 'application/xml',

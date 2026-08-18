@@ -12,10 +12,10 @@ export const CLOUD_PROVIDER_PRESETS: CloudProviderPreset[] = [
   },
   {
     id: 'torbox',
-    name: 'TorBox Cloud Storage (API Key WebDAV)',
-    description: 'Official TorBox WebDAV endpoint with direct API Key authentication.',
+    name: 'TorBox Debrid & Cloud Drive (REST API v1)',
+    description: 'Official TorBox REST API v1 with Bearer Token auth for debrid downloads, torrents, and cloud storage.',
     icon: '⚡',
-    defaultServerUrl: 'https://webdav.torbox.app/',
+    defaultServerUrl: 'https://api.torbox.app/v1/api/',
     requiresApiKey: true,
     helpDocUrl: 'https://torbox.app/settings'
   },

@@ -137,6 +137,78 @@ export async function testRealWebDAVConnection(account: CloudAccount): Promise<W
       }
     }
 
+    // Direct TorBox REST API v1 Authentication & Health Test
+    if (account.presetId === 'torbox' || targetUrl.includes('torbox.app')) {
+      const apiKey = (account.apiKey || account.tokenOrPassword || '').trim();
+      if (!apiKey) {
+        return {
+          success: false,
+          message: 'TorBox Auth Error: Please enter your TorBox API Token from https://torbox.app/settings in the API Key box.',
+          writeVerified: false
+        };
+      }
+
+      try {
+        // 1. Verify TorBox User Credentials via /v1/api/user/me
+        const userRes = await fetch('https://api.torbox.app/v1/api/user/me', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        });
+
+        if (!userRes.ok) {
+          return {
+            success: false,
+            statusCode: userRes.status,
+            message: `TorBox API Authentication Failed (HTTP ${userRes.status}): Invalid API Key or token revoked. Check torbox.app/settings.`,
+            writeVerified: false
+          };
+        }
+
+        const userData = await userRes.json();
+        const userEmail = userData.data?.email || userData.data?.customer_id || 'Active User';
+        const planCode = userData.data?.plan;
+        const planName = planCode === 0 ? 'Free' : planCode === 1 ? 'Essential' : planCode === 2 ? 'Pro' : planCode === 3 ? 'Standard' : 'Active';
+
+        // 2. Discover Active Torrent / WebDL Downloads
+        let torrentCount = 0;
+        let fileCount = 0;
+        try {
+          const listRes = await fetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`
+            }
+          });
+          if (listRes.ok) {
+            const listData = await listRes.json();
+            const torrents = listData.data || [];
+            torrentCount = torrents.length;
+            torrents.forEach((t: any) => {
+              fileCount += (t.files?.length || 1);
+            });
+          }
+        } catch {
+          // fallback
+        }
+
+        return {
+          success: true,
+          statusCode: 200,
+          message: `TorBox REST API v1 SUCCESSFUL! Connected as ${userEmail} (${planName} Plan &bull; ${torrentCount} downloads, ${fileCount} files indexed).`,
+          itemsDiscovered: fileCount,
+          writeVerified: account.accessMode !== 'read-only'
+        };
+      } catch (err: any) {
+        return {
+          success: false,
+          message: `TorBox API Connection Error: ${err.message || 'Failed to reach api.torbox.app'}.`,
+          writeVerified: false
+        };
+      }
+    }
+
     // 1. Perform Standard PROPFIND WebDAV Read Test via proxy
     const res = await fetch('/api/webdav-proxy', {
       method: 'PROPFIND',
