@@ -73,6 +73,7 @@ import { StoryMakerAuthorBibleModal } from './components/StoryMakerAuthorBibleMo
 import { RunningLitanyWatchdogModal } from './components/RunningLitanyWatchdogModal';
 import { PersonaCollectorHubModal } from './components/PersonaCollectorHubModal';
 import { VaultBackupRestoreModal } from './components/VaultBackupRestoreModal';
+import { VodImporterModal } from './components/VodImporterModal';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -340,6 +341,7 @@ export function App() {
   const [isRunningLitanyOpen, setIsRunningLitanyOpen] = useState(false);
   const [isPersonaCollectorOpen, setIsPersonaCollectorOpen] = useState(false);
   const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
+  const [isVodImporterOpen, setIsVodImporterOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -1048,6 +1050,16 @@ format: "dcmd/goodreads"
           >
             <span>📦</span>
             <span className="hidden xl:inline">Restore Vault</span>
+          </button>
+
+          {/* 14. 🎬 VOD & STREAM IMPORTER */}
+          <button
+            onClick={() => setIsVodImporterOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-950/90 hover:bg-red-900 border border-red-500/50 text-red-300 text-xs font-bold transition-all"
+            title="VOD & Stream Importer (YouTube, Twitch, Kick, TorBox Streams)"
+          >
+            <span>🎬</span>
+            <span className="hidden xl:inline">VODs</span>
           </button>
 
           {/* 6. ⚙️ CLOUD & PLUGINS */}
@@ -2015,6 +2027,18 @@ format: "dcmd/goodreads"
             setActiveBookId(newBooks[0].id);
             setActiveView('library');
           }
+        }}
+      />
+
+      {/* 14. VOD & Video Stream Importer Modal */}
+      <VodImporterModal
+        isOpen={isVodImporterOpen}
+        onClose={() => setIsVodImporterOpen(false)}
+        cloudAccounts={cloudAccounts}
+        onImportVod={(book) => {
+          handleUpdateBooks(prev => [book, ...prev]);
+          setActiveBookId(book.id);
+          setActiveView('library');
         }}
       />
 

@@ -5,6 +5,7 @@ import { searchAnnasArchiveIsbnDb, type AnnasArchiveIsbnRecord } from '../plugin
 import { parseTextDirectoryListing } from '../plugins/webdavIndexerPlugin';
 import { scanMultipleIndividualPhotos, convertScannedCardsToVaultItems } from '../plugins/cardScannerPlugin';
 import { importVaultZipArchive } from '../plugins/vaultZipImportPlugin';
+import { convertVodToVaultItem, detectPlatformAndThumbnail, type VodPlatform } from '../plugins/vodImporterPlugin';
 import {
   X,
   Upload,
@@ -15,7 +16,13 @@ import {
   Search,
   Sparkles,
   FolderPlus,
-  Archive
+  Archive,
+  Tv,
+  Play,
+  Video,
+  Clock,
+  ListOrdered,
+  Link as LinkIcon
 } from 'lucide-react';
 
 interface UnifiedImportStudioModalProps {
@@ -40,7 +47,7 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
   onImportBooks,
   onProceedToVerification
 }) => {
-  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'vault_zip_restore'>('insurance');
+  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'vod_streams' | 'vault_zip_restore'>('insurance');
   const zipBackupInputRef = useRef<HTMLInputElement | null>(null);
 
   // Processing & Progress Bar State
@@ -77,6 +84,17 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 
   // 6. Folder Scan State
   const localDirInputRef = useRef<HTMLInputElement | null>(null);
+
+  // 7. VOD & Video Stream State
+  const [vodUrl, setVodUrl] = useState('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  const [vodTitle, setVodTitle] = useState('Deep Work Sovereign Livestream & Architecture Review');
+  const [vodCreator, setVodCreator] = useState('Antigravity Streamer');
+  const [vodPlatform, setVodPlatform] = useState<VodPlatform>('youtube');
+  const [vodDuration, setVodDuration] = useState('01:45:20');
+  const [vodResolution, setVodResolution] = useState('1080p60');
+  const [vodThumbnail, setVodThumbnail] = useState('https://images.unsplash.com/photo-1536240478700-b869070f9279?w=600&auto=format&fit=crop&q=80');
+  const [vodTimestamps, setVodTimestamps] = useState('00:00 - Stream Kickoff\n12:30 - Core Architecture Breakdown\n45:15 - Live Code Refactoring\n01:20:00 - Synthesis & Conclusions');
+  const [vodNotes, setVodNotes] = useState('Livestream archive with spatial chapter markers.');
 
   if (!isOpen) return null;
 
@@ -458,6 +476,28 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     }
   };
 
+  // 8. VOD & Video Stream Import Handler
+  const handleVodImport = () => {
+    if (!vodUrl.trim() || !vodTitle.trim()) return;
+
+    const book = convertVodToVaultItem({
+      url: vodUrl.trim(),
+      title: vodTitle.trim(),
+      creator: vodCreator.trim() || 'Anonymous Streamer',
+      platform: vodPlatform,
+      durationFormatted: vodDuration,
+      resolution: vodResolution,
+      thumbnailUrl: vodThumbnail,
+      description: vodNotes,
+      rawTimestampsText: vodTimestamps,
+      tags: ['vod', vodPlatform]
+    });
+
+    onImportBooks([book], 'vod-import');
+    alert(`✓ Successfully imported "${vodTitle}" into Sovereign Vault!`);
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
       <div className="bg-slate-900 border border-slate-700/80 text-slate-100 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -582,6 +622,18 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
           >
             <FolderPlus className="w-3.5 h-3.5 text-sky-400" />
             <span>📁 Local Folder Sync</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('vod_streams')}
+            className={`px-4 py-2 font-bold rounded-t-xl transition-all border-b-2 flex items-center space-x-1.5 ${
+              activeTab === 'vod_streams'
+                ? 'border-red-400 text-red-300 bg-slate-900'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Tv className="w-3.5 h-3.5 text-red-400" />
+            <span>🎬 VOD &amp; Stream Importer</span>
           </button>
 
           <button
@@ -1014,7 +1066,146 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
             </div>
           )}
 
-          {/* TAB 7: VAULT ZIP BACKUP IMPORT */}
+          {/* TAB 7: VOD & STREAM IMPORTER */}
+          {activeTab === 'vod_streams' && (
+            <div className="space-y-4 animate-fadeIn font-mono text-xs">
+              <div className="p-4 rounded-2xl bg-red-950/30 border border-red-500/30 space-y-2 font-sans">
+                <span className="font-bold text-red-300 flex items-center space-x-1.5 text-xs font-mono">
+                  <Tv className="w-4 h-4 text-red-400" />
+                  <span>Sovereign VOD &amp; Livestream Stream Archive Ingest</span>
+                </span>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Catalog YouTube recordings, Twitch VODs, Kick streams, Vimeo videos, or TorBox Debrid streams into sovereign markdown companion sidecars with timestamped chapter markers.
+                </p>
+              </div>
+
+              <div className="space-y-3 p-5 rounded-3xl bg-slate-950 border border-slate-800">
+                <div className="space-y-1">
+                  <label className="block text-slate-300 font-bold flex items-center space-x-1">
+                    <LinkIcon className="w-3.5 h-3.5 text-red-400" />
+                    <span>Stream / VOD URL:</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={vodUrl}
+                    onChange={(e) => {
+                      setVodUrl(e.target.value);
+                      const det = detectPlatformAndThumbnail(e.target.value);
+                      setVodPlatform(det.platform);
+                      if (det.thumbnailUrl) setVodThumbnail(det.thumbnailUrl);
+                    }}
+                    placeholder="https://youtube.com/watch?v=... or https://twitch.tv/videos/..."
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-slate-300 font-bold">VOD Title:</label>
+                    <input
+                      type="text"
+                      value={vodTitle}
+                      onChange={(e) => setVodTitle(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-slate-300 font-bold">Streamer / Creator:</label>
+                    <input
+                      type="text"
+                      value={vodCreator}
+                      onChange={(e) => setVodCreator(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-slate-300 font-bold">Platform:</label>
+                    <select
+                      value={vodPlatform}
+                      onChange={(e) => setVodPlatform(e.target.value as VodPlatform)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-red-500"
+                    >
+                      <option value="youtube">📺 YouTube</option>
+                      <option value="twitch">🟣 Twitch VOD</option>
+                      <option value="kick">🟢 Kick Stream</option>
+                      <option value="vimeo">🔵 Vimeo</option>
+                      <option value="torbox">⚡ TorBox Stream</option>
+                      <option value="direct_stream">🌐 Direct MP4/M3U8</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-slate-300 font-bold flex items-center space-x-1">
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Duration:</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={vodDuration}
+                      onChange={(e) => setVodDuration(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-slate-300 font-bold flex items-center space-x-1">
+                      <Video className="w-3.5 h-3.5 text-sky-400" />
+                      <span>Quality:</span>
+                    </label>
+                    <select
+                      value={vodResolution}
+                      onChange={(e) => setVodResolution(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-red-500"
+                    >
+                      <option value="1080p60">1080p 60fps HD</option>
+                      <option value="4K UHD">4K UHD (2160p)</option>
+                      <option value="720p60">720p 60fps</option>
+                      <option value="Audio Only">🎙️ Audio Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-slate-300 font-bold flex items-center space-x-1">
+                    <ListOrdered className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Spatial Chapters &amp; Timestamps:</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={vodTimestamps}
+                    onChange={(e) => setVodTimestamps(e.target.value)}
+                    className="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-slate-300 font-bold">VOD Notes &amp; Summary:</label>
+                  <input
+                    type="text"
+                    value={vodNotes}
+                    onChange={(e) => setVodNotes(e.target.value)}
+                    placeholder="Key stream takeaways and synthesis..."
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={handleVodImport}
+                    className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all"
+                  >
+                    <Play className="w-4 h-4 text-slate-950 fill-current" />
+                    <span>Import VOD Stream into Vault</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 8: VAULT ZIP BACKUP IMPORT */}
           {activeTab === 'vault_zip_restore' && (
             <div className="space-y-4 animate-fadeIn">
               <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 space-y-2 font-sans">
