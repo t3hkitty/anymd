@@ -17,13 +17,18 @@
 - **Grand Bookcase & Multi-View Studio**: 3D bookshelf UI, realistic mahogany spines, wardrobe closet hangers, list view, and interactive 3D carousel showcase.
 - **🧪 Dedicated Sandbox Demo Vault**: Isolated non-sensitive sandbox playground to safely test bulk edits, batch tag replacements, bulk deletions, and ZIP exports, with 1-click restore.
 - **🎸 Music Album & Track-Linked Sidecars**: Full rock opera concept albums (e.g. Green Day's *American Idiot*) linking to individual song sidecars (*Boulevard of Broken Dreams*, *Holiday*, etc.) with nested Zettelkasten wikilinks.
+- **🚪 Spatial-Chained Routine Registry & TTS Director**: Dual-channel (TTS podcast-style audio cadence + visual cards) for 4 daily protocols: `[Leaving the House]`, `[Morning Wake & Prep]`, `[Morning Sustenance]`, and `[Bedtime Closure]`.
+- **🛡️ "No Bad Days" Script Engine**: Goblin Tools-style shame-free task deconstructor that automatically chunks unfinished tasks into atomic 2-minute steps.
+- **🎭 Story Maker & Author Bible**: Uncurated Zettelkasten Inspo Ledger (`ZK-INSP-...`), dynamic character role slugs (`[MC]`, `[ML]`, `[MC:eyes]`, `[ML:secret]`), live refined prose compiler, and AI structural drafting interrogator.
+- **⚡ Running Litany & Inactivity Watchdog**: Real-time activity pulse stream replacing old Live Tweet with high-frequency blackbox logging, 2-minute idle watchdog with audio check-in chime, and AuDHD Morning Manager with traffic delay lead-time calculator.
+- **💖 Persona Sanctuary & Plushie Cubbies**: 4-7-8 visual breathing pacer, Preference & Suffering Ledger, Person Slugs (`[Contact:Name]`), Piplup/Dawn Cameo Radar, and digital Plushie Cubbies with Build-A-Bear Wardrobe & scent tracking.
 - **Auto-Card Cropper & Dual Media Linking**: Extracts individual slab-framed card covers from scans with HTML5 canvas while linking to raw full-resolution uncropped master uploads.
 - **Structured ZIP Archive & `/media/` Packaging**: 1-click full vault backup with `.companion.md` sidecars in `/Sidecars/`, all image covers & raw scans in `/media/`, and standard `manifest.json`.
 - **Storage Quota & Local Folder Upgrade**: Native File System Access API integration (`mountSovereignLocalFolder()`) to mount local drives without browser cache limitations.
 - **Discord-Style Reaction Bursts & Pac-Man Retro GIFs**: Quick reaction capture with 24-emoji burst bar and context GIFs (Pac-Man ghost-chasing & fruit chomp, Popcat, Doge).
 - **Natural Black Box Expansion**: Tamper-proof, zero-cloud data processing with controlled outbound egress.
 - **Hardware Passkeys & OpenSSO**: Biometric Touch ID, Face ID, Windows Hello (WebAuthn), GitHub OAuth, or self-hosted SMTP email verification.
-- **Fair Trade Calculator & Sourcing Digest**: Decimal precision asset comparator, executive PA procurement lists, and Google Sheets CSV exports.
+- **Fair Trade Calculator & Sourcing Digest**: Multi-currency valuation engine (`$ USD`, `§ Simoleons`, `Ð Doge`, `₹ INR`, `🪙 Gold`), executive PA procurement lists, and Google Sheets CSV exports.
 - **Library Action Controls**: 1-click `✏️ Edit / Review` sidecar inspector and direct `👁️ View` external reader file link launcher.
 
 ---

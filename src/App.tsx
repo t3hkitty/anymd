@@ -68,6 +68,10 @@ import { SuggestedDriveLinksModal } from './components/SuggestedDriveLinksModal'
 import { CronSchedulerModal } from './components/CronSchedulerModal';
 import { SpotifyMusicModal } from './components/SpotifyMusicModal';
 import { ArtistAiStudioModal } from './components/ArtistAiStudioModal';
+import { SpatialRoutineDirectorModal } from './components/SpatialRoutineDirectorModal';
+import { StoryMakerAuthorBibleModal } from './components/StoryMakerAuthorBibleModal';
+import { RunningLitanyWatchdogModal } from './components/RunningLitanyWatchdogModal';
+import { PersonaCollectorHubModal } from './components/PersonaCollectorHubModal';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -330,6 +334,10 @@ export function App() {
   const [isCronSchedulerOpen, setIsCronSchedulerOpen] = useState(false);
   const [isSpotifyMusicOpen, setIsSpotifyMusicOpen] = useState(false);
   const [isArtistAiStudioOpen, setIsArtistAiStudioOpen] = useState(false);
+  const [isSpatialRoutineOpen, setIsSpatialRoutineOpen] = useState(false);
+  const [isStoryMakerBibleOpen, setIsStoryMakerBibleOpen] = useState(false);
+  const [isRunningLitanyOpen, setIsRunningLitanyOpen] = useState(false);
+  const [isPersonaCollectorOpen, setIsPersonaCollectorOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -988,6 +996,46 @@ format: "dcmd/goodreads"
           >
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
             <span className="hidden lg:inline">Creator AI</span>
+          </button>
+
+          {/* 9. 🚪 SPATIAL-CHAINED ROUTINES & TTS */}
+          <button
+            onClick={() => setIsSpatialRoutineOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-blue-950/80 hover:bg-blue-900 border border-blue-500/40 text-blue-300 text-xs font-bold transition-all"
+            title="Spatial-Chained Routine Registry (Leaving House, Morning Wake, Sustenance, Bedtime) & 'No Bad Days' Script"
+          >
+            <span>🚪</span>
+            <span className="hidden xl:inline">Routines &amp; TTS</span>
+          </button>
+
+          {/* 10. 🎭 STORY MAKER & AUTHOR BIBLE */}
+          <button
+            onClick={() => setIsStoryMakerBibleOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all"
+            title="Story Maker & Author Bible: Inspo Ledger, Character Role Slugs ([MC], [ML]) & AI Drafting"
+          >
+            <span>🎭</span>
+            <span className="hidden xl:inline">Author Bible</span>
+          </button>
+
+          {/* 11. ⚡ RUNNING LITANY & WATCHDOG */}
+          <button
+            onClick={() => setIsRunningLitanyOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all"
+            title="Running Litany Real-Time Activity Pulse, Inactivity Watchdog & AuDHD Traffic Alarm"
+          >
+            <span>⚡</span>
+            <span className="hidden xl:inline">Litany Pulse</span>
+          </button>
+
+          {/* 12. 💖 PERSONA, PIPLUP & PLUSHIE CUBBIES */}
+          <button
+            onClick={() => setIsPersonaCollectorOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all"
+            title="Persona Sanctuary: Anxiety Reducer (Calm Mode), Suffering Ledger, Person Slugs, Piplup Radar & Plushie Cubbies"
+          >
+            <span>💖</span>
+            <span className="hidden xl:inline">Persona &amp; Plush</span>
           </button>
 
           {/* 6. ⚙️ CLOUD & PLUGINS */}
@@ -1903,6 +1951,30 @@ format: "dcmd/goodreads"
           setActiveBookId(newBook.id);
           setActiveView('sidecar');
         }}
+      />
+
+      {/* 9. Spatial-Chained Routine Registry & TTS Director Modal */}
+      <SpatialRoutineDirectorModal
+        isOpen={isSpatialRoutineOpen}
+        onClose={() => setIsSpatialRoutineOpen(false)}
+      />
+
+      {/* 10. Story Maker & Author Bible Modal */}
+      <StoryMakerAuthorBibleModal
+        isOpen={isStoryMakerBibleOpen}
+        onClose={() => setIsStoryMakerBibleOpen(false)}
+      />
+
+      {/* 11. Running Litany & Inactivity Watchdog Modal */}
+      <RunningLitanyWatchdogModal
+        isOpen={isRunningLitanyOpen}
+        onClose={() => setIsRunningLitanyOpen(false)}
+      />
+
+      {/* 12. Persona, Feed Engine & Collector Hub Modal */}
+      <PersonaCollectorHubModal
+        isOpen={isPersonaCollectorOpen}
+        onClose={() => setIsPersonaCollectorOpen(false)}
       />
 
       {/* ⚡ Idle Background Auto-Worker Toast Notice */}
