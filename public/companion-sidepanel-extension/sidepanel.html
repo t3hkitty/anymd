@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LC-MD Side Panel Companion</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #0f172a;
+      --border: #1e293b;
+      --accent: #6366f1;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      padding: 12px 16px;
+      background: #050811;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .brand span.badge {
+      font-size: 10px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .nav-tabs {
+      display: flex;
+      background: #090d16;
+      padding: 6px 12px;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: #fff;
+      border-color: var(--border);
+    }
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+    }
+    .btn-break {
+      background: #ef4444;
+      color: #fff;
+    }
+    .btn-break:hover {
+      background: #dc2626;
+    }
+    .btn-secondary {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+    }
+    .btn-secondary:hover {
+      background: #334155;
+    }
+    input, textarea, select {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #f8fafc;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      background: #1e293b;
+      color: #94a3b8;
+    }
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      flex: 1;
+    }
+    #view-app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 0;
+      margin: -14px;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>📚 LC-MD</span>
+      <span class="badge">SIDE PANEL</span>
+    </div>
+    <button id="btn-open-full" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">
+      ↗ Full Vault
+    </button>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="tab-quick">⚡ Quick Grab &amp; Break</button>
+    <button class="tab-btn" data-tab="tab-app">📱 Live Vault App</button>
+  </nav>
+
+  <main>
+    <!-- TAB 1: QUICK GRAB & LIVE TCG BREAK TRACKER -->
+    <div id="tab-quick" class="tab-content" style="display: flex; flex-direction: column; gap: 12px;">
+      
+      <!-- Current Tab Context Card -->
+      <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
+        <div class="card-title">
+          <span>🎯 Active Browser Tab</span>
+          <span id="tab-platform-badge" class="pill">Detecting...</span>
+        </div>
+        <div id="tab-info" style="font-size: 12px; color: #94a3b8; word-break: break-word;">
+          Checking current active tab...
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;">
+            📥 Grab to Vault
+          </button>
+          <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;">
+            🔄
+          </button>
+        </div>
+      </div>
+
+      <!-- Live TCG Break Logger Card -->
+      <div class="card" style="border-color: rgba(239, 68, 68, 0.4);">
+        <div class="card-title">
+          <span style="color: #f87171;">🎴 Live TCG Break Logger</span>
+          <span class="pill" style="color: #f87171; background: rgba(239, 68, 68, 0.15);">undiisclosed / Twitch</span>
+        </div>
+        <p style="font-size: 11px; color: #94a3b8;">
+          Watch the stream on your main monitor and log hits, pack pulls, and timestamp chapters here live without switching tabs!
+        </p>
+
+        <div style="display: flex; gap: 6px;">
+          <input id="break-hit-input" type="text" placeholder="e.g. Pack #3: Charizard SIR Pull!" />
+          <button id="btn-add-hit" class="btn btn-break" style="padding: 6px 12px; shrink-0;">
+            + Log Hit
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;" id="hits-list">
+          <div style="font-size: 11px; color: #64748b; font-style: italic;">No card pulls logged yet. Click '+ Log Hit' as packs open!</div>
+        </div>
+
+        <button id="btn-export-break" class="btn btn-secondary" style="width: 100%; font-size: 11px;">
+          💾 Save Complete Break Sidecar to Vault
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EMBEDDED LIVE VAULT APP -->
+    <div id="tab-app" class="tab-content hidden" style="flex: 1; height: 100%;">
+      <div id="view-app">
+        <iframe id="vault-iframe" class="app-frame" src="http://artkitty.net/meow/lcmd/"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

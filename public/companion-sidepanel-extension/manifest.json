@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Library Companion MD - Sovereign Side Panel",
+  "version": "1.0.0",
+  "description": "Dock your Sovereign Library, TCG Break notes, and VOD chapter tracker directly in a Chrome Side Panel next to Twitch, YouTube, and Goodreads.",
+  "permissions": [
+    "sidePanel",
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open Library Companion MD Side Panel"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  }
+}
