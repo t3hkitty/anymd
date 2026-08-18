@@ -184,9 +184,25 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
 
     // Media Type Filter
     if (selectedTypeFilter !== 'all') {
-      if (selectedTypeFilter === 'tcg' && !b.title.toLowerCase().includes('charizard') && !b.title.toLowerCase().includes('lotus')) return false;
-      if (selectedTypeFilter === 'collectibles' && !b.title.toLowerCase().includes('loki') && !b.title.toLowerCase().includes('pop')) return false;
-      if (selectedTypeFilter === 'wardrobe' && !b.title.toLowerCase().includes('coat') && !b.title.toLowerCase().includes('hanger')) return false;
+      const titleLower = b.title.toLowerCase();
+      const sidecarLower = (b.sidecarMarkdown || '').toLowerCase();
+      
+      if (selectedTypeFilter === 'journal') {
+        const isJournal = titleLower.includes('journal') || titleLower.includes('blackbox') || b.id.startsWith('journal-') || sidecarLower.includes('media_type: "journal"');
+        if (!isJournal) return false;
+      } else if (selectedTypeFilter === 'plushie') {
+        const isPlushie = titleLower.includes('plushie') || titleLower.includes('plush') || titleLower.includes('pop') || titleLower.includes('loki') || titleLower.includes('statue') || titleLower.includes('figure') || titleLower.includes('toy') || sidecarLower.includes('plushie');
+        if (!isPlushie) return false;
+      } else if (selectedTypeFilter === 'tcg') {
+        const isTcg = titleLower.includes('charizard') || titleLower.includes('lotus') || titleLower.includes('tcg') || titleLower.includes('card') || sidecarLower.includes('tcg');
+        if (!isTcg) return false;
+      } else if (selectedTypeFilter === 'collectibles') {
+        const isCollectible = titleLower.includes('loki') || titleLower.includes('pop') || titleLower.includes('statue') || titleLower.includes('relic') || titleLower.includes('plushie');
+        if (!isCollectible) return false;
+      } else if (selectedTypeFilter === 'wardrobe') {
+        const isWardrobe = titleLower.includes('coat') || titleLower.includes('hanger') || titleLower.includes('shirt') || titleLower.includes('dress');
+        if (!isWardrobe) return false;
+      }
     }
 
     // Curated Collection Filter
@@ -559,6 +575,30 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
             }`}
           >
             📚 Books
+          </button>
+
+          <button
+            onClick={() => setSelectedTypeFilter('journal')}
+            className={`px-2.5 py-1 rounded-xl transition-all font-mono shrink-0 ${
+              selectedTypeFilter === 'journal'
+                ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                : 'bg-slate-900 text-emerald-300 hover:bg-slate-800'
+            }`}
+            title="Filter to myBlackbox Daily Journals, Captain Logs & Litany Pulses"
+          >
+            📓 Journal Vault (myBlackbox)
+          </button>
+
+          <button
+            onClick={() => setSelectedTypeFilter('plushie')}
+            className={`px-2.5 py-1 rounded-xl transition-all font-mono shrink-0 ${
+              selectedTypeFilter === 'plushie'
+                ? 'bg-rose-500 text-white font-bold shadow-sm'
+                : 'bg-slate-900 text-rose-300 hover:bg-slate-800'
+            }`}
+            title="Filter to Plushie Vault, plushies, figures & collectibles"
+          >
+            🧸 Plushie Vault
           </button>
 
           <button

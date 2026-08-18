@@ -263,6 +263,7 @@ export function App() {
   const [currentChapterIndex, setCurrentChapterIndex] = useState<number>(0);
   const [currentParagraphIndex, setCurrentParagraphIndex] = useState<number>(0);
   const [activeTargetCfi, setActiveTargetCfi] = useState<string | null>(null);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(false);
   
   // Pluggable E-Reader Engine Selection
   const [activeReaderEngine, setActiveReaderEngine] = useState<ReaderEngineId>('sovereign-canvas');
@@ -804,8 +805,25 @@ date_cataloged: "${new Date().toISOString()}"
         </button>
       </div>
 
-      {/* Top Application Toolbar (Visible across all views) */}
-      <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
+      {/* Top Application Toolbar (Visible across all views with collapse toggle) */}
+      {isHeaderCollapsed ? (
+        <div className="px-4 py-1 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+          <div className="flex items-center space-x-3">
+            <span className="font-bold text-amber-300">🐾 Sovereign Library</span>
+            <button onClick={() => setActiveView('library')} className={`px-2 py-0.5 rounded ${activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400'}`}>📚 Library</button>
+            <button onClick={() => setActiveView('blackbox')} className={`px-2 py-0.5 rounded ${activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>⬛ myBlackbox</button>
+            <button onClick={() => setActiveView('reader')} className={`px-2 py-0.5 rounded ${activeView === 'reader' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>📖 Reader</button>
+          </div>
+          <button
+            onClick={() => setIsHeaderCollapsed(false)}
+            className="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-[11px] transition-colors flex items-center space-x-1"
+            title="Expand Full Header Toolbar"
+          >
+            <span>▼ Expand Header Toolbar</span>
+          </button>
+        </div>
+      ) : (
+        <header className="px-6 py-2 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
           <div className="flex items-center space-x-4">
           
           {/* Ornate Grand Bookcase Logo & Title */}
@@ -1020,13 +1038,23 @@ date_cataloged: "${new Date().toISOString()}"
           {/* Expressive Reaction Quick Trigger */}
           <button
             onClick={() => handleOpenQuickCapture()}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+            className="flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-bold text-xs px-3 py-1 rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
           >
             <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '4s' }} />
             <span>Reaction</span>
           </button>
+
+          {/* Collapse Header Toggle Button */}
+          <button
+            onClick={() => setIsHeaderCollapsed(true)}
+            className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono font-bold text-[11px] border border-slate-700 transition-colors flex items-center space-x-1"
+            title="Collapse Top Header for Full Screen View"
+          >
+            <span>▲ Collapse</span>
+          </button>
         </div>
       </header>
+      )}
 
       {/* Main Content Workspace Layout */}
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
