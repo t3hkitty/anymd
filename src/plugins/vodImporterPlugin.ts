@@ -1,6 +1,7 @@
 /**
- * Sovereign VOD & Video Stream Importer Plugin
- * Catalogues YouTube, Twitch, Kick, Vimeo, TorBox Debrid streams, and local MP4/M3U8 VODs into sovereign companion sidecars with timestamped anchors.
+ * Sovereign VOD & Video Stream Companion Plugin
+ * Catalogs YouTube, Twitch, Kick, and Live Streams into sovereign markdown companion notes
+ * with native 1-click timestamp jump links that open directly in the official player.
  */
 
 import type { Book, ResonanceEntry } from '../types/resonance';
@@ -13,6 +14,7 @@ export interface VodChapter {
   timestampFormatted: string; // e.g. "01:24:15"
   title: string;
   notes?: string;
+  nativeJumpUrl?: string;
 }
 
 export interface VodMetadataInput {
@@ -20,8 +22,8 @@ export interface VodMetadataInput {
   title: string;
   creator: string;
   platform: VodPlatform;
-  durationFormatted?: string; // e.g. "02:15:30"
-  resolution?: string; // e.g. "1080p60", "4K UHD"
+  durationFormatted?: string;
+  resolution?: string;
   thumbnailUrl?: string;
   description?: string;
   rawTimestampsText?: string;
@@ -58,13 +60,34 @@ export function parseTimestampToSeconds(ts: string): number {
 }
 
 /**
+ * Generates official native deep-link jumping directly to the timestamp on Twitch/YouTube/Kick
+ */
+export function buildNativeTimestampJumpUrl(baseUrl: string, platform: VodPlatform, totalSeconds: number): string {
+  const cleanUrl = baseUrl.trim();
+  if (platform === 'twitch') {
+    const hours = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    const twitchTime = (hours > 0 ? `${hours}h` : '') + (mins > 0 || hours > 0 ? `${mins}m` : '') + `${secs}s`;
+    const separator = cleanUrl.includes('?') ? '&' : '?';
+    return `${cleanUrl.split('?t=')[0].split('&t=')[0]}${separator}t=${twitchTime}`;
+  }
+
+  if (platform === 'youtube') {
+    const separator = cleanUrl.includes('?') ? '&' : '?';
+    return `${cleanUrl.split('?t=')[0].split('&t=')[0]}${separator}t=${totalSeconds}s`;
+  }
+
+  return `${cleanUrl}#t=${totalSeconds}`;
+}
+
+/**
  * Extracts platform and video ID from common video URLs
  */
 export function detectPlatformAndThumbnail(url: string): {
   platform: VodPlatform;
   thumbnailUrl?: string;
   videoId?: string;
-  embedIframeUrl?: string;
   suggestedCreator?: string;
 } {
   const clean = url.trim();
@@ -76,8 +99,7 @@ export function detectPlatformAndThumbnail(url: string): {
     return {
       platform: 'youtube',
       videoId,
-      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-      embedIframeUrl: `https://www.youtube.com/embed/${videoId}`
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
     };
   }
 
@@ -88,7 +110,6 @@ export function detectPlatformAndThumbnail(url: string): {
       platform: 'twitch',
       videoId: vId,
       thumbnailUrl: 'https://static-cdn.jtvnw.net/ttv-static/404_preview-640x360.jpg',
-      embedIframeUrl: `https://player.twitch.tv/?video=${vId}&parent=artkitty.net&parent=localhost&parent=127.0.0.1&parent=artkitty-net.us.stackstaging.com&autoplay=false`,
       suggestedCreator: 'undiisclosed'
     };
   }
@@ -99,7 +120,6 @@ export function detectPlatformAndThumbnail(url: string): {
       platform: 'twitch',
       videoId: channel,
       thumbnailUrl: 'https://static-cdn.jtvnw.net/ttv-static/404_preview-640x360.jpg',
-      embedIframeUrl: `https://player.twitch.tv/?channel=${channel}&parent=artkitty.net&parent=localhost&parent=127.0.0.1&parent=artkitty-net.us.stackstaging.com&autoplay=false`,
       suggestedCreator: channel || 'undiisclosed'
     };
   }
@@ -118,8 +138,7 @@ export function detectPlatformAndThumbnail(url: string): {
   if (vimeoMatch && vimeoMatch[1]) {
     return {
       platform: 'vimeo',
-      videoId: vimeoMatch[1],
-      embedIframeUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`
+      videoId: vimeoMatch[1]
     };
   }
 
@@ -136,7 +155,7 @@ export function detectPlatformAndThumbnail(url: string): {
 /**
  * Parses raw chapter timestamp lines into structured VodChapter[]
  */
-export function parseRawTimestampLines(text: string): VodChapter[] {
+export function parseRawTimestampLines(text: string, baseUrl: string = '', platform: VodPlatform = 'youtube'): VodChapter[] {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const chapters: VodChapter[] = [];
 
@@ -148,10 +167,13 @@ export function parseRawTimestampLines(text: string): VodChapter[] {
       const tsFormatted = match[1];
       const title = match[2] ? match[2].trim() : `Chapter ${chapters.length + 1}`;
       const secs = parseTimestampToSeconds(tsFormatted);
+      const nativeJumpUrl = baseUrl ? buildNativeTimestampJumpUrl(baseUrl, platform, secs) : undefined;
+
       chapters.push({
         timestampSeconds: secs,
         timestampFormatted: tsFormatted,
-        title: title || `Chapter at ${tsFormatted}`
+        title: title || `Chapter at ${tsFormatted}`,
+        nativeJumpUrl
       });
     }
   }
@@ -170,7 +192,7 @@ export function convertVodToVaultItem(
   const platform = input.platform || detected.platform;
   const thumbnailUrl = input.thumbnailUrl || detected.thumbnailUrl || 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=600&auto=format&fit=crop&q=80';
 
-  const chapters = parseRawTimestampLines(input.rawTimestampsText || '');
+  const chapters = parseRawTimestampLines(input.rawTimestampsText || '', input.url, platform);
   const nowIso = new Date().toISOString();
   const dateStr = nowIso.split('T')[0];
 
@@ -185,7 +207,7 @@ export function convertVodToVaultItem(
     cfi: `cfi:vod:${ch.timestampSeconds}`,
     chapterTitle: ch.title,
     paragraphIndex: idx,
-    paragraphSnippet: ch.notes || `Spatial timestamp anchor at playback offset ${ch.timestampFormatted} on ${platform.toUpperCase()}.`,
+    paragraphSnippet: ch.notes || `Direct timestamp jump link: ${ch.nativeJumpUrl || input.url}`,
     intensityScore: 4,
     reactionImageUrl: thumbnailUrl,
     reactionGifCaption: `Chapter: ${ch.title} (${ch.timestampFormatted})`,
@@ -204,17 +226,13 @@ export function convertVodToVaultItem(
       cfi: 'cfi:vod:0',
       chapterTitle: 'Overview',
       paragraphIndex: 0,
-      paragraphSnippet: `Sovereign VOD archive captured from ${platform.toUpperCase()}. Direct stream URL: ${input.url}`,
+      paragraphSnippet: `Sovereign VOD companion cataloged for ${platform.toUpperCase()}. Direct native link: ${input.url}`,
       intensityScore: 5,
       reactionImageUrl: thumbnailUrl,
       reactionGifCaption: input.title,
       emojiReactions: ['🎬', '⚡']
     });
   }
-
-  const embedSection = detected.embedIframeUrl
-    ? `\n### 📺 Stream Player Embed\n<iframe src="${detected.embedIframeUrl}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>\n`
-    : '';
 
   const sidecarMarkdown = `---
 title: "${input.title.replace(/"/g, '\\"')}"
@@ -231,20 +249,23 @@ date_cataloged: "${nowIso}"
 
 # 🎬 ${input.title}
 
-> **Platform:** \`${platform.toUpperCase()}\` &bull; **Creator:** **${input.creator}** &bull; **Duration:** \`${input.durationFormatted || 'N/A'}\` &bull; **Resolution:** \`${input.resolution || '1080p60'}\`
-> **Stream URL:** [Watch Video Stream](${input.url})
-${embedSection}
----
-
-## 📑 Spatial Chapters & Timestamp Anchors
-
-${chapters.length > 0 ? chapters.map(ch => `- **\`[${ch.timestampFormatted}]\`** ${ch.title}`).join('\n') : '*No chapter breakdowns recorded for this VOD.*'}
+> **Platform:** \`${platform.toUpperCase()}\` &bull; **Creator:** **${input.creator}** &bull; **Duration:** \`${input.durationFormatted || 'N/A'}\`
+> ↗ **Native Stream:** [Open Directly on ${platform.toUpperCase()}](${input.url})
 
 ---
 
-## 📝 VOD Notes & Synthesis
+## 📑 Timestamp Jump Anchors
 
-${input.description || 'Sovereign VOD companion sidecar cataloged with media attachments and playback anchors.'}
+${chapters.length > 0
+  ? chapters.map(ch => `- ⏱️ **[\`[${ch.timestampFormatted}]\` ${ch.title}](${ch.nativeJumpUrl || input.url})**`).join('\n')
+  : `*Direct Link:* [Watch on ${platform.toUpperCase()}](${input.url})`
+}
+
+---
+
+## 📝 Break Notes & Synthesis
+
+${input.description || 'Sovereign companion sidecar cataloged with direct timestamp jump links.'}
 `;
 
   return {
@@ -263,7 +284,7 @@ ${input.description || 'Sovereign VOD companion sidecar cataloged with media att
       ? chapters.map(ch => ({
           title: ch.title,
           cfiBase: `cfi:vod:${ch.timestampSeconds}`,
-          paragraphs: [`Offset: ${ch.timestampFormatted}`, ch.title]
+          paragraphs: [`Timestamp: ${ch.timestampFormatted}`, ch.title, ch.nativeJumpUrl || input.url]
         }))
       : [{ title: 'Full Stream Recording', cfiBase: 'cfi:vod:0', paragraphs: [`Stream URL: ${input.url}`] }]
   };
