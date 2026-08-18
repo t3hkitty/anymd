@@ -89,6 +89,14 @@ import { loadSavedCloudAccounts, saveCloudAccounts } from './plugins/cloudAccoun
 import { loadSavedPluginState, savePluginState } from './plugins/themeEnginePlugin';
 import { needsMetadataEnrichment, enrichBookMetadata } from './plugins/backgroundMetadataSyncPlugin';
 import { getSampleBooksWithPrice, getDefaultSidecarPrice } from './plugins/sidecarPricingPlugin';
+import {
+  getSavedVaultMode,
+  saveVaultMode,
+  loadBooksForVault,
+  saveBooksForVault,
+  resetSandboxVault,
+  type VaultMode
+} from './plugins/sandboxVaultPlugin';
 
 // Icons
 import {
@@ -96,37 +104,36 @@ import {
   Cloud, Import, Grid, Globe, Share2, Lock, Tag, Bookmark
 } from 'lucide-react';
 
-const LOCAL_BOOKS_KEY = 'lc_md_books_v3';
 const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
 
-function loadSavedBooks(): Book[] {
-  try {
-    const raw = localStorage.getItem(LOCAL_BOOKS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.warn('Failed to load books from localStorage:', err);
-  }
-  return SAMPLE_BOOKS;
-}
-
-function saveBooks(books: Book[]): void {
-  try {
-    localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(books));
-  } catch (err) {
-    console.warn('Failed to save books to localStorage:', err);
-  }
-}
-
 export function App() {
-  const [books, setBooks] = useState<Book[]>(loadSavedBooks);
+  const [vaultMode, setVaultMode] = useState<VaultMode>(getSavedVaultMode);
+  const [books, setBooks] = useState<Book[]>(() => loadBooksForVault(getSavedVaultMode()));
   const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
   const [activeView, setActiveView] = useState<'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community'>('split');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
+
+  // Switch between Sandbox Demo Vault and Personal Private Vault
+  const handleSwitchVaultMode = (newMode: VaultMode) => {
+    saveBooksForVault(vaultMode, books);
+    saveVaultMode(newMode);
+    setVaultMode(newMode);
+    const loaded = loadBooksForVault(newMode);
+    setBooks(loaded);
+    if (loaded.length > 0) {
+      setActiveBookId(loaded[0].id);
+    }
+  };
+
+  // Reset Sandbox Vault back to defaults
+  const handleResetSandboxVault = () => {
+    const reset = resetSandboxVault();
+    setBooks(reset);
+    if (reset.length > 0) {
+      setActiveBookId(reset[0].id);
+    }
+    alert('✓ Sandbox Demo Vault reset back to default examples (Green Day album, LitRPG books, memes & TCG)!');
+  };
 
   // Onboarding Modal State
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
@@ -173,7 +180,7 @@ export function App() {
       const enriched = enrichBookMetadata(targetBook);
       setBooks(prev => {
         const updated = prev.map(b => b.id === enriched.id ? enriched : b);
-        saveBooks(updated);
+        saveBooksForVault(vaultMode, updated);
         return updated;
       });
       setIdleSyncNotice(`⚡ Idle Auto-Worker: Enriched metadata & tags for "${targetBook.title}"`);
@@ -191,7 +198,7 @@ export function App() {
   const handleUpdateBooks = (newBooks: Book[] | ((prev: Book[]) => Book[])) => {
     setBooks(prev => {
       const next = typeof newBooks === 'function' ? newBooks(prev) : newBooks;
-      saveBooks(next);
+      saveBooksForVault(vaultMode, next);
       return next;
     });
   };
@@ -1102,6 +1109,7 @@ format: "dcmd/goodreads"
               books={displayedBooks}
               activeBookId={activeBookId}
               relLinkRoot={pluginState.relLinkRoot}
+              vaultMode={vaultMode}
               onSelectBook={(id) => setActiveBookId(id)}
               onOpenView={(view) => setActiveView(view)}
               onExportObsidian={handleExportObsidian}
@@ -1110,6 +1118,8 @@ format: "dcmd/goodreads"
               onPurgeAllBooks={handlePurgeAllBooks}
               onOpenBulkEdits={() => setIsBulkEditOpen(true)}
               onDeleteSelectedBooks={handleDeleteSelectedBooks}
+              onSwitchVaultMode={handleSwitchVaultMode}
+              onResetSandboxVault={handleResetSandboxVault}
               onOpenPrimaryNews={(colId) => {
                 setNewsCollectionId(colId);
                 setIsPrimaryNewsOpen(true);

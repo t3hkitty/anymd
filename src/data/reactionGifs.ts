@@ -114,6 +114,14 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
     category: 'wholesome',
     tags: ['doge', 'much-wow', 'wholesome', 'meme', 'kabosu'],
     emoji: '🐕'
+  },
+  {
+    id: 'gif-pacman-ghost-fruit',
+    title: 'Pac-Man Chasing Ghosts & Eating Fruit (Waka Waka Waka)',
+    url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',
+    category: 'wholesome',
+    tags: ['pacman', 'waka', 'ghost', 'fruit', 'arcade', 'retro', 'alone', 'greenday', 'boulevard', 'eating', 'nostalgia', 'kid', 'tweet', 'punk', 'rock'],
+    emoji: '🕹️'
   }
 ];
 

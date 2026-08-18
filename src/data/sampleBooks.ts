@@ -489,5 +489,292 @@ tags: [meme, doge, kabosu, shiba-inu, much-wow, internet-folklore, crypto-lore]
         ]
       }
     ]
+  },
+  {
+    id: 'album-american-idiot',
+    title: 'American Idiot (Punk Rock Opera Album)',
+    author: 'Green Day (Billie Joe Armstrong, Mike Dirnt, Tré Cool)',
+    coverColor: '#b91c1c',
+    coverImageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600',
+    originalImageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200',
+    externalReaderUri: 'file://./Music/Green_Day_American_Idiot_2004.dcmd',
+    totalChapters: 5,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    isWebPresenceOnly: false,
+    tradeValueUsd: 18.99,
+    isAvailableForTrade: true,
+    resonanceStream: [
+      {
+        id: 'res-album-ai-1',
+        timestamp: '2026-08-17T15:00:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 100,
+        category: 'Punk Rock Opera / Concept Album',
+        presetTier: 'diaper-emergency',
+        rawText: 'GREEN DAY CREATED THE GREATEST 2000s PUNK ROCK OPERA OF ALL TIME! EVERY TRACK FLOWS SEAMLESSLY INTO THE NEXT!',
+        cfi: 'album://american-idiot/full',
+        chapterTitle: 'Album Overview & Liner Notes',
+        paragraphIndex: 0,
+        paragraphSnippet: 'American Idiot is the seventh studio album by Green Day. Released in September 2004, it tells the sprawling narrative of the Jesus of Suburbia, St. Jimmy, and Whatsername across anthemic power chords.',
+        intensityScore: 5,
+        emojiReactions: ['🎸', '🔥', '👑', '⚡']
+      }
+    ],
+    sidecarMarkdown: `---
+title: "American Idiot (Punk Rock Opera Album)"
+artist: "Green Day"
+release_year: "2004"
+format: "dcmd/music-album-master"
+genre: "Punk Rock / Pop Punk / Rock Opera"
+cover_image: "./media/cover_american_idiot_album.png"
+original_uncropped_image: "./media/uncropped_american_idiot_album.jpg"
+rel_link_root: "./Music"
+external_reader_uri: "file://./Music/Green_Day_American_Idiot_2004.dcmd"
+fair_trade_valuation_usd: "18.99"
+available_for_trade: true
+tracklist:
+  - "[[track-american-idiot|01. American Idiot]]"
+  - "[[track-jesus-of-suburbia|02. Jesus of Suburbia]]"
+  - "[[track-holiday|03. Holiday]]"
+  - "[[track-boulevard-of-broken-dreams|04. Boulevard of Broken Dreams]]"
+  - "[[track-wake-me-up-when-september-ends|05. Wake Me Up When September Ends]]"
+tags: [music, greenday, american-idiot, punk-rock, album-master, 2000s-rock, rock-opera]
+---
+
+# 🎸 Green Day — American Idiot (2004 Master Album)
+
+> [!abstract] Master Rock Opera Album [ZK: \`20040921-GREENDAY-AI\`]
+> **Artist:** Green Day &bull; **Producer:** Rob Cavallo
+> **Tracks:** 5 Master Tracks &bull; Multi-Platinum Grammy Award Winner
+> **Album Concept:** The Odyssey of the Jesus of Suburbia
+
+---
+
+## 🎶 Master Album Track Links
+- 🎵 **Track 01:** [[track-american-idiot|American Idiot]] — High-octane political punk anthem.
+- 🎵 **Track 02:** [[track-jesus-of-suburbia|Jesus of Suburbia]] — 9-minute 5-part suburban rock symphony.
+- 🎵 **Track 03:** [[track-holiday|Holiday]] — Driving bassline & anti-war march.
+- 🎵 **Track 04:** [[track-boulevard-of-broken-dreams|Boulevard of Broken Dreams]] — Iconic acoustic ballad & "Ah-loooone" chorus.
+- 🎵 **Track 05:** [[track-wake-me-up-when-september-ends|Wake Me Up When September Ends]] — Emotional acoustic tribute.
+
+---
+*Cataloged in Sovereign Library Companion MD as a Masterpiece Concept Album.*
+`,
+    chapters: [
+      {
+        title: 'Track 1: American Idiot',
+        cfiBase: 'album://ai/track1',
+        paragraphs: [
+          '"Don\'t wanna be an American idiot! One nation controlled by the media!"',
+          'Fast distorted guitar chords in A flat major drive the adrenaline-pumping opening anthem of the album.'
+        ]
+      },
+      {
+        title: 'Track 2: Jesus of Suburbia',
+        cfiBase: 'album://ai/track2',
+        paragraphs: [
+          '"I\'m the son of rage and love, the Jesus of Suburbia!"',
+          'A multi-movement mini-opera chronicling a teenager\'s disillusionment with suburban strip malls and desolate parking lots.'
+        ]
+      },
+      {
+        title: 'Track 3: Holiday',
+        cfiBase: 'album://ai/track3',
+        paragraphs: [
+          '"Hear the sound of the falling rain, coming down like an Armageddon flame!"',
+          'Mike Dirnt\'s pulsing bassline leads into an explosive stomping anthem with spoken-word bridge.'
+        ]
+      },
+      {
+        title: 'Track 4: Boulevard of Broken Dreams',
+        cfiBase: 'album://ai/track4',
+        paragraphs: [
+          '"I walk a lonely road, the only one that I have ever known. Don\'t know where it goes, but it\'s home to me and I walk alone."',
+          'Acoustic tremolo guitar arpeggios build into the legendary stadium chorus: "Ah-loooone! Ah-loooone! I walk alone, I walk a--"'
+        ]
+      },
+      {
+        title: 'Track 5: Wake Me Up When September Ends',
+        cfiBase: 'album://ai/track5',
+        paragraphs: [
+          '"Summer has come and passed, the innocent can never last. Wake me up when September ends."',
+          'A deeply personal acoustic ballad dedicated to Billie Joe Armstrong\'s father.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'track-boulevard-of-broken-dreams',
+    title: 'Boulevard of Broken Dreams (American Idiot Track 04)',
+    author: 'Green Day',
+    coverColor: '#1e293b',
+    coverImageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600',
+    originalImageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200',
+    externalReaderUri: 'file://./Music/04_Boulevard_of_Broken_Dreams.mp3',
+    totalChapters: 2,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    isWebPresenceOnly: false,
+    tradeValueUsd: 1.29,
+    isAvailableForTrade: true,
+    resonanceStream: [
+      {
+        id: 'res-boulevard-kid-1',
+        timestamp: '2026-08-17T15:15:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 65.0,
+        category: 'Punk Rock Immersion / Live Tweet',
+        presetTier: 'diaper-emergency',
+        rawText: 'I WALK A LONELY ROAD, THE ONLY ONE THAT I HAVE EVER KNOWN! 🎸 AH-LOOOOOONE! AH-LOOOOOONE! I WALK ALONE, I WALK A--🎸🔥 LIVE TWEETING THE GUITAR SOLO!',
+        cfi: 'track://boulevard/chorus',
+        chapterTitle: 'Track 04: Boulevard of Broken Dreams (Verse & Chorus)',
+        paragraphIndex: 1,
+        paragraphSnippet: 'Acoustic tremolo guitar arpeggios build into the legendary stadium chorus: "Ah-loooone! Ah-loooone! I walk alone, I walk a--"',
+        intensityScore: 5,
+        emojiReactions: ['🎸', '🔥', '⚡', '🖤']
+      },
+      {
+        id: 'res-boulevard-parent-pacman',
+        timestamp: '2026-08-17T15:20:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 100.0,
+        category: 'Wholesome Retro / Arcade Chomp',
+        presetTier: 'diaper-emergency',
+        rawText: 'WAKA WAKA WAKA WAKA! 🟡🍒 Ghost chasing fruit eating retro arcade energy! Don\'t walk alone, eat some power pellets and chase the blue ghosts!',
+        cfi: 'track://boulevard/solo',
+        chapterTitle: 'Track 04: Boulevard of Broken Dreams (Outro Solo)',
+        paragraphIndex: 1,
+        paragraphSnippet: 'The thunderous guitar distortion crashes in while Billie Joe holds the high vocal harmony.',
+        reactionImageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',
+        reactionGifCaption: 'WAKA WAKA WAKA 🟡🍒 Pac-Man Chasing Ghosts & Eating Fruit!',
+        intensityScore: 5,
+        emojiReactions: ['🕹️', '🟡', '👻', '🍒', '🤣', '🎸']
+      }
+    ],
+    sidecarMarkdown: `---
+title: "Boulevard of Broken Dreams (American Idiot Track 04)"
+artist: "Green Day"
+parent_album: "[[album-american-idiot|American Idiot (Album)]]"
+track_number: 4
+duration: "4:20"
+bpm: 84
+format: "dcmd/song-track-sidecar"
+cover_image: "./media/cover_boulevard_of_broken_dreams.png"
+original_uncropped_image: "./media/uncropped_boulevard_of_broken_dreams.jpg"
+rel_link_root: "./Music"
+external_reader_uri: "file://./Music/04_Boulevard_of_Broken_Dreams.mp3"
+fair_trade_valuation_usd: "1.29"
+available_for_trade: true
+tags: [song, greenday, boulevard-of-broken-dreams, american-idiot, punk-rock, 2000s, alone, waka-waka, pacman]
+---
+
+# 🚶‍♂️ Green Day — Boulevard of Broken Dreams
+
+> [!abstract] Individual Song Track Sidecar [Parent: [[album-american-idiot|American Idiot Album]]]
+> **Track:** 04 &bull; **Single Release:** November 29, 2004
+> **Grammy:** Record of the Year (2006)
+> **Key Lyric:** *"I walk a lonely road, the only one that I have ever known..."*
+
+---
+
+## 🔗 Parent Album Link
+- Back to Full Rock Opera: [[album-american-idiot|American Idiot (Master Album)]]
+
+---
+
+## 💬 Live Chat & Resonance Stream
+- **[Kid's Live Tweet]:** *AH-LOOOOOONE! AH-LOOOOOONE! I WALK ALONE, I WALK A--🎸🔥*
+- **[Parent's Arcade Tweet]:** *WAKA WAKA WAKA! 🟡🍒 Ghost chasing fruit eating retro arcade energy!*
+
+---
+*Cataloged in Sovereign Library Companion MD.*
+`,
+    chapters: [
+      {
+        title: 'Track 04: Boulevard of Broken Dreams (Verse & Chorus)',
+        cfiBase: 'track://boulevard/ch1',
+        paragraphs: [
+          'I walk a lonely road, the only one that I have ever known. Don\'t know where it goes, but it\'s home to me and I walk alone.',
+          'I walk this empty street, on the Boulevard of Broken Dreams. Where the city sleeps, and I\'m the only one, and I walk alone. Ah-loooone! Ah-loooone!'
+        ]
+      },
+      {
+        title: 'Track 04: Boulevard of Broken Dreams (Bridge & Outro)',
+        cfiBase: 'track://boulevard/ch2',
+        paragraphs: [
+          'My shadow\'s the only one that walks beside me. My shallow heart\'s the only thing that\'s beating.',
+          'Sometimes I wish someone out there would find me. \'Til then I walk alone!'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'track-american-idiot',
+    title: 'American Idiot (American Idiot Track 01)',
+    author: 'Green Day',
+    coverColor: '#dc2626',
+    coverImageUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600',
+    originalImageUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200',
+    externalReaderUri: 'file://./Music/01_American_Idiot.mp3',
+    totalChapters: 1,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    isWebPresenceOnly: false,
+    tradeValueUsd: 1.29,
+    isAvailableForTrade: true,
+    resonanceStream: [
+      {
+        id: 'res-ai-title-1',
+        timestamp: '2026-08-17T15:05:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 100,
+        category: 'Fast Punk / Title Track',
+        presetTier: 'snot-cascade',
+        rawText: 'DON\'T WANNA BE AN AMERICAN IDIOT! 🎸⚡ FAST PACED POWER CHORDS ALL DAY!',
+        cfi: 'track://ai/intro',
+        chapterTitle: 'Track 01: American Idiot (Full Song)',
+        paragraphIndex: 0,
+        paragraphSnippet: 'Don\'t wanna be an American idiot! One nation controlled by the media! Information age of hysteria!',
+        intensityScore: 5,
+        emojiReactions: ['⚡', '🎸', '🔥']
+      }
+    ],
+    sidecarMarkdown: `---
+title: "American Idiot (American Idiot Track 01)"
+artist: "Green Day"
+parent_album: "[[album-american-idiot|American Idiot (Album)]]"
+track_number: 1
+duration: "2:54"
+bpm: 186
+format: "dcmd/song-track-sidecar"
+cover_image: "./media/cover_american_idiot_song.png"
+original_uncropped_image: "./media/uncropped_american_idiot_song.jpg"
+rel_link_root: "./Music"
+external_reader_uri: "file://./Music/01_American_Idiot.mp3"
+fair_trade_valuation_usd: "1.29"
+available_for_trade: true
+tags: [song, greenday, american-idiot, punk-rock, title-track]
+---
+
+# ⚡ Green Day — American Idiot (Track 01)
+
+> [!abstract] Individual Track Sidecar [Parent: [[album-american-idiot|American Idiot Album]]]
+> **Track:** 01 &bull; **BPM:** 186 &bull; **Key:** A-flat major
+> **Parent Album Link:** [[album-american-idiot|American Idiot (Master Album)]]
+
+---
+*Cataloged in Sovereign Library Companion MD.*
+`,
+    chapters: [
+      {
+        title: 'Track 01: American Idiot (Full Song)',
+        cfiBase: 'track://ai/full',
+        paragraphs: [
+          'Don\'t wanna be an American idiot! One nation controlled by the media! Information age of hysteria, it\'s calling out to idiot America!',
+          'Welcome to a new kind of tension, all across the alien nation, where everything isn\'t meant to be okay!'
+        ]
+      }
+    ]
   }
 ];

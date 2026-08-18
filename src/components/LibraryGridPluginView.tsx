@@ -12,6 +12,7 @@ interface LibraryGridPluginViewProps {
   books: Book[];
   activeBookId: string;
   relLinkRoot: string;
+  vaultMode?: 'personal' | 'sandbox';
   onSelectBook: (bookId: string) => void;
   onOpenView: (view: 'reader' | 'stream' | 'sidecar' | 'split') => void;
   onExportObsidian: (book: Book) => void;
@@ -23,6 +24,8 @@ interface LibraryGridPluginViewProps {
   onOpenPrimaryNews?: (collectionId: string) => void;
   onToggleTradeAvailability?: (book: Book) => void;
   onOpenInspector?: (book: Book) => void;
+  onSwitchVaultMode?: (mode: 'personal' | 'sandbox') => void;
+  onResetSandboxVault?: () => void;
 }
 
 export type ViewLayoutMode = 'grid' | 'list' | 'carousel' | 'spines' | 'hangers';
@@ -32,6 +35,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   books,
   activeBookId,
   relLinkRoot,
+  vaultMode = 'sandbox',
   onSelectBook,
   onOpenView,
   onRemoveExampleData,
@@ -42,6 +46,8 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   onOpenPrimaryNews,
   onToggleTradeAvailability,
   onOpenInspector,
+  onSwitchVaultMode,
+  onResetSandboxVault,
 }) => {
   const [selectedBookIds, setSelectedBookIds] = useState<string[]>([]);
   const [excludedTags, setExcludedTags] = useState<string[]>([]);
@@ -210,6 +216,56 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   return (
     <div className="h-full flex flex-col space-y-4 overflow-y-auto pr-1">
       
+      {/* 🧪 VAULT MODE SWITCHER & SANDBOX PLAYGROUND BANNER */}
+      <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono shadow-md">
+        <div className="flex items-center space-x-2.5">
+          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <button
+              onClick={() => onSwitchVaultMode && onSwitchVaultMode('sandbox')}
+              className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 ${
+                vaultMode === 'sandbox'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Switch to Sandbox Demo Vault (Playground for testing bulk edits, deletes & non-sensitive examples)"
+            >
+              <span>🧪</span>
+              <span>Sandbox Demo Vault</span>
+            </button>
+
+            <button
+              onClick={() => onSwitchVaultMode && onSwitchVaultMode('personal')}
+              className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 ${
+                vaultMode === 'personal'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Switch to My Private Sovereign Vault"
+            >
+              <span>🔒</span>
+              <span>My Sovereign Vault</span>
+            </button>
+          </div>
+
+          <span className="text-[11px] text-slate-400 hidden lg:inline">
+            {vaultMode === 'sandbox' 
+              ? '✨ Non-sensitive playground: test bulk edits, deletions & exports freely.' 
+              : '🔒 Personal private collection saved locally on your device.'}
+          </span>
+        </div>
+
+        {vaultMode === 'sandbox' && onResetSandboxVault && (
+          <button
+            onClick={onResetSandboxVault}
+            className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center space-x-1.5 transition-all shrink-0"
+            title="Reset Sandbox Vault back to default examples (Green Day album, LitRPG books, memes, TCG)"
+          >
+            <span>🔄</span>
+            <span>Reset Demo Vault</span>
+          </button>
+        )}
+      </div>
+
       {/* Grand Library Banner */}
       <div className="p-5 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/80 to-slate-900 border border-indigo-500/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
@@ -218,9 +274,9 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-extrabold text-slate-100 flex items-center space-x-2">
-              <span>Sovereign Grand Library Bookshelf</span>
+              <span>{vaultMode === 'sandbox' ? '🧪 Sandbox Demo Vault' : '🔒 Sovereign Grand Library'}</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono">
-                Plugins Engine v3.8
+                {vaultMode === 'sandbox' ? 'NON-SENSITIVE DEMO' : 'PRIVATE VAULT'}
               </span>
             </h2>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
