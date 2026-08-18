@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   generateNovelUpdatesBookmarklet,
   generateGoodreadsBookmarklet,
@@ -24,6 +24,40 @@ interface BookmarkletModalProps {
   onClose: () => void;
   onManualImport?: (importedBook: Book) => void;
 }
+
+const DraggableBookmarkletButton: React.FC<{
+  bookmarkletJs: string;
+  label: string;
+  className: string;
+}> = ({ bookmarkletJs, label, className }) => {
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
+
+  useEffect(() => {
+    if (linkRef.current) {
+      // Direct DOM attribute bypasses React JSX javascript: URL sanitizer
+      linkRef.current.setAttribute('href', bookmarkletJs);
+    }
+  }, [bookmarkletJs]);
+
+  return (
+    <a
+      ref={linkRef}
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData('text/uri-list', bookmarkletJs);
+        e.dataTransfer.setData('text/plain', bookmarkletJs);
+      }}
+      onClick={(e) => {
+        e.preventDefault();
+        alert("👆 Drag this button directly up to your browser's Bookmarks Bar (or click 'Copy JS Bookmarklet Code' below to paste into a new bookmark)!");
+      }}
+      className={className}
+      title="Drag this button directly to your browser's Bookmarks Bar!"
+    >
+      <span>{label}</span>
+    </a>
+  );
+};
 
 export const BookmarkletModal: React.FC<BookmarkletModalProps> = ({
   isOpen,
@@ -239,18 +273,11 @@ Imported web presence entry. Local markdown sidecar initialized.
                   </div>
 
                   {/* Drag button */}
-                  <a
-                    href={nuResult.bookmarkletJs}
-                    onClick={(e) => {
-                      // Do not navigate inside app if clicked directly
-                      e.preventDefault();
-                      alert("👆 Drag this button up to your browser's Bookmarks Bar, or click 'Copy JS Code' below to paste as a bookmark URL!");
-                    }}
+                  <DraggableBookmarkletButton
+                    bookmarkletJs={nuResult.bookmarkletJs}
+                    label="🌐 Grab NovelUpdates"
                     className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 cursor-grab active:cursor-grabbing flex items-center space-x-1.5 transition-all shrink-0 select-none"
-                    title="Drag this button to your browser Bookmarks Bar!"
-                  >
-                    <span>🌐 Grab NovelUpdates</span>
-                  </a>
+                  />
                 </div>
 
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
@@ -279,17 +306,11 @@ Imported web presence entry. Local markdown sidecar initialized.
                   </div>
 
                   {/* Drag button */}
-                  <a
-                    href={grResult.bookmarkletJs}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("👆 Drag this button up to your browser's Bookmarks Bar, or click 'Copy JS Code' below to paste as a bookmark URL!");
-                    }}
+                  <DraggableBookmarkletButton
+                    bookmarkletJs={grResult.bookmarkletJs}
+                    label="📖 Grab Goodreads"
                     className="px-4 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs shadow-lg shadow-yellow-500/20 cursor-grab active:cursor-grabbing flex items-center space-x-1.5 transition-all shrink-0 select-none"
-                    title="Drag this button to your browser Bookmarks Bar!"
-                  >
-                    <span>📖 Grab Goodreads</span>
-                  </a>
+                  />
                 </div>
 
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
@@ -318,17 +339,11 @@ Imported web presence entry. Local markdown sidecar initialized.
                   </div>
 
                   {/* Drag button */}
-                  <a
-                    href={vodResult.bookmarkletJs}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("👆 Drag this button up to your browser's Bookmarks Bar, or click 'Copy JS Code' below to paste as a bookmark URL!");
-                    }}
+                  <DraggableBookmarkletButton
+                    bookmarkletJs={vodResult.bookmarkletJs}
+                    label="🎬 Grab VOD Stream"
                     className="px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-slate-950 font-bold text-xs shadow-lg shadow-red-500/20 cursor-grab active:cursor-grabbing flex items-center space-x-1.5 transition-all shrink-0 select-none"
-                    title="Drag this button to your browser Bookmarks Bar!"
-                  >
-                    <span>🎬 Grab VOD Stream</span>
-                  </a>
+                  />
                 </div>
 
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
