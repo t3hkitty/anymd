@@ -75,6 +75,18 @@ export const DEFAULT_VPS_CRON_JOBS: CronJobTask[] = [
     targetAction: 'opds-rebuild',
     vpsScriptCommand: 'node /opt/lc-md/scripts/rebuild_opds.js --out=/var/www/html/opds/feed.xml',
     executionLogs: ['[OK] Weekly OPDS catalog generation enabled.']
+  },
+  {
+    id: 'cron-ocp-vps-health',
+    name: 'OCPkit VPS Storage & Process Telemetry',
+    description: 'Remote health monitor on OCPkit VPS (147.224.54.244): checks disk usage (df -h) and top memory/CPU processes (ps aux).',
+    pluginId: 'vps-health-telemetry',
+    cronExpression: '*/15 * * * *',
+    humanReadable: 'Every 15 minutes',
+    enabled: true,
+    targetAction: 'custom-script',
+    vpsScriptCommand: '/tmp/vps_health.sh',
+    executionLogs: ['[OK] Telemetry routine initialized for ocpkit (147.224.54.244).']
   }
 ];
 
