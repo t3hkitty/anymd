@@ -14,11 +14,15 @@
 
 **Library Companion MD (LC-MD)** is an open-source, local-first companion system and discovery library designed to keep your personal reading data, custom PC rig builds, trading card grails, home insurance valuations, and gift histories **100% private to your hardware**.
 
-- **Grand Bookcase**: 3D bookshelf UI with LitRPG, Danmei / SVSSS, and Piplup & Dawn Sinnoh theme modes.
+- **Grand Bookcase & Multi-View Studio**: 3D bookshelf UI, realistic mahogany spines, wardrobe closet hangers, list view, and interactive 3D carousel showcase.
+- **Auto-Card Cropper & Dual Media Linking**: Extracts individual slab-framed card covers from scans with HTML5 canvas while linking to raw full-resolution uncropped master uploads.
+- **Structured ZIP Archive & `/media/` Packaging**: 1-click full vault backup with `.companion.md` sidecars in `/Sidecars/`, all image covers & raw scans in `/media/`, and standard `manifest.json`.
+- **Storage Quota & Local Folder Upgrade**: Native File System Access API integration (`mountSovereignLocalFolder()`) to mount local drives without browser cache limitations.
+- **Discord-Style Reaction Bursts & Context GIFs**: Quick reaction capture with 24-emoji burst bar and smart GIF suggestions (Popcat, Vibing Cat, Doge, etc.).
 - **Natural Black Box Expansion**: Tamper-proof, zero-cloud data processing with controlled outbound egress.
 - **Hardware Passkeys & OpenSSO**: Biometric Touch ID, Face ID, Windows Hello (WebAuthn), GitHub OAuth, or self-hosted SMTP email verification.
-- **Fair Trade Calculator**: Decimal precision asset comparator with 1-click `🤝 Available for Trade` flags.
-- **Profile Management**: Multi-user account switching and self-service registration protected by the master invite code **`meow`**.
+- **Fair Trade Calculator & Sourcing Digest**: Decimal precision asset comparator, executive PA procurement lists, and Google Sheets CSV exports.
+- **Library Action Controls**: 1-click `✏️ Edit / Review` sidecar inspector and direct `👁️ View` external reader file link launcher.
 
 ---
 
@@ -95,6 +99,13 @@ Registration on your sovereign node is restricted by an invite code to prevent u
 You can configure or rotate your invite code in two ways:
 1. **Via Environment Variable**: Set `VITE_INVITE_CODE=your_secret_code` in your `.env` file before building.
 2. **In-App Admin Rotation**: Open the **Profile Management** modal (`👤 @lorik_admin`), enter a new invite code in the **Node Admin** settings, and click **Save New Code** to update it instantly without rebuilding!
+
+## 📦 Card Cropping, Media Packaging & Storage Quota Upgrades
+
+- **🃏 HTML5 Canvas Card & Slab Auto-Cropper**: Automatically crops individual trading cards from multi-slot binder pages or single photo uploads, rendering custom PSA/CGC-styled slab frames for cover displays.
+- **📁 Structured Dual Media Linking**: Markdown sidecars retain relative links to both the cropped display cover (`cover_image: "./media/cover_{slug}.png"`) and the uncropped high-resolution master scan (`original_uncropped_image: "./media/uncropped_{slug}.jpg"`).
+- **📦 Complete ZIP Archive with `/media/` Folder**: Exports all vault sidecars into `/Sidecars/`, all image covers & raw scans into `/media/`, and indexes valuation schemas in `manifest.json`.
+- **💾 Sovereign Local Folder Upgrade**: Built-in quota monitor warns when browser cache usage grows and prompts users to mount a local directory via the native **File System Access API** (`window.showDirectoryPicker()`) for unlimited image storage.
 
 ---
 
