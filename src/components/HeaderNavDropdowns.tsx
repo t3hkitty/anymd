@@ -17,7 +17,8 @@ import {
   Boxes,
   Database,
   Smartphone,
-  Server
+  Server,
+  Share2
 } from 'lucide-react';
 
 interface HeaderNavDropdownsProps {
@@ -30,6 +31,7 @@ interface HeaderNavDropdownsProps {
   onUploadEpubClick: () => void;
 
   onOpenVaultRestore: () => void;
+  onOpenExportShare: () => void;
   onOpenGenreTagManager: () => void;
   onOpenMediaTypeManager: () => void;
   onOpenBulkEdit: () => void;
@@ -51,11 +53,22 @@ interface HeaderNavDropdownsProps {
   onOpenPersonaCollector: () => void;
   onOpenHtmlPublish: () => void;
   onOpenCommunityHub: () => void;
+
+  // Notification Counts
+  pendingDriveMatchesCount?: number;
+  totalBooksCount?: number;
+  cloudAccountsCount?: number;
+  litanyPulsesCount?: number;
 }
 
 export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => {
   const [openMenu, setOpenMenu] = useState<'ingest' | 'vault' | 'cloud' | 'studio' | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const pendingMatches = props.pendingDriveMatchesCount || 0;
+  const totalBooks = props.totalBooksCount || 0;
+  const cloudCount = props.cloudAccountsCount || 0;
+  const pulsesCount = props.litanyPulsesCount || 0;
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -78,13 +91,13 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
   };
 
   return (
-    <div ref={containerRef} className="flex items-center space-x-1.5 font-sans text-xs">
+    <div ref={containerRef} className="flex items-center space-x-2 font-sans text-xs flex-wrap gap-y-1">
       
       {/* 1. 📥 INGEST & SCRAPERS DROPDOWN */}
       <div className="relative">
         <button
           onClick={() => toggleMenu('ingest')}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm relative ${
             openMenu === 'ingest'
               ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
               : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
@@ -92,13 +105,21 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         >
           <Download className="w-3.5 h-3.5" />
           <span>Ingest &amp; Sourcing</span>
+          {pendingMatches > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] animate-pulse">
+              {pendingMatches}
+            </span>
+          )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'ingest' ? 'rotate-180' : ''}`} />
         </button>
 
         {openMenu === 'ingest' && (
-          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
-              Media Ingest &amp; Scrapers
+          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+              <span>Media Ingest &amp; Scrapers</span>
+              {pendingMatches > 0 && (
+                <span className="text-amber-400 font-bold">{pendingMatches} new file match</span>
+              )}
             </div>
             
             <button
@@ -193,14 +214,35 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         >
           <Boxes className="w-3.5 h-3.5" />
           <span>Vault Tools</span>
+          {totalBooks > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-slate-800 text-amber-300 font-bold text-[10px] border border-amber-500/30">
+              {totalBooks}
+            </span>
+          )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'vault' ? 'rotate-180' : ''}`} />
         </button>
 
         {openMenu === 'vault' && (
-          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
-              Vault Organization &amp; Metadata
+          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+              <span>Vault Tools &amp; Data</span>
+              <span className="text-amber-400 font-bold">{totalBooks} volumes</span>
             </div>
+
+            {/* Prominent Export & Share Studio inside Menu */}
+            <button
+              onClick={() => runAction(props.onOpenExportShare)}
+              className="flex items-center space-x-2.5 px-2.5 py-2.5 rounded-xl text-left bg-gradient-to-r from-amber-500/20 to-indigo-500/20 hover:from-amber-500/30 hover:to-indigo-500/30 border border-amber-500/40 text-amber-200 font-bold transition-all shadow-sm"
+            >
+              <Share2 className="w-4 h-4 text-amber-400" />
+              <div>
+                <div className="text-amber-300 font-extrabold flex items-center space-x-1.5">
+                  <span>📤 Universal Export &amp; Share</span>
+                  <span className="px-1 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-black uppercase">HUB</span>
+                </div>
+                <div className="text-[10px] text-slate-300">Obsidian zip, Sheets CSV, PA list &amp; QR</div>
+              </div>
+            </button>
 
             <button
               onClick={() => runAction(props.onOpenMediaTypeManager)}
@@ -283,13 +325,19 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         >
           <Cloud className="w-3.5 h-3.5" />
           <span>Cloud &amp; Auth</span>
+          {cloudCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-sky-950 text-sky-300 font-bold text-[10px] border border-sky-500/30">
+              {cloudCount}
+            </span>
+          )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'cloud' ? 'rotate-180' : ''}`} />
         </button>
 
         {openMenu === 'cloud' && (
-          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
-              Sovereign Storage &amp; Authentication
+          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+              <span>Cloud &amp; Auth Config</span>
+              <span className="text-sky-400 font-bold">{cloudCount} accounts</span>
             </div>
 
             <button
@@ -373,13 +421,19 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>Creative Studio</span>
+          {pulsesCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-rose-950 text-rose-300 font-bold text-[10px] border border-rose-500/30">
+              {pulsesCount}
+            </span>
+          )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'studio' ? 'rotate-180' : ''}`} />
         </button>
 
         {openMenu === 'studio' && (
-          <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
-              Author, AI &amp; Spatial Routines
+          <div className="absolute right-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+              <span>Creative Engines</span>
+              <span className="text-rose-400 font-bold">{pulsesCount} pulses</span>
             </div>
 
             <button

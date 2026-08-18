@@ -109,7 +109,7 @@ import { buildBlackBoxDailyJournalBook, loadRunningLitany } from './plugins/runn
 
 // Icons
 import {
-  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock
+  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock, Share2
 } from 'lucide-react';
 
 const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
@@ -796,6 +796,11 @@ date_cataloged: "${new Date().toISOString()}"
         >
           <span className="font-mono text-sm">⬛</span>
           <span>MyBlackBox &amp; WYD</span>
+          {loadRunningLitany().length > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-950 text-[10px] font-black shadow-sm">
+              {loadRunningLitany().length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -881,6 +886,7 @@ date_cataloged: "${new Date().toISOString()}"
             onUploadEpubClick={() => fileInputRef.current?.click()}
 
             onOpenVaultRestore={() => setIsVaultRestoreOpen(true)}
+            onOpenExportShare={() => setIsUnifiedExportOpen(true)}
             onOpenGenreTagManager={() => setIsGenreTagManagerOpen(true)}
             onOpenMediaTypeManager={() => setIsMediaTypeManagerOpen(true)}
             onOpenBulkEdit={() => setIsBulkEditOpen(true)}
@@ -902,7 +908,23 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenPersonaCollector={() => setIsPersonaCollectorOpen(true)}
             onOpenHtmlPublish={() => setIsHtmlPublishOpen(true)}
             onOpenCommunityHub={() => setActiveView('community')}
+
+            pendingDriveMatchesCount={suggestedDriveLinks.filter(s => s.status === 'pending').length}
+            totalBooksCount={books.length}
+            cloudAccountsCount={loadSavedCloudAccounts().length}
+            litanyPulsesCount={loadRunningLitany().length}
           />
+
+          {/* Dedicated Prominent Export & Share Studio Button */}
+          <button
+            onClick={() => setIsUnifiedExportOpen(true)}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+            title="Universal Export & Share Studio (Obsidian Vault, Google Sheets CSV, PA Grocery List, HTML Showcase, QR Share)"
+          >
+            <Share2 className="w-3.5 h-3.5 text-amber-200" />
+            <span>Export &amp; Share</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-amber-200 font-mono text-[10px]">ZIP</span>
+          </button>
 
           {/* Hidden EPUB File Input */}
           <input
