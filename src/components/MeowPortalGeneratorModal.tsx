@@ -22,16 +22,27 @@ export const MeowPortalGeneratorModal: React.FC<MeowPortalGeneratorModalProps> =
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>meow.artkitty.net — Sovereign Live Projects & Demos Hub</title>
+  <title>meow.artkitty.net — Sovereign Black Box & Discovery Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
-  <div class="max-w-4xl mx-auto space-y-6">
-    <h1 class="text-2xl font-bold text-amber-300">meow.artkitty.net Portal</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500 block">
-        <h2 class="font-bold text-lg text-slate-100">Library Companion MD (/lcmd/)</h2>
-        <p class="text-xs text-slate-400 mt-1">Sovereign Grand Library & E-Reader</p>
+  <div class="max-w-5xl mx-auto space-y-6">
+    <h1 class="text-3xl font-extrabold text-amber-300">meow.artkitty.net — Sovereign Black Box Ecosystem</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-amber-500/50 hover:border-amber-400 block">
+        <span class="text-2xl block mb-2">⚡</span>
+        <h2 class="font-bold text-lg text-slate-100">Sovereign Black Box (myblackbox)</h2>
+        <p class="text-xs text-slate-400 mt-1">Running Litany Activity Stream, 2m+ Inactivity Watchdog, and AuDHD Morning Manager.</p>
+      </a>
+      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-purple-500/50 hover:border-purple-400 block">
+        <span class="text-2xl block mb-2">🎭</span>
+        <h2 class="font-bold text-lg text-slate-100">AI Story Tool & Author Bible</h2>
+        <p class="text-xs text-slate-400 mt-1">Inspo Ledger (YYYYMMDD-HHMM), Character Slugs ([MC], [ML]), and 3-Fork CYA Lore Bridge.</p>
+      </a>
+      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-blue-500/50 hover:border-blue-400 block">
+        <span class="text-2xl block mb-2">🚪</span>
+        <h2 class="font-bold text-lg text-slate-100">Spatial Routines & Grand Library</h2>
+        <p class="text-xs text-slate-400 mt-1">Dual-channel TTS/visual daily protocols, No Bad Days deconstructor, and 3D Sovereign Bookshelf.</p>
       </a>
     </div>
   </div>
