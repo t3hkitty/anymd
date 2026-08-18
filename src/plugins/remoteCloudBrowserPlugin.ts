@@ -154,7 +154,123 @@ export async function fetchRemoteFolderContents(
     }
   }
 
-  // 3. WEBDAV DIRECTORY PROPFIND BROWSER (Filejump, Koofr, Nextcloud, rclone)
+  // 3. TORBOX REST API v1 BROWSER (Torrents, Debrid WebDL, Usenet)
+  if (account.presetId === 'torbox' || targetUrl.includes('torbox.app')) {
+    if (!token) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: 'TorBox Auth Error: Please enter your TorBox API Token from https://torbox.app/settings in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      const items: RemoteNodeItem[] = [];
+
+      // 1. Fetch Torrents
+      try {
+        const torRes = await fetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (torRes.ok) {
+          const torData = await torRes.json();
+          (torData.data || []).forEach((t: any) => {
+            if (t.files && t.files.length > 0) {
+              t.files.forEach((f: any) => {
+                items.push({
+                  id: `tb-tor-${t.id}-${f.id}`,
+                  name: f.name || `${t.name} (File #${f.id})`,
+                  path: `torrents/${t.id}/${f.id}`,
+                  isDir: false,
+                  size: f.size || t.size || 0,
+                  lastModified: t.updated_at ? t.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+                  mimeType: f.mimetype || 'application/octet-stream'
+                });
+              });
+            } else {
+              items.push({
+                id: `tb-tor-${t.id}`,
+                name: t.name || `Torrent #${t.id}`,
+                path: `torrents/${t.id}`,
+                isDir: true,
+                size: t.size || 0,
+                lastModified: t.updated_at ? t.updated_at.split('T')[0] : new Date().toISOString().split('T')[0]
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('TorBox torrents fetch failed:', e);
+      }
+
+      // 2. Fetch Web Downloads (Debrid)
+      try {
+        const webRes = await fetch('https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (webRes.ok) {
+          const webData = await webRes.json();
+          (webData.data || []).forEach((w: any) => {
+            items.push({
+              id: `tb-webdl-${w.id}`,
+              name: w.name || `Web Download #${w.id}`,
+              path: `webdl/${w.id}`,
+              isDir: false,
+              size: w.size || 0,
+              lastModified: w.updated_at ? w.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+              mimeType: 'application/octet-stream'
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('TorBox webdl fetch failed:', e);
+      }
+
+      // 3. Fetch Usenet
+      try {
+        const useRes = await fetch('https://api.torbox.app/v1/api/usenet/mylist?bypass_cache=true', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (useRes.ok) {
+          const useData = await useRes.json();
+          (useData.data || []).forEach((u: any) => {
+            items.push({
+              id: `tb-usenet-${u.id}`,
+              name: u.name || `Usenet #${u.id}`,
+              path: `usenet/${u.id}`,
+              isDir: false,
+              size: u.size || 0,
+              lastModified: u.updated_at ? u.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
+              mimeType: 'application/octet-stream'
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('TorBox usenet fetch failed:', e);
+      }
+
+      // If user account is valid, return items cleanly with NO error even if empty (0 items)
+      return {
+        currentPath: '/',
+        items,
+        parentPath: undefined
+      };
+    } catch (err: any) {
+      return {
+        currentPath: '/',
+        items: [],
+        error: `TorBox API Error: ${err.message || 'Failed to list TorBox downloads.'}`
+      };
+    }
+  }
+
+  // 4. WEBDAV DIRECTORY PROPFIND BROWSER (Filejump, Koofr, Nextcloud, rclone)
   try {
     const cleanServer = targetUrl.replace(/\/$/, '');
     const cleanDir = cleanPath.replace(/^\//, '');
