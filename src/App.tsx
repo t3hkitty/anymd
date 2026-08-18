@@ -46,6 +46,7 @@ import { PcRigBuildModal } from './components/PcRigBuildModal';
 import { GiftTrackerModal } from './components/GiftTrackerModal';
 import { SovereignPrivacyShieldModal } from './components/SovereignPrivacyShieldModal';
 import { BlackBoxModal } from './components/BlackBoxModal';
+import { MyBlackBoxView } from './components/MyBlackBoxView';
 import { CommunityHubView } from './components/CommunityHubView';
 import { StackcpDeployModal } from './components/StackcpDeployModal';
 import { AntigravitySetupModal } from './components/AntigravitySetupModal';
@@ -116,7 +117,7 @@ export function App() {
   const [vaultMode, setVaultMode] = useState<VaultMode>(getSavedVaultMode);
   const [books, setBooks] = useState<Book[]>(() => loadBooksForVault(getSavedVaultMode()));
   const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
-  const [activeView, setActiveView] = useState<'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community'>('split');
+  const [activeView, setActiveView] = useState<'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox'>('split');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
 
   // Switch between Sandbox Demo Vault and Personal Private Vault
@@ -750,13 +751,13 @@ date_cataloged: "${new Date().toISOString()}"
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
       
       {/* Master Top Navigation Bar: Sovereign Library <-> User Account Profile <-> MyBlackBox */}
-      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2 flex items-center justify-between shadow-lg sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
+      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
         
         {/* Left: 📚 Sovereign Library Tab */}
         <button
           onClick={() => setActiveView('library')}
-          className={`flex items-center space-x-2 px-4 py-1.5 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
-            activeView === 'library' || activeView === 'split' || activeView === 'reader'
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
+            activeView !== 'blackbox'
               ? 'bg-amber-500 text-slate-950 shadow-amber-500/20 ring-2 ring-amber-400/40'
               : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
           }`}
@@ -769,7 +770,7 @@ date_cataloged: "${new Date().toISOString()}"
         {/* Center: 👤 Account & Profile Manager Button */}
         <button
           onClick={() => setIsProfileManagementOpen(true)}
-          className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-400/50 text-amber-200 text-xs font-extrabold shadow-sm transition-all group"
+          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-400/50 text-amber-200 text-xs font-extrabold shadow-sm transition-all group"
           title="Account Management, Cloud Auth & Switch Profile (Invite Code: meow)"
         >
           <span className="text-sm group-hover:scale-110 transition-transform">{activeUserProfile.avatarEmoji || '👤'}</span>
@@ -779,18 +780,23 @@ date_cataloged: "${new Date().toISOString()}"
 
         {/* Right: ⬛ MyBlackBox & WYD Timers Tab */}
         <button
-          onClick={() => setIsBlackBoxOpen(true)}
-          className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 font-extrabold text-xs transition-all shadow-sm shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300"
-          title="Open Sovereign Black Box Architecture, Litany Pulse & WYD Timers"
+          onClick={() => setActiveView('blackbox')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
+            activeView === 'blackbox'
+              ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30 ring-2 ring-emerald-400/50 font-black'
+              : 'bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300'
+          }`}
+          title="Open Sovereign Black Box Dashboard, Litany Pulse & WYD Timers"
         >
-          <span className="text-emerald-400 font-mono text-sm">⬛</span>
+          <span className="font-mono text-sm">⬛</span>
           <span>MyBlackBox &amp; WYD</span>
         </button>
       </div>
 
-      {/* Top Application Toolbar */}
-      <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[45px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
-        <div className="flex items-center space-x-4">
+      {/* Top Application Toolbar (Visible in Library Modes) */}
+      {activeView !== 'blackbox' && (
+        <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
+          <div className="flex items-center space-x-4">
           
           {/* Ornate Grand Bookcase Logo & Title */}
           <div
@@ -1276,6 +1282,7 @@ date_cataloged: "${new Date().toISOString()}"
           </button>
         </div>
       </header>
+      )}
 
       {/* Main Content Workspace Layout */}
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
@@ -1443,6 +1450,13 @@ date_cataloged: "${new Date().toISOString()}"
                 setActiveView('sidecar');
               }}
             />
+          </div>
+        )}
+
+        {/* Sovereign MyBlackBox Full Dashboard View */}
+        {activeView === 'blackbox' && (
+          <div className="w-full min-h-[calc(100vh-140px)]">
+            <MyBlackBoxView onBackToLibrary={() => setActiveView('library')} />
           </div>
         )}
       </main>
