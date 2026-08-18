@@ -10,19 +10,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$targetUrl = isset($_SERVER['HTTP_X_TARGET_URL']) ? $_SERVER['HTTP_X_TARGET_URL'] : '';
+$targetUrl = '';
+if (isset($_SERVER['HTTP_X_TARGET_URL'])) {
+    $targetUrl = $_SERVER['HTTP_X_TARGET_URL'];
+} elseif (isset($_GET['url'])) {
+    $targetUrl = $_GET['url'];
+}
+
 if (empty($targetUrl)) {
     http_response_code(400);
-    echo json_encode(["error" => "Missing X-Target-Url header"]);
+    echo json_encode(["error" => "Missing X-Target-Url header or url parameter"]);
     exit();
+}
+
+$targetMethod = $_SERVER['REQUEST_METHOD'];
+if (isset($_SERVER['HTTP_X_TARGET_METHOD'])) {
+    $targetMethod = $_SERVER['HTTP_X_TARGET_METHOD'];
+} elseif (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+    $targetMethod = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
+} elseif (isset($_GET['method'])) {
+    $targetMethod = $_GET['method'];
 }
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $targetUrl);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $targetMethod);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+curl_setopt($ch, CURLOPT_TIMEOUT, 25);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
 // Forward essential headers

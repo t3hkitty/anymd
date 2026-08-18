@@ -29,18 +29,24 @@ export async function proxyFetch(
   const method = options.method || 'GET';
   const headers: Record<string, string> = {
     'X-Target-Url': targetUrl,
+    'X-Target-Method': method,
     ...(options.headers || {})
   };
 
   let proxyUrl = '/api/webdav-proxy';
+  let httpMethod = method;
+
   if (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd')) {
     const basePath = window.location.pathname.split('/lcmd')[0];
     proxyUrl = `${basePath}/lcmd/api/webdav-proxy.php`;
+    if (method === 'PROPFIND' || method === 'MKCOL') {
+      httpMethod = 'POST';
+    }
   }
 
   try {
     const res = await fetch(proxyUrl, {
-      method,
+      method: httpMethod,
       headers,
       body: options.body
     });
