@@ -62,43 +62,72 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
         format: 'dcmd/webnovel'
       };
 
-      var oldModal = document.getElementById('lc-md-nu-modal');
-      if (oldModal) oldModal.remove();
-
-      var modal = document.createElement('div');
-      modal.id = 'lc-md-nu-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
-
       var targetUrl = '${host}?import_novel=' + encodeURIComponent(title) + '&author=' + encodeURIComponent(author) + '&tags=' + encodeURIComponent(tags.join(',')) + '&rating=' + encodeURIComponent(rating) + '&source=' + encodeURIComponent(window.location.href);
 
-      modal.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-        + '<h3 style="margin:0;font-size:14px;color:#818cf8;font-weight:bold;display:flex;align-items:center;gap:6px;"><span>🌐</span> NovelUpdates Grabber</h3>'
-        + '<button id="lc-close-btn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✖</button>'
-        + '</div>'
-        + '<div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;">'
-        + '<div style="font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;">' + title + '</div>'
-        + '<div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">By ' + author + ' &bull; ★ ' + rating + '</div>'
-        + '<div style="color:#cbd5e1;font-size:10px;">' + tags.slice(0, 6).map(function(tg){ return '#' + tg; }).join(' ') + '</div>'
-        + '</div>'
-        + '<div style="display:flex;gap:8px;">'
-        + '<a href="' + targetUrl + '" target="_blank" id="lc-open-btn" style="flex:1;text-align:center;padding:10px;background:#6366f1;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;">🚀 Open in LC-MD</a>'
-        + '<button id="lc-copy-btn" style="padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;">📋 Copy JSON</button>'
-        + '</div>';
+      var old = document.getElementById('lc-md-overlay');
+      if (old) old.remove();
 
-      document.body.appendChild(modal);
+      var overlay = document.createElement('div');
+      overlay.id = 'lc-md-overlay';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
-      document.getElementById('lc-close-btn').onclick = function(){ modal.remove(); };
-      document.getElementById('lc-copy-btn').onclick = function(){
+      var header = document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+      var h3 = document.createElement('h3');
+      h3.style.cssText = 'margin:0;font-size:14px;color:#818cf8;font-weight:bold;';
+      h3.textContent = '🌐 NovelUpdates Grabber';
+      header.appendChild(h3);
+
+      var closeBtn = document.createElement('button');
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0 4px;';
+      closeBtn.textContent = '✖';
+      closeBtn.onclick = function(){ overlay.remove(); };
+      header.appendChild(closeBtn);
+      overlay.appendChild(header);
+
+      var card = document.createElement('div');
+      card.style.cssText = 'background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;';
+      var tEl = document.createElement('div');
+      tEl.style.cssText = 'font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;word-break:break-word;';
+      tEl.textContent = title;
+      card.appendChild(tEl);
+
+      var sEl = document.createElement('div');
+      sEl.style.cssText = 'color:#94a3b8;font-size:11px;margin-bottom:6px;';
+      sEl.textContent = 'By ' + author + ' • ★ ' + rating;
+      card.appendChild(sEl);
+
+      var tagEl = document.createElement('div');
+      tagEl.style.cssText = 'color:#cbd5e1;font-size:10px;';
+      tagEl.textContent = tags.slice(0, 6).map(function(tg){ return '#' + tg; }).join(' ');
+      card.appendChild(tagEl);
+      overlay.appendChild(card);
+
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:8px;';
+
+      var openLink = document.createElement('a');
+      openLink.href = targetUrl;
+      openLink.target = '_blank';
+      openLink.style.cssText = 'flex:1;text-align:center;padding:10px;background:#6366f1;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;cursor:pointer;';
+      openLink.textContent = '🚀 Open in Vault';
+      btnRow.appendChild(openLink);
+
+      var copyBtn = document.createElement('button');
+      copyBtn.style.cssText = 'padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;';
+      copyBtn.textContent = '📋 Copy JSON';
+      copyBtn.onclick = function(){
         navigator.clipboard.writeText(JSON.stringify(dataObj, null, 2));
-        this.innerText = '✓ Copied!';
-        this.style.background = '#059669';
-        this.style.color = '#ffffff';
+        copyBtn.textContent = '✓ Copied!';
+        copyBtn.style.background = '#059669';
+        copyBtn.style.color = '#ffffff';
       };
+      btnRow.appendChild(copyBtn);
+      overlay.appendChild(btnRow);
 
-      var win = window.open(targetUrl, '_blank');
-      if (win) {
-        setTimeout(function(){ if (modal) modal.remove(); }, 3000);
-      }
+      document.body.appendChild(overlay);
+
+      try { window.open(targetUrl, '_blank'); } catch(e) {}
     } catch(err) {
       alert('NovelUpdates Grabber Error: ' + err.message);
     }
@@ -143,43 +172,74 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
         format: 'dcmd/goodreads'
       };
 
-      var oldModal = document.getElementById('lc-md-gr-modal');
-      if (oldModal) oldModal.remove();
-
-      var modal = document.createElement('div');
-      modal.id = 'lc-md-gr-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
-
       var targetUrl = '${host}?import_goodreads=' + encodeURIComponent(titlesJson) + '&author=' + encodeURIComponent(author) + '&rating=' + encodeURIComponent(rating) + '&source=' + encodeURIComponent(window.location.href);
 
-      modal.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-        + '<h3 style="margin:0;font-size:14px;color:#facc15;font-weight:bold;display:flex;align-items:center;gap:6px;"><span>📖</span> Goodreads Grabber</h3>'
-        + '<button id="lc-close-btn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✖</button>'
-        + '</div>'
-        + '<div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;">'
-        + '<div style="font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;">' + finalTitle + '</div>'
-        + '<div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">By ' + author + ' &bull; ★ ' + rating + '</div>'
-        + (listTitles.length > 1 ? '<div style="color:#facc15;font-size:10px;">Found ' + listTitles.length + ' books in reading list</div>' : '')
-        + '</div>'
-        + '<div style="display:flex;gap:8px;">'
-        + '<a href="' + targetUrl + '" target="_blank" id="lc-open-btn" style="flex:1;text-align:center;padding:10px;background:#eab308;color:#0f172a;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;">🚀 Open in LC-MD</a>'
-        + '<button id="lc-copy-btn" style="padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;">📋 Copy JSON</button>'
-        + '</div>';
+      var old = document.getElementById('lc-md-overlay');
+      if (old) old.remove();
 
-      document.body.appendChild(modal);
+      var overlay = document.createElement('div');
+      overlay.id = 'lc-md-overlay';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
-      document.getElementById('lc-close-btn').onclick = function(){ modal.remove(); };
-      document.getElementById('lc-copy-btn').onclick = function(){
-        navigator.clipboard.writeText(JSON.stringify(dataObj, null, 2));
-        this.innerText = '✓ Copied!';
-        this.style.background = '#059669';
-        this.style.color = '#ffffff';
-      };
+      var header = document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+      var h3 = document.createElement('h3');
+      h3.style.cssText = 'margin:0;font-size:14px;color:#facc15;font-weight:bold;';
+      h3.textContent = '📖 Goodreads Grabber';
+      header.appendChild(h3);
 
-      var win = window.open(targetUrl, '_blank');
-      if (win) {
-        setTimeout(function(){ if (modal) modal.remove(); }, 3000);
+      var closeBtn = document.createElement('button');
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0 4px;';
+      closeBtn.textContent = '✖';
+      closeBtn.onclick = function(){ overlay.remove(); };
+      header.appendChild(closeBtn);
+      overlay.appendChild(header);
+
+      var card = document.createElement('div');
+      card.style.cssText = 'background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;';
+      var tEl = document.createElement('div');
+      tEl.style.cssText = 'font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;word-break:break-word;';
+      tEl.textContent = finalTitle;
+      card.appendChild(tEl);
+
+      var sEl = document.createElement('div');
+      sEl.style.cssText = 'color:#94a3b8;font-size:11px;margin-bottom:6px;';
+      sEl.textContent = 'By ' + author + ' • ★ ' + rating;
+      card.appendChild(sEl);
+
+      if (listTitles.length > 1) {
+        var countEl = document.createElement('div');
+        countEl.style.cssText = 'color:#facc15;font-size:10px;';
+        countEl.textContent = 'Found ' + listTitles.length + ' books in reading list';
+        card.appendChild(countEl);
       }
+      overlay.appendChild(card);
+
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:8px;';
+
+      var openLink = document.createElement('a');
+      openLink.href = targetUrl;
+      openLink.target = '_blank';
+      openLink.style.cssText = 'flex:1;text-align:center;padding:10px;background:#eab308;color:#0f172a;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;cursor:pointer;';
+      openLink.textContent = '🚀 Open in Vault';
+      btnRow.appendChild(openLink);
+
+      var copyBtn = document.createElement('button');
+      copyBtn.style.cssText = 'padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;';
+      copyBtn.textContent = '📋 Copy JSON';
+      copyBtn.onclick = function(){
+        navigator.clipboard.writeText(JSON.stringify(dataObj, null, 2));
+        copyBtn.textContent = '✓ Copied!';
+        copyBtn.style.background = '#059669';
+        copyBtn.style.color = '#ffffff';
+      };
+      btnRow.appendChild(copyBtn);
+      overlay.appendChild(btnRow);
+
+      document.body.appendChild(overlay);
+
+      try { window.open(targetUrl, '_blank'); } catch(e) {}
     } catch(err) {
       alert('Goodreads Grabber Error: ' + err.message);
     }
@@ -193,17 +253,19 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
   const host = getAppTargetEndpoint();
   const rawJs = `(function(){
     try {
-      var titleEl = document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title');
-      var title = titleEl ? titleEl.innerText.trim() : ((document.querySelector('meta[property="og:title"]') && document.querySelector('meta[property="og:title"]').content.trim()) || document.title.replace(/\\s*-\\s*(YouTube|Twitch|Kick).*/i, '').trim());
+      var title = (document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title') && document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title').textContent.trim())
+        || (document.querySelector('meta[property="og:title"]') && document.querySelector('meta[property="og:title"]').content.trim())
+        || document.title.replace(/\\s*-\\s*(YouTube|Twitch|Kick).*/i, '').trim();
 
-      var creatorEl = document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1');
-      var creator = creatorEl ? creatorEl.innerText.trim() : ((document.querySelector('meta[name="author"]') && document.querySelector('meta[name="author"]').content.trim()) || 'Video Creator');
+      var creator = (document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1') && document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1').textContent.trim())
+        || (document.querySelector('meta[name="author"]') && document.querySelector('meta[name="author"]').content.trim())
+        || 'Video Streamer';
 
       var descEl = document.querySelector('#description-inline-expander, #description, .tw-rich-text');
-      var descText = descEl ? descEl.innerText.trim() : ((document.querySelector('meta[property="og:description"]') && document.querySelector('meta[property="og:description"]').content.trim()) || '');
+      var descText = descEl ? (descEl.textContent || '').trim().slice(0, 1000) : ((document.querySelector('meta[property="og:description"]') && document.querySelector('meta[property="og:description"]').content.trim()) || '');
 
       var durEl = document.querySelector('.ytp-time-duration, .tw-time');
-      var duration = durEl ? durEl.innerText.trim() : 'N/A';
+      var duration = durEl ? (durEl.textContent || '').trim() : 'N/A';
 
       var thumbMeta = document.querySelector('meta[property="og:image"]');
       var thumb = thumbMeta ? thumbMeta.content : '';
@@ -214,46 +276,71 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
         duration: duration,
         streamUrl: window.location.href,
         thumbnailUrl: thumb,
-        description: descText.slice(0, 1000),
+        description: descText,
         format: 'dcmd/vod'
       };
 
-      var oldModal = document.getElementById('lc-md-vod-modal');
-      if (oldModal) oldModal.remove();
-
-      var modal = document.createElement('div');
-      modal.id = 'lc-md-vod-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
-
       var targetUrl = '${host}?import_vod=' + encodeURIComponent(title) + '&creator=' + encodeURIComponent(creator) + '&duration=' + encodeURIComponent(duration) + '&thumb=' + encodeURIComponent(thumb) + '&source=' + encodeURIComponent(window.location.href);
 
-      modal.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-        + '<h3 style="margin:0;font-size:14px;color:#f87171;font-weight:bold;display:flex;align-items:center;gap:6px;"><span>🎬</span> VOD & Stream Grabber</h3>'
-        + '<button id="lc-close-btn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✖</button>'
-        + '</div>'
-        + '<div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;">'
-        + '<div style="font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;">' + title + '</div>'
-        + '<div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">By ' + creator + ' &bull; ⏱ ' + duration + '</div>'
-        + '</div>'
-        + '<div style="display:flex;gap:8px;">'
-        + '<a href="' + targetUrl + '" target="_blank" id="lc-open-btn" style="flex:1;text-align:center;padding:10px;background:#ef4444;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;">🚀 Open in LC-MD</a>'
-        + '<button id="lc-copy-btn" style="padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;">📋 Copy JSON</button>'
-        + '</div>';
+      var old = document.getElementById('lc-md-overlay');
+      if (old) old.remove();
 
-      document.body.appendChild(modal);
+      var overlay = document.createElement('div');
+      overlay.id = 'lc-md-overlay';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
-      document.getElementById('lc-close-btn').onclick = function(){ modal.remove(); };
-      document.getElementById('lc-copy-btn').onclick = function(){
+      var header = document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+      var h3 = document.createElement('h3');
+      h3.style.cssText = 'margin:0;font-size:14px;color:#f87171;font-weight:bold;';
+      h3.textContent = '🎬 VOD & Stream Grabber';
+      header.appendChild(h3);
+
+      var closeBtn = document.createElement('button');
+      closeBtn.style.cssText = 'background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;padding:0 4px;';
+      closeBtn.textContent = '✖';
+      closeBtn.onclick = function(){ overlay.remove(); };
+      header.appendChild(closeBtn);
+      overlay.appendChild(header);
+
+      var card = document.createElement('div');
+      card.style.cssText = 'background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;';
+      var tEl = document.createElement('div');
+      tEl.style.cssText = 'font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;word-break:break-word;';
+      tEl.textContent = title;
+      card.appendChild(tEl);
+
+      var sEl = document.createElement('div');
+      sEl.style.cssText = 'color:#94a3b8;font-size:11px;margin-bottom:6px;';
+      sEl.textContent = 'By ' + creator + ' • ⏱ ' + duration;
+      card.appendChild(sEl);
+      overlay.appendChild(card);
+
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:8px;';
+
+      var openLink = document.createElement('a');
+      openLink.href = targetUrl;
+      openLink.target = '_blank';
+      openLink.style.cssText = 'flex:1;text-align:center;padding:10px;background:#ef4444;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;cursor:pointer;';
+      openLink.textContent = '🚀 Open in Vault';
+      btnRow.appendChild(openLink);
+
+      var copyBtn = document.createElement('button');
+      copyBtn.style.cssText = 'padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;';
+      copyBtn.textContent = '📋 Copy JSON';
+      copyBtn.onclick = function(){
         navigator.clipboard.writeText(JSON.stringify(dataObj, null, 2));
-        this.innerText = '✓ Copied!';
-        this.style.background = '#059669';
-        this.style.color = '#ffffff';
+        copyBtn.textContent = '✓ Copied!';
+        copyBtn.style.background = '#059669';
+        copyBtn.style.color = '#ffffff';
       };
+      btnRow.appendChild(copyBtn);
+      overlay.appendChild(btnRow);
 
-      var win = window.open(targetUrl, '_blank');
-      if (win) {
-        setTimeout(function(){ if (modal) modal.remove(); }, 3000);
-      }
+      document.body.appendChild(overlay);
+
+      try { window.open(targetUrl, '_blank'); } catch(e) {}
     } catch(err) {
       alert('VOD Grabber Error: ' + err.message);
     }
