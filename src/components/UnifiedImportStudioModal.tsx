@@ -21,8 +21,15 @@ interface UnifiedImportStudioModalProps {
   relLinkRoot?: string;
   accounts?: CloudAccount[];
   onClose: () => void;
-  onImportBooks: (newBooks: Book[]) => void;
+  onImportBooks: (newBooks: Book[], bundleFilterTag?: string) => void;
   onProceedToVerification?: (importedItems: any[]) => void;
+}
+
+function generateBundleSerial(prefix: string = 'BUNDLE'): string {
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+  const randomHex = Math.floor(1000 + Math.random() * 9000).toString(16).toUpperCase();
+  return `ZK-${dateStr}-${prefix}-${randomHex}`;
 }
 
 export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> = ({
@@ -33,10 +40,14 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 }) => {
   const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan'>('insurance');
 
+  // Processing & Progress Bar State
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [processingStatusText, setProcessingStatusText] = useState('');
+
   // 1. Home Insurance State
   const [insuranceRoom, setInsuranceRoom] = useState('Master Library & Study');
   const [insuranceCategory, setInsuranceCategory] = useState('Collectibles & Books');
-  const [insuranceScanning, setInsuranceScanning] = useState(false);
   const [insuranceCount, setInsuranceCount] = useState(6);
   const [insurancePhotoUrl, setInsurancePhotoUrl] = useState<string | null>(null);
   const [insurancePhotoName, setInsurancePhotoName] = useState<string | null>(null);
@@ -44,7 +55,6 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 
   // 2. Card & Comic Scanner State
   const [cardSet, setCardSet] = useState('Evolving Skies & Marvel Vintage');
-  const [cardScanning, setCardScanning] = useState(false);
   const [cardPhotos, setCardPhotos] = useState<Array<{ name: string; url: string }>>([]);
   const cardFileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -88,12 +98,29 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
     }
   };
 
-  // Handlers
+  // Handlers with Progress Bar and Unified ZK Bundle Serials
   // 1. Insurance Auto-Generate
   const handleGenerateInsuranceItems = () => {
-    setInsuranceScanning(true);
+    setIsProcessing(true);
+    setImportProgress(15);
+    setProcessingStatusText(`Scanning ${insuranceRoom} assets & allocating Zettelkasten serials...`);
+
+    const bundleSerial = generateBundleSerial('INSURANCE');
+
     setTimeout(() => {
-      setInsuranceScanning(false);
+      setImportProgress(55);
+      setProcessingStatusText(`Generating ${insuranceCount} markdown sidecars with unified serial ${bundleSerial}...`);
+    }, 400);
+
+    setTimeout(() => {
+      setImportProgress(90);
+      setProcessingStatusText(`Finalizing provenance signatures & valuation schemas...`);
+    }, 800);
+
+    setTimeout(() => {
+      setImportProgress(100);
+      setIsProcessing(false);
+
       const generated: Book[] = Array.from({ length: insuranceCount }).map((_, i) => ({
         id: `ins-item-${Date.now()}-${i}`,
         title: `${insuranceRoom} Asset Item #${i + 1} (${insuranceCategory})`,
@@ -109,6 +136,9 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 title: "${insuranceRoom} Asset #${i + 1}"
 category: "${insuranceCategory}"
 location: "${insuranceRoom}"
+zettelkasten_bundle_serial: "${bundleSerial}"
+import_bundle_tag: "bundle:${bundleSerial.toLowerCase()}"
+tags: [insurance, asset, "${bundleSerial.toLowerCase()}"]
 replacement_cost_usd: "${(120 + i * 45).toFixed(2)}"
 verified_date: "${new Date().toISOString().split('T')[0]}"
 format: "dcmd/insurance-asset"
@@ -116,8 +146,11 @@ format: "dcmd/insurance-asset"
 
 # ${insuranceRoom} Asset #${i + 1}
 
+> [!abstract] Zettelkasten Import Bundle Serial: \`${bundleSerial}\`
+
 - **Room / Location:** ${insuranceRoom}
 - **Category:** ${insuranceCategory}
+- **Bundle Serial:** \`${bundleSerial}\`
 - **Replacement Valuation:** $${(120 + i * 45).toFixed(2)} USD
 - **Custody Condition:** Mint / Very Good
 `,
@@ -125,16 +158,33 @@ format: "dcmd/insurance-asset"
         chapters: [{ title: 'Insurance Documentation', cfiBase: 'cfiBase:1', paragraphs: ['Asset verified for bulk home insurance coverage.'] }]
       }));
 
-      onImportBooks(generated);
+      onImportBooks(generated, bundleSerial.toLowerCase());
       onClose();
-    }, 800);
+    }, 1200);
   };
 
   // 2. Card & Comic Scanner Auto-Generate
   const handleScanCards = () => {
-    setCardScanning(true);
+    setIsProcessing(true);
+    setImportProgress(20);
+    setProcessingStatusText(`Scanning card binder photos & detecting grid cells...`);
+
+    const bundleSerial = generateBundleSerial('TCG-CARDS');
+
     setTimeout(() => {
-      setCardScanning(false);
+      setImportProgress(60);
+      setProcessingStatusText(`Cropping slabs, rendering grading frames & attaching serial ${bundleSerial}...`);
+    }, 500);
+
+    setTimeout(() => {
+      setImportProgress(95);
+      setProcessingStatusText(`Finalizing sidecars and media relative paths...`);
+    }, 900);
+
+    setTimeout(() => {
+      setImportProgress(100);
+      setIsProcessing(false);
+
       const filesToProcess = cardPhotos.length > 0
         ? cardPhotos
         : [
@@ -143,10 +193,20 @@ format: "dcmd/insurance-asset"
             { name: 'moonbreon_vmax.jpg' }
           ];
       const scanned = scanMultipleIndividualPhotos(filesToProcess, 'mixed', cardSet);
-      const cardItems = convertScannedCardsToVaultItems(scanned);
-      onImportBooks(cardItems);
+      const rawCardItems = convertScannedCardsToVaultItems(scanned);
+
+      // Attach matching ZK bundle serial to all cards in this import batch
+      const cardItems = rawCardItems.map(item => ({
+        ...item,
+        sidecarMarkdown: item.sidecarMarkdown.replace(
+          /---([\s\S]*?)---/,
+          `---\nzettelkasten_bundle_serial: "${bundleSerial}"\nimport_bundle_tag: "bundle:${bundleSerial.toLowerCase()}"\n$1---\n\n> [!abstract] Import Bundle: \`${bundleSerial}\`\n`
+        )
+      }));
+
+      onImportBooks(cardItems, bundleSerial.toLowerCase());
       onClose();
-    }, 800);
+    }, 1300);
   };
 
   // 3. Anna's Archive Search
@@ -200,46 +260,78 @@ format: "dcmd/annas-archive"
       return;
     }
 
-    const imported = lines.map((line, idx) => {
-      const parts = line.split(/[,\t|]/);
-      const title = parts[0]?.trim() || `Imported Title ${idx + 1}`;
-      const author = parts[1]?.trim() || 'Unknown Author';
-      return {
-        id: `import-${Date.now()}-${idx}`,
-        title,
-        author,
-        format: 'epub',
-        status: 'pending',
-        estimatedValueUsd: 18.50
-      };
-    });
+    setIsProcessing(true);
+    setImportProgress(25);
+    setProcessingStatusText(`Parsing ${lines.length} lines from reading list / CSV...`);
 
-    if (onProceedToVerification) {
-      onProceedToVerification(imported);
-      onClose();
-    } else {
-      const newBooks: Book[] = imported.map(item => ({
-        id: item.id,
-        title: item.title,
-        author: item.author,
-        coverColor: '#6366f1',
-        totalChapters: 1,
-        currentChapterIndex: 0,
-        currentParagraphIndex: 0,
-        isWebPresenceOnly: true,
-        tradeValueUsd: item.estimatedValueUsd,
-        isAvailableForTrade: true,
-        sidecarMarkdown: `# ${item.title}\nBy ${item.author}`,
-        resonanceStream: [],
-        chapters: [{ title: 'Chapter 1', cfiBase: 'cfi:1', paragraphs: [item.title] }]
-      }));
-      onImportBooks(newBooks);
-      onClose();
-    }
+    const bundleSerial = generateBundleSerial('READING-LIST');
+
+    setTimeout(() => {
+      setImportProgress(65);
+      setProcessingStatusText(`Generating ${lines.length} sidecars with bundle serial ${bundleSerial}...`);
+    }, 400);
+
+    setTimeout(() => {
+      setImportProgress(100);
+      setIsProcessing(false);
+
+      const imported = lines.map((line, idx) => {
+        const parts = line.split(/[,\t|]/);
+        const title = parts[0]?.trim() || `Imported Title ${idx + 1}`;
+        const author = parts[1]?.trim() || 'Unknown Author';
+        return {
+          id: `import-${Date.now()}-${idx}`,
+          title,
+          author,
+          format: 'epub',
+          status: 'pending',
+          estimatedValueUsd: 18.50,
+          bundleSerial
+        };
+      });
+
+      if (onProceedToVerification) {
+        onProceedToVerification(imported);
+        onClose();
+      } else {
+        const newBooks: Book[] = imported.map(item => ({
+          id: item.id,
+          title: item.title,
+          author: item.author,
+          coverColor: '#6366f1',
+          totalChapters: 1,
+          currentChapterIndex: 0,
+          currentParagraphIndex: 0,
+          isWebPresenceOnly: true,
+          tradeValueUsd: item.estimatedValueUsd,
+          isAvailableForTrade: true,
+          sidecarMarkdown: `---
+title: "${item.title}"
+author: "${item.author}"
+zettelkasten_bundle_serial: "${bundleSerial}"
+import_bundle_tag: "bundle:${bundleSerial.toLowerCase()}"
+tags: [reading-list, import, "${bundleSerial.toLowerCase()}"]
+format: "dcmd/reading-list"
+---
+
+# ${item.title}
+
+> [!abstract] Import Bundle Serial: \`${bundleSerial}\`
+
+By ${item.author}
+`,
+          resonanceStream: [],
+          chapters: [{ title: 'Chapter 1', cfiBase: 'cfi:1', paragraphs: [item.title] }]
+        }));
+        onImportBooks(newBooks, bundleSerial.toLowerCase());
+        onClose();
+      }
+    }, 1000);
   };
 
   // 5. NovelUpdates Import
   const handleImportNovel = () => {
+    const bundleSerial = generateBundleSerial('WEBNOVEL');
     const newBook: Book = {
       id: `nu-${Date.now()}`,
       title: novelTitle,
@@ -255,11 +347,15 @@ format: "dcmd/annas-archive"
 title: "${novelTitle}"
 author: "${novelAuthor}"
 source_url: "${novelUrl}"
-tags: [${novelTags.split(',').map(t => `"${t.trim()}"`).join(', ')}]
+zettelkasten_bundle_serial: "${bundleSerial}"
+import_bundle_tag: "bundle:${bundleSerial.toLowerCase()}"
+tags: [${novelTags.split(',').map(t => `"${t.trim()}"`).join(', ')}, "${bundleSerial.toLowerCase()}"]
 format: "dcmd/webnovel"
 ---
 
 # ${novelTitle}
+
+> [!abstract] Import Bundle Serial: \`${bundleSerial}\`
 
 - **Author:** ${novelAuthor}
 - **Source:** [NovelUpdates Series Page](${novelUrl})
@@ -269,7 +365,7 @@ format: "dcmd/webnovel"
       chapters: [{ title: 'Overview', cfiBase: 'cfi:1', paragraphs: [`Webnovel series record for ${novelTitle}.`] }]
     };
 
-    onImportBooks([newBook]);
+    onImportBooks([newBook], bundleSerial.toLowerCase());
     onClose();
   };
 
@@ -278,43 +374,73 @@ format: "dcmd/webnovel"
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const fileNames = Array.from(files).map(f => f.name);
-    const parsed = parseTextDirectoryListing(fileNames.join('\n'));
+    setIsProcessing(true);
+    setImportProgress(20);
+    setProcessingStatusText(`Scanning ${files.length} local files from folder...`);
 
-    const newBooks: Book[] = parsed.map(item => ({
-      id: `local-file-${Date.now()}-${Math.random()}`,
-      title: item.filename.replace(/\.(epub|pdf|mobi|md)$/i, '').replace(/[-_]/g, ' '),
-      author: 'Local File Author',
-      coverColor: '#0284c7',
-      totalChapters: 1,
-      currentChapterIndex: 0,
-      currentParagraphIndex: 0,
-      isWebPresenceOnly: false,
-      tradeValueUsd: 19.99,
-      isAvailableForTrade: true,
-      sidecarMarkdown: `# ${item.filename}\n\nLocal file size: ${(item.size / 1024 / 1024).toFixed(2)} MB`,
-      resonanceStream: [],
-      chapters: [{ title: 'Local Ebook', cfiBase: 'cfi:1', paragraphs: [`Filename: ${item.filename}`] }]
-    }));
+    const bundleSerial = generateBundleSerial('LOCAL-FOLDER');
 
-    onImportBooks(newBooks);
-    onClose();
+    setTimeout(() => {
+      setImportProgress(60);
+      setProcessingStatusText(`Synthesizing markdown sidecars with ZK serial ${bundleSerial}...`);
+    }, 400);
+
+    setTimeout(() => {
+      setImportProgress(100);
+      setIsProcessing(false);
+
+      const fileNames = Array.from(files).map(f => f.name);
+      const parsed = parseTextDirectoryListing(fileNames.join('\n'));
+
+      const newBooks: Book[] = parsed.map(item => ({
+        id: `local-file-${Date.now()}-${Math.random()}`,
+        title: item.filename.replace(/\.(epub|pdf|mobi|md)$/i, '').replace(/[-_]/g, ' '),
+        author: 'Local File Author',
+        coverColor: '#0284c7',
+        totalChapters: 1,
+        currentChapterIndex: 0,
+        currentParagraphIndex: 0,
+        isWebPresenceOnly: false,
+        tradeValueUsd: 19.99,
+        isAvailableForTrade: true,
+        sidecarMarkdown: `---
+title: "${item.filename.replace(/\.(epub|pdf|mobi|md)$/i, '').replace(/[-_]/g, ' ')}"
+filename: "${item.filename}"
+zettelkasten_bundle_serial: "${bundleSerial}"
+import_bundle_tag: "bundle:${bundleSerial.toLowerCase()}"
+tags: [local-file, folder-sync, "${bundleSerial.toLowerCase()}"]
+file_size_bytes: ${item.size}
+---
+
+# ${item.filename}
+
+> [!abstract] Zettelkasten Import Bundle Serial: \`${bundleSerial}\`
+
+Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
+`,
+        resonanceStream: [],
+        chapters: [{ title: 'Local Ebook', cfiBase: 'cfi:1', paragraphs: [`Filename: ${item.filename}`] }]
+      }));
+
+      onImportBooks(newBooks, bundleSerial.toLowerCase());
+      onClose();
+    }, 1000);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-700/80 text-slate-100 w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+      <div className="bg-slate-900 border border-slate-700/80 text-slate-100 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/95">
+        <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-emerald-500 to-sky-600 text-slate-950 font-bold shadow-lg shadow-emerald-500/20">
-              <Upload className="w-5 h-5 text-white" />
+            <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
+              <Upload className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight flex items-center space-x-2">
-                <span>Universal Import &amp; Ingest Studio</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
+                <span>Unified Discovery &amp; Import Studio</span>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold">
                   MULTI-SOURCE INTAKE
                 </span>
               </h3>
@@ -329,6 +455,28 @@ format: "dcmd/webnovel"
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* ⚡ ACTIVE PROCESSING PROGRESS BAR */}
+        {isProcessing && (
+          <div className="px-6 py-3 bg-slate-950 border-b border-indigo-500/40 shadow-inner space-y-2 font-mono animate-fadeIn">
+            <div className="flex items-center justify-between text-indigo-300 font-bold text-xs">
+              <span className="flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
+                <span>{processingStatusText || 'Synthesizing Sidecars & Zettelkasten Bundle Serials...'}</span>
+              </span>
+              <span className="text-amber-300 text-sm">{importProgress}%</span>
+            </div>
+            <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-800">
+              <div
+                className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 h-full rounded-full transition-all duration-300 shadow-md shadow-indigo-500/50"
+                style={{ width: `${importProgress}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-slate-400">
+              Allocating identical Zettelkasten serial across all bundle sidecars &bull; Auto-filtering Library view upon completion.
+            </p>
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="px-6 pt-3 border-b border-slate-800 flex items-center space-x-2 bg-slate-950/50 font-mono text-xs overflow-x-auto">
@@ -497,11 +645,11 @@ format: "dcmd/webnovel"
               <div className="pt-2 flex justify-start">
                 <button
                   onClick={handleGenerateInsuranceItems}
-                  disabled={insuranceScanning}
+                  disabled={isProcessing}
                   className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 flex items-center space-x-2 transition-all disabled:opacity-50"
                 >
-                  <Sparkles className={`w-4 h-4 ${insuranceScanning ? 'animate-spin' : ''}`} />
-                  <span>{insuranceScanning ? 'Processing Asset Imagery...' : `⚡ Auto-Generate ${insuranceCount} Insurance Vault Records`}</span>
+                  <Sparkles className={`w-4 h-4 ${isProcessing ? 'animate-spin' : ''}`} />
+                  <span>{isProcessing ? 'Synthesizing Sidecars & Serials...' : `⚡ Auto-Generate ${insuranceCount} Insurance Vault Records`}</span>
                 </button>
               </div>
             </div>
@@ -616,14 +764,14 @@ format: "dcmd/webnovel"
               <div className="pt-2 flex justify-start">
                 <button
                   onClick={handleScanCards}
-                  disabled={cardScanning}
+                  disabled={isProcessing}
                   className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all disabled:opacity-50"
                 >
-                  <Sparkles className={`w-4 h-4 ${cardScanning ? 'animate-spin' : ''}`} />
+                  <Sparkles className={`w-4 h-4 ${isProcessing ? 'animate-spin' : ''}`} />
                   <span>
-                    {cardScanning
-                      ? `Analyzing ${cardPhotos.length || 'Batch'} Photo(s) via Local Vision OCR...`
-                      : `📸 Process ${cardPhotos.length > 0 ? cardPhotos.length : ''} Photo(s) &amp; Auto-Appraise Vault Sidecars`}
+                    {isProcessing
+                      ? `Analyzing ${cardPhotos.length || 'Batch'} Photo(s) & Synthesizing Serials...`
+                      : `📸 Process ${cardPhotos.length > 0 ? cardPhotos.length : ''} Photo(s) & Auto-Appraise Vault Sidecars`}
                   </span>
                 </button>
               </div>

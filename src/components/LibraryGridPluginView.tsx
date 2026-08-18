@@ -26,6 +26,8 @@ interface LibraryGridPluginViewProps {
   onOpenInspector?: (book: Book) => void;
   onSwitchVaultMode?: (mode: 'personal' | 'sandbox') => void;
   onResetSandboxVault?: () => void;
+  activeFilterTag?: string | null;
+  onClearFilterTag?: () => void;
 }
 
 export type ViewLayoutMode = 'grid' | 'list' | 'carousel' | 'spines' | 'hangers';
@@ -36,6 +38,8 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   activeBookId,
   relLinkRoot,
   vaultMode = 'sandbox',
+  activeFilterTag,
+  onClearFilterTag,
   onSelectBook,
   onOpenView,
   onRemoveExampleData,
@@ -53,6 +57,21 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   const [excludedTags, setExcludedTags] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [layoutMode, setLayoutMode] = useState<ViewLayoutMode>('grid');
+  const [toastNotice, setToastNotice] = useState<string | null>(null);
+
+  const handleViewItem = (book: Book) => {
+    onSelectBook(book.id);
+    onOpenView('split');
+    if (book.externalReaderUri) {
+      try {
+        navigator.clipboard.writeText(book.externalReaderUri);
+        setToastNotice(`📖 Opening Sovereign Reader. Local file path copied: ${book.externalReaderUri}`);
+        setTimeout(() => setToastNotice(null), 4000);
+      } catch {
+        // ignore
+      }
+    }
+  };
   const [valuationSort, setValuationSort] = useState<ValuationSortMode>('default');
   const [tradeFilter, setTradeFilter] = useState<'all' | 'trade-only' | 'vault-only'>('all');
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -216,6 +235,38 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   return (
     <div className="h-full flex flex-col space-y-4 overflow-y-auto pr-1">
       
+      {/* Toast Notification for Local Resource Copied & Viewer Launch */}
+      {toastNotice && (
+        <div className="p-3 rounded-2xl bg-indigo-950 border border-indigo-400 text-indigo-200 text-xs font-mono shadow-xl flex items-center justify-between animate-fadeIn sticky top-0 z-30">
+          <div className="flex items-center space-x-2">
+            <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="font-semibold">{toastNotice}</span>
+          </div>
+          <button onClick={() => setToastNotice(null)} className="text-slate-400 hover:text-white ml-2">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Active Zettelkasten Bundle Filter Banner */}
+      {activeFilterTag && (
+        <div className="p-3 rounded-2xl bg-indigo-950/60 border border-indigo-500/50 flex items-center justify-between text-xs font-mono shadow-md animate-fadeIn">
+          <span className="text-indigo-200 font-bold flex items-center space-x-2">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Active Import Bundle: <code className="text-amber-300 font-extrabold">{activeFilterTag}</code> ({filteredBooks.length} items)</span>
+          </span>
+          {onClearFilterTag && (
+            <button
+              onClick={onClearFilterTag}
+              className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center space-x-1 transition-all"
+            >
+              <X className="w-3 h-3 text-rose-400" />
+              <span>Clear Filter</span>
+            </button>
+          )}
+        </div>
+      )}
+
       {/* 🧪 VAULT MODE SWITCHER & SANDBOX PLAYGROUND BANNER */}
       <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono shadow-md">
         <div className="flex items-center space-x-2.5">
@@ -932,33 +983,16 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                       <span>Edit / Review</span>
                     </button>
 
-                    {/* View Button with External Reader URI Link Trigger */}
-                    {book.externalReaderUri ? (
-                      <a
-                        href={book.externalReaderUri}
-                        onClick={() => {
-                          onSelectBook(book.id);
-                        }}
-                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs transition-all flex items-center space-x-1"
-                        title={`View / Launch External Reader: ${book.externalReaderUri}`}
-                      >
-                        <Eye className="w-3 h-3 text-amber-400" />
-                        <span>View</span>
-                        <ExternalLink className="w-2.5 h-2.5 text-slate-500" />
-                      </a>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          onSelectBook(book.id);
-                          onOpenView('split');
-                        }}
-                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs transition-all flex items-center space-x-1"
-                        title="View reader & sidecar"
-                      >
-                        <Eye className="w-3 h-3 text-amber-400" />
-                        <span>View</span>
-                      </button>
-                    )}
+                    {/* View Button with In-App Reader Launcher & Local Path Copy */}
+                    <button
+                      onClick={() => handleViewItem(book)}
+                      className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs transition-all flex items-center space-x-1"
+                      title={book.externalReaderUri ? `View in Sovereign Reader & copy local path (${book.externalReaderUri})` : 'View in Sovereign Reader'}
+                    >
+                      <Eye className="w-3 h-3 text-amber-400" />
+                      <span>View</span>
+                      {book.externalReaderUri && <ExternalLink className="w-2.5 h-2.5 text-slate-500" />}
+                    </button>
                   </div>
 
                   <div className="flex items-center space-x-1">
@@ -1052,29 +1086,15 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                     <span>Edit / Review</span>
                   </button>
 
-                  {book.externalReaderUri ? (
-                    <a
-                      href={book.externalReaderUri}
-                      onClick={() => onSelectBook(book.id)}
-                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs shadow-md transition-all flex items-center space-x-1"
-                      title={`View / Launch External Reader: ${book.externalReaderUri}`}
-                    >
-                      <Eye className="w-3.5 h-3.5 text-amber-400" />
-                      <span>View</span>
-                      <ExternalLink className="w-3 h-3 text-slate-500" />
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        onSelectBook(book.id);
-                        onOpenView('split');
-                      }}
-                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs shadow-md transition-all flex items-center space-x-1"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-amber-400" />
-                      <span>View</span>
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleViewItem(book)}
+                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs shadow-md transition-all flex items-center space-x-1"
+                    title={book.externalReaderUri ? `View in Sovereign Reader & copy local path (${book.externalReaderUri})` : 'View in Sovereign Reader'}
+                  >
+                    <Eye className="w-3.5 h-3.5 text-amber-400" />
+                    <span>View</span>
+                    {book.externalReaderUri && <ExternalLink className="w-3 h-3 text-slate-500" />}
+                  </button>
                 </div>
               </div>
             );

@@ -699,9 +699,9 @@ format: "dcmd/goodreads"
             </div>
           </div>
 
-          {/* Book Selector Dropdown */}
+          {/* Book / Treasure / Item Selector Dropdown */}
           <div className="hidden lg:flex items-center space-x-2 pl-4 border-l border-slate-800">
-            <label className="text-xs text-slate-400 font-mono">Active Book:</label>
+            <label className="text-xs text-slate-400 font-mono" title="Current Active Treasure, Collectible, Book, Album, or Good">Current Treasure / Item / Good:</label>
             <select
               value={activeBookId}
               onChange={(e) => {
@@ -1110,6 +1110,8 @@ format: "dcmd/goodreads"
               activeBookId={activeBookId}
               relLinkRoot={pluginState.relLinkRoot}
               vaultMode={vaultMode}
+              activeFilterTag={activeFilterTag}
+              onClearFilterTag={() => setActiveFilterTag(null)}
               onSelectBook={(id) => setActiveBookId(id)}
               onOpenView={(view) => setActiveView(view)}
               onExportObsidian={handleExportObsidian}
@@ -1781,10 +1783,14 @@ format: "dcmd/goodreads"
         relLinkRoot={pluginState.relLinkRoot}
         accounts={cloudAccounts}
         onClose={() => setIsUnifiedImportOpen(false)}
-        onImportBooks={(newBooks) => {
+        onImportBooks={(newBooks, bundleFilterTag) => {
           handleUpdateBooks(prev => [...newBooks, ...prev]);
           if (newBooks.length > 0) {
             setActiveBookId(newBooks[0].id);
+            setActiveView('library');
+            if (bundleFilterTag) {
+              setActiveFilterTag(bundleFilterTag);
+            }
           }
         }}
         onProceedToVerification={(importedItems) => {
