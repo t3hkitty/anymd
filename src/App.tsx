@@ -109,7 +109,7 @@ import { buildBlackBoxDailyJournalBook, loadRunningLitany } from './plugins/runn
 
 // Icons
 import {
-  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock, Share2
+  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock, Share2, Import
 } from 'lucide-react';
 
 const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
@@ -877,6 +877,9 @@ date_cataloged: "${new Date().toISOString()}"
 
           {/* Organized Dropdown Hubs: Ingest | Vault Tools | Cloud & Auth | Creative Studio */}
           <HeaderNavDropdowns
+            onOpenUnifiedImport={() => setIsUnifiedImportOpen(true)}
+            onOpenCardScanner={() => setIsCardScannerOpen(true)}
+            onOpenHomeInsuranceScanner={() => setIsHomeInsuranceOpen(true)}
             onOpenVodImporter={() => setIsVodImporterOpen(true)}
             onOpenNovelUpdates={() => setIsNovelUpdatesOpen(true)}
             onOpenAnnasArchive={() => setIsAnnasArchiveOpen(true)}
@@ -914,6 +917,17 @@ date_cataloged: "${new Date().toISOString()}"
             cloudAccountsCount={loadSavedCloudAccounts().length}
             litanyPulsesCount={loadRunningLitany().length}
           />
+
+          {/* Dedicated Prominent Import & Intake Studio Button */}
+          <button
+            onClick={() => setIsUnifiedImportOpen(true)}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-500 hover:to-sky-500 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95"
+            title="Universal Import & Intake Studio: Photo Asset Scanner, TCG Cards, Anna's Archive LoC, Reading Lists, Webnovels & Folder Sync"
+          >
+            <Import className="w-3.5 h-3.5" />
+            <span>Import Studio</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-emerald-200 font-mono text-[10px]">PHOTO</span>
+          </button>
 
           {/* Dedicated Prominent Export & Share Studio Button */}
           <button

@@ -18,10 +18,15 @@ import {
   Database,
   Smartphone,
   Server,
-  Share2
+  Share2,
+  Camera,
+  Import
 } from 'lucide-react';
 
 interface HeaderNavDropdownsProps {
+  onOpenUnifiedImport: () => void;
+  onOpenCardScanner: () => void;
+  onOpenHomeInsuranceScanner: () => void;
   onOpenVodImporter: () => void;
   onOpenNovelUpdates: () => void;
   onOpenAnnasArchive: () => void;
@@ -114,7 +119,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'ingest' && (
-          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
               <span>Media Ingest &amp; Scrapers</span>
               {pendingMatches > 0 && (
@@ -122,9 +127,48 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
               )}
             </div>
             
+            {/* Prominent Unified Import Studio (Image / Photos / Scrapers) */}
+            <button
+              onClick={() => runAction(props.onOpenUnifiedImport)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left bg-gradient-to-r from-emerald-600/30 to-sky-600/30 hover:from-emerald-600/40 hover:to-sky-600/40 border border-emerald-500/40 text-emerald-200 font-bold transition-all shadow-sm"
+            >
+              <Import className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-emerald-300 font-extrabold flex items-center space-x-1.5">
+                  <span>📥 Universal Import Studio</span>
+                  <span className="px-1 py-0.2 rounded bg-emerald-400 text-slate-950 text-[9px] font-black uppercase">HUB</span>
+                </div>
+                <div className="text-[10px] text-slate-300">Images, TCG, Insurance, Books &amp; Scrapers</div>
+              </div>
+            </button>
+
+            {/* 📸 Bulk Photo & Image Scanner (Insurance & TCG) */}
+            <button
+              onClick={() => runAction(props.onOpenHomeInsuranceScanner)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors"
+            >
+              <Camera className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-slate-100 font-bold">📸 Photo Asset Scanner</div>
+                <div className="text-[10px] text-slate-400">Bulk room photos, items &amp; receipts</div>
+              </div>
+            </button>
+
+            {/* 🃏 TCG Card Photo Scanner */}
+            <button
+              onClick={() => runAction(props.onOpenCardScanner)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
+            >
+              <span>🃏</span>
+              <div>
+                <div className="text-slate-100 font-bold">TCG Card &amp; Slab Scanner</div>
+                <div className="text-[10px] text-slate-400">PSA/BGS slabs, cards &amp; sets from photos</div>
+              </div>
+            </button>
+
             <button
               onClick={() => runAction(props.onOpenVodImporter)}
-              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-red-300 font-semibold transition-colors"
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-red-300 font-semibold transition-colors border-t border-slate-800/80"
             >
               <span>🎬</span>
               <div>
@@ -223,7 +267,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'vault' && (
-          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
               <span>Vault Tools &amp; Data</span>
               <span className="text-amber-400 font-bold">{totalBooks} volumes</span>
@@ -334,7 +378,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'cloud' && (
-          <div className="absolute left-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
               <span>Cloud &amp; Auth Config</span>
               <span className="text-sky-400 font-bold">{cloudCount} accounts</span>
@@ -430,7 +474,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'studio' && (
-          <div className="absolute right-0 mt-2 w-68 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+          <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
               <span>Creative Engines</span>
               <span className="text-rose-400 font-bold">{pulsesCount} pulses</span>
