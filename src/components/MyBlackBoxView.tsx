@@ -206,6 +206,15 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
           </button>
 
           <button
+            onClick={() => window.location.href = './lcmd/'}
+            className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5"
+            title="Open Full myBlackbox Microlog Dashboard with 23 Customizable Panels & Layout Manager"
+          >
+            <span>🧹</span>
+            <span>Layout &amp; Panels (/lcmd/)</span>
+          </button>
+
+          <button
             onClick={onBackToLibrary}
             className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5"
           >

@@ -804,9 +804,8 @@ date_cataloged: "${new Date().toISOString()}"
         </button>
       </div>
 
-      {/* Top Application Toolbar (Visible in Library Modes) */}
-      {activeView !== 'blackbox' && (
-        <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
+      {/* Top Application Toolbar (Visible across all views) */}
+      <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
           <div className="flex items-center space-x-4">
           
           {/* Ornate Grand Bookcase Logo & Title */}
@@ -918,6 +917,7 @@ date_cataloged: "${new Date().toISOString()}"
             pendingDriveMatchesCount={suggestedDriveLinks.filter(s => s.status === 'pending').length}
             totalBooksCount={books.length}
             cloudAccountsCount={loadSavedCloudAccounts().length}
+            cloudAuthErrorsCount={cloudAccounts.filter(a => (a as any).status === 'error' || (a as any).status === 'disconnected').length}
             litanyPulsesCount={loadRunningLitany().length}
           />
 
@@ -941,6 +941,17 @@ date_cataloged: "${new Date().toISOString()}"
             <Share2 className="w-3.5 h-3.5 text-amber-200" />
             <span>Export &amp; Share</span>
             <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-amber-200 font-mono text-[10px]">ZIP</span>
+          </button>
+
+          {/* Dedicated Layout & Microlog Panel Customizer Button */}
+          <button
+            onClick={() => window.location.href = './lcmd/'}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-extrabold text-xs shadow-md shadow-sky-500/20 transition-all hover:scale-105 active:scale-95"
+            title="Open myBlackbox Microlog Dashboard with 23 Customizable Panels & Layout Customizer"
+          >
+            <Layers className="w-3.5 h-3.5 text-sky-200" />
+            <span>🧹 Layout &amp; Panels</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-sky-200 font-mono text-[10px]">LCMD</span>
           </button>
 
           {/* Hidden EPUB File Input */}
@@ -1016,7 +1027,6 @@ date_cataloged: "${new Date().toISOString()}"
           </button>
         </div>
       </header>
-      )}
 
       {/* Main Content Workspace Layout */}
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
@@ -1739,6 +1749,7 @@ date_cataloged: "${new Date().toISOString()}"
         onProceedToVerification={(importedItems) => {
           setImportedItemsForVerification(importedItems);
         }}
+        onRestoreCloudAccounts={handleUpdateCloudAccounts}
       />
 
       {/* Unified Export & Sharing Studio Modal */}
@@ -1789,6 +1800,12 @@ date_cataloged: "${new Date().toISOString()}"
           const updatedSuggestions = suggestedDriveLinks.map(s => s.id === sugId ? { ...s, status: 'dismissed' as const } : s);
           setSuggestedDriveLinks(updatedSuggestions);
           saveSuggestedLinks(updatedSuggestions);
+        }}
+        onDismissAll={() => {
+          const updatedSuggestions = suggestedDriveLinks.map(s => ({ ...s, status: 'dismissed' as const }));
+          setSuggestedDriveLinks(updatedSuggestions);
+          saveSuggestedLinks(updatedSuggestions);
+          alert('✕ Dismissed all pending file suggestions.');
         }}
         onOpenCloudSettings={() => setIsCloudAccountsOpen(true)}
       />

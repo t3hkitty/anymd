@@ -436,11 +436,20 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                     </label>
 
                     <button
+                      disabled={zipResult.isPinProtected && !zipPinUnlocked}
                       onClick={handleCommitZipRestore}
-                      className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20 flex items-center space-x-1.5 transition-all"
+                      className={`px-5 py-2.5 rounded-2xl font-extrabold text-xs shadow-lg flex items-center space-x-1.5 transition-all ${
+                        zipResult.isPinProtected && !zipPinUnlocked
+                          ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                          : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-500/20'
+                      }`}
                     >
                       <Sparkles className="w-4 h-4 fill-current" />
-                      <span>Restore {zipResult.importedCount} Items into Vault</span>
+                      <span>
+                        {zipResult.isPinProtected && !zipPinUnlocked
+                          ? 'Enter & Verify PIN Above to Unlock'
+                          : `Restore ${zipResult.importedCount} Items into Vault`}
+                      </span>
                     </button>
                   </div>
                 </div>

@@ -21,7 +21,8 @@ import {
   Share2,
   Camera,
   Import,
-  Zap
+  Zap,
+  AlertTriangle
 } from 'lucide-react';
 
 interface HeaderNavDropdownsProps {
@@ -63,10 +64,11 @@ interface HeaderNavDropdownsProps {
   onOpenHtmlPublish: () => void;
   onOpenCommunityHub: () => void;
 
-  // Notification Counts
+  // Real actionable notification counts (Alerts ONLY when action needed)
   pendingDriveMatchesCount?: number;
   totalBooksCount?: number;
   cloudAccountsCount?: number;
+  cloudAuthErrorsCount?: number;
   litanyPulsesCount?: number;
 }
 
@@ -77,6 +79,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
   const pendingMatches = props.pendingDriveMatchesCount || 0;
   const totalBooks = props.totalBooksCount || 0;
   const cloudCount = props.cloudAccountsCount || 0;
+  const authErrors = props.cloudAuthErrorsCount || 0;
   const pulsesCount = props.litanyPulsesCount || 0;
 
   // Close dropdown on outside click
@@ -289,11 +292,6 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         >
           <Boxes className="w-3.5 h-3.5" />
           <span>Vault Tools</span>
-          {totalBooks > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-slate-800 text-amber-300 font-bold text-[10px] border border-amber-500/30">
-              {totalBooks}
-            </span>
-          )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'vault' ? 'rotate-180' : ''}`} />
         </button>
 
@@ -398,21 +396,25 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         )}
       </div>
 
-      {/* 3. ☁️ CLOUD & AUTH DROPDOWN */}
+      {/* 3. ☁️ CLOUD & AUTH DROPDOWN (Alert ONLY if auth fails on idle scan!) */}
       <div className="relative">
         <button
           onClick={() => toggleMenu('cloud')}
           className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
             openMenu === 'cloud'
               ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : authErrors > 0
+              ? 'bg-rose-950/80 hover:bg-rose-900 border border-rose-500 text-rose-200'
               : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
           }`}
+          title={authErrors > 0 ? `${authErrors} cloud account(s) failing auth check` : `All ${cloudCount} cloud accounts authed`}
         >
           <Cloud className="w-3.5 h-3.5" />
           <span>Cloud &amp; Auth</span>
-          {cloudCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-sky-950 text-sky-300 font-bold text-[10px] border border-sky-500/30">
-              {cloudCount}
+          {authErrors > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-black text-[10px] animate-pulse flex items-center space-x-0.5">
+              <AlertTriangle className="w-2.5 h-2.5" />
+              <span>{authErrors}</span>
             </span>
           )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'cloud' ? 'rotate-180' : ''}`} />
@@ -426,10 +428,17 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
               title="Click to open Cloud Account Manager"
             >
               <span>Cloud &amp; Auth Config</span>
-              <span className="text-sky-400 font-bold flex items-center space-x-1 group-hover:underline">
-                <span>{cloudCount} accounts</span>
-                <span>➜</span>
-              </span>
+              {authErrors > 0 ? (
+                <span className="text-rose-400 font-bold flex items-center space-x-1 group-hover:underline">
+                  <span>⚠️ {authErrors} Auth Error</span>
+                  <span>➜</span>
+                </span>
+              ) : (
+                <span className="text-emerald-400 font-bold flex items-center space-x-1 group-hover:underline">
+                  <span>All {cloudCount} Authed ✓</span>
+                  <span>➜</span>
+                </span>
+              )}
             </button>
 
             <button
@@ -515,7 +524,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
           <span>Creative Studio</span>
           {pulsesCount > 0 && (
             <span className="px-1.5 py-0.2 rounded-full bg-rose-950 text-rose-300 font-bold text-[10px] border border-rose-500/30">
-              {pulsesCount}
+              ⚡ {pulsesCount}
             </span>
           )}
           <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'studio' ? 'rotate-180' : ''}`} />

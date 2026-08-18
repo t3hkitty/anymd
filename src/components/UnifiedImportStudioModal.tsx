@@ -4,7 +4,8 @@ import type { CloudAccount } from '../types/cloudAccounts';
 import { searchAnnasArchiveIsbnDb, type AnnasArchiveIsbnRecord } from '../plugins/annasArchiveIsbnPlugin';
 import { parseTextDirectoryListing } from '../plugins/webdavIndexerPlugin';
 import { scanMultipleIndividualPhotos, convertScannedCardsToVaultItems } from '../plugins/cardScannerPlugin';
-import { importVaultZipArchive } from '../plugins/vaultZipImportPlugin';
+import { importVaultZipArchive, type VaultZipImportResult } from '../plugins/vaultZipImportPlugin';
+import { verifyAndUnlockVaultSession } from '../plugins/vaultSessionLockPlugin';
 import { convertVodToVaultItem, detectPlatformAndThumbnail, type VodPlatform } from '../plugins/vodImporterPlugin';
 import {
   X,
@@ -22,7 +23,9 @@ import {
   Video,
   Clock,
   ListOrdered,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Lock,
+  KeyRound
 } from 'lucide-react';
 
 interface UnifiedImportStudioModalProps {
@@ -32,6 +35,7 @@ interface UnifiedImportStudioModalProps {
   onClose: () => void;
   onImportBooks: (newBooks: Book[], bundleFilterTag?: string) => void;
   onProceedToVerification?: (importedItems: any[]) => void;
+  onRestoreCloudAccounts?: (accounts: CloudAccount[]) => void;
 }
 
 function generateBundleSerial(prefix: string = 'BUNDLE'): string {
@@ -45,7 +49,8 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
   isOpen,
   onClose,
   onImportBooks,
-  onProceedToVerification
+  onProceedToVerification,
+  onRestoreCloudAccounts
 }) => {
   const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'vod_streams' | 'vault_zip_restore'>('insurance');
   const zipBackupInputRef = useRef<HTMLInputElement | null>(null);
@@ -95,6 +100,12 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
   const [vodThumbnail, setVodThumbnail] = useState('https://images.unsplash.com/photo-1536240478700-b869070f9279?w=600&auto=format&fit=crop&q=80');
   const [vodTimestamps, setVodTimestamps] = useState('00:00 - Stream Kickoff\n12:30 - Core Architecture Breakdown\n45:15 - Live Code Refactoring\n01:20:00 - Synthesis & Conclusions');
   const [vodNotes, setVodNotes] = useState('Livestream archive with spatial chapter markers.');
+
+  // 8. ZIP Backup & PIN Unlock State
+  const [zipResult, setZipResult] = useState<VaultZipImportResult | null>(null);
+  const [zipEnteredPin, setZipEnteredPin] = useState('');
+  const [zipPinError, setZipPinError] = useState<string | null>(null);
+  const [zipPinUnlocked, setZipPinUnlocked] = useState(false);
 
   if (!isOpen) return null;
 
@@ -456,23 +467,61 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     setIsProcessing(true);
     setImportProgress(20);
     setProcessingStatusText('Unpacking Vault ZIP Archive & Extracting /media/...');
+    setZipPinError(null);
+    setZipResult(null);
 
     try {
-      setImportProgress(50);
+      setImportProgress(60);
       const res = await importVaultZipArchive(file);
-      setImportProgress(90);
-      setProcessingStatusText(`Restoring ${res.importedCount} items and ${res.mediaRestoredCount} media assets...`);
+      setImportProgress(100);
+      setIsProcessing(false);
+      setZipResult(res);
 
-      setTimeout(() => {
-        setIsProcessing(false);
-        setImportProgress(100);
+      // If NOT PIN protected, restore directly!
+      if (!res.isPinProtected) {
         onImportBooks(res.books);
+        if (res.cloudAccounts && res.cloudAccounts.length > 0 && onRestoreCloudAccounts) {
+          onRestoreCloudAccounts(res.cloudAccounts);
+        }
         alert(`✓ Successfully restored ${res.importedCount} items and ${res.mediaRestoredCount} media covers from ZIP archive!`);
         onClose();
-      }, 600);
+      }
     } catch (err: any) {
       setIsProcessing(false);
       alert(`ZIP restore error: ${err.message}`);
+    }
+  };
+
+  const handleUnlockZipPin = async () => {
+    if (!zipEnteredPin.trim() || !zipResult) {
+      setZipPinError('Please enter your 4-digit Sovereign PIN.');
+      return;
+    }
+    setZipPinError(null);
+
+    if (zipResult.lockFileContent) {
+      const unlockRes = await verifyAndUnlockVaultSession(zipResult.lockFileContent, zipEnteredPin.trim());
+      if (unlockRes.success) {
+        setZipPinUnlocked(true);
+        onImportBooks(zipResult.books);
+        if (unlockRes.sessionData?.cloudAccounts && onRestoreCloudAccounts) {
+          onRestoreCloudAccounts(unlockRes.sessionData.cloudAccounts);
+        } else if (zipResult.cloudAccounts && onRestoreCloudAccounts) {
+          onRestoreCloudAccounts(zipResult.cloudAccounts);
+        }
+        alert(`✓ Sovereign PIN Verified! Successfully unlocked and restored ${zipResult.importedCount} vault items and accounts!`);
+        onClose();
+      } else {
+        setZipPinError(unlockRes.error || 'Incorrect Sovereign PIN.');
+      }
+    } else {
+      setZipPinUnlocked(true);
+      onImportBooks(zipResult.books);
+      if (zipResult.cloudAccounts && onRestoreCloudAccounts) {
+        onRestoreCloudAccounts(zipResult.cloudAccounts);
+      }
+      alert(`✓ Sovereign PIN Verified! Successfully restored ${zipResult.importedCount} vault items and accounts!`);
+      onClose();
     }
   };
 
@@ -1226,19 +1275,61 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                 className="hidden"
               />
 
-              <div className="p-8 border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-3xl text-center space-y-3 bg-slate-950/60 transition-all">
-                <Archive className="w-12 h-12 text-amber-400 mx-auto" />
-                <div>
-                  <h4 className="font-bold text-sm text-slate-100">Select Sovereign Vault Backup ZIP</h4>
-                  <p className="text-xs text-slate-400 mt-1">Unpacks sidecars and automatically matches media folder images.</p>
+              {/* PIN Challenge Screen if PIN Protected */}
+              {zipResult && zipResult.isPinProtected && !zipPinUnlocked ? (
+                <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-indigo-950/40 border border-amber-500/50 space-y-4 shadow-2xl animate-fadeIn">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400">
+                      <Lock className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-amber-300">
+                        PIN-Protected Vault Archive Detected {zipResult.pinHint ? `(Hint: ${zipResult.pinHint})` : ''}
+                      </h4>
+                      <p className="text-xs text-slate-300 mt-0.5">
+                        This archive contains <span className="text-amber-300 font-bold">{zipResult.importedCount} books</span>, <span className="text-indigo-300 font-bold">{zipResult.mediaRestoredCount} images</span>, and encrypted cloud accounts. Enter your 4-digit Sovereign PIN to unlock.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 pt-2">
+                    <input
+                      type="password"
+                      maxLength={8}
+                      value={zipEnteredPin}
+                      onChange={(e) => setZipEnteredPin(e.target.value)}
+                      placeholder="Enter PIN"
+                      className="px-4 py-2.5 rounded-2xl bg-slate-950 border border-amber-500/70 text-amber-300 text-lg font-mono tracking-widest w-40 text-center focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleUnlockZipPin}
+                      className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20 flex items-center space-x-2"
+                    >
+                      <KeyRound className="w-4 h-4" />
+                      <span>Unlock &amp; Restore Library</span>
+                    </button>
+                  </div>
+
+                  {zipPinError && (
+                    <p className="text-xs text-rose-400 font-mono font-bold">{zipPinError}</p>
+                  )}
                 </div>
-                <button
-                  onClick={() => zipBackupInputRef.current?.click()}
-                  className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20"
-                >
-                  📦 Select Vault ZIP File
-                </button>
-              </div>
+              ) : (
+                <div className="p-8 border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-3xl text-center space-y-3 bg-slate-950/60 transition-all">
+                  <Archive className="w-12 h-12 text-amber-400 mx-auto" />
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-100">Select Sovereign Vault Backup ZIP</h4>
+                    <p className="text-xs text-slate-400 mt-1">Unpacks sidecars, media assets, and validates PIN security lockfile.</p>
+                  </div>
+                  <button
+                    onClick={() => zipBackupInputRef.current?.click()}
+                    className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20"
+                  >
+                    📦 Select Vault ZIP File
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
