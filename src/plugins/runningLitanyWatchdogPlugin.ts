@@ -3,6 +3,8 @@
  * Real-time continuous blackbox activity stream, idle watchdog & sleep/traffic synced alarm.
  */
 
+import type { Book, ResonanceEntry } from '../types/resonance';
+
 export interface LitanyPulseEntry {
   id: string;
   timestamp: string; // ISO string
@@ -158,4 +160,92 @@ export function saveAuDhdMorningSettings(settings: AuDhdMorningSettings): void {
   } catch (err) {
     console.error('Failed to save AuDHD morning settings:', err);
   }
+}
+
+/**
+ * Creates or updates today's Sovereign BlackBox Daily Journal Book for the Grand Bookshelf
+ */
+export function buildBlackBoxDailyJournalBook(
+  pulses: LitanyPulseEntry[],
+  date: Date = new Date()
+): Book {
+  const dateStr = date.toISOString().split('T')[0];
+  const dateDisplay = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const bookId = `journal-${dateStr}`;
+
+  const pulsesMarkdown = pulses
+    .map(p => `- **[${p.formattedTime}]** \`[${p.activityType.toUpperCase()}]\` **${p.headline}**\n  ${p.bodySnippet ? `> ${p.bodySnippet}\n` : ''}  *Serial: \`${p.zettelSerial}\` • Tags: ${p.tags.map(t => `#${t}`).join(' ')}*`)
+    .join('\n\n');
+
+  const sidecarMarkdown = `---
+title: "📓 BlackBox Daily Journal • ${dateDisplay}"
+author: "MyBlackBox Captain's Log"
+media_type: "journal"
+date: "${dateStr}"
+total_pulses: ${pulses.length}
+tags: ["journal", "daily-log", "blackbox", "captains-log", "wyd-stream"]
+---
+
+# 📓 BlackBox Daily Journal • ${dateDisplay}
+
+> **Log Type:** \`CAPTAIN'S LOG / DAILY PULSE\` &bull; **Status:** \`IMMUTABLE VAULT LOG\`
+> **Date:** \`${dateStr}\` &bull; **Entries Logged:** \`${pulses.length}\`
+
+---
+
+## 📑 Daily Pulse Stream & WYD Check-Ins
+
+${pulsesMarkdown || '*No pulses recorded for this date yet. Use MyBlackBox WYD timer or Litany Pulse to log activities.*'}
+
+---
+
+## 📝 End of Day Synthesis & Reflection
+
+*Reflect on today's high-intensity flow states, breakthroughs, reading chapters, and break pulls.*
+`;
+
+  const resonanceStream: ResonanceEntry[] = pulses.map((p, idx) => ({
+    id: `res-journal-${p.id}`,
+    timestamp: p.timestamp,
+    formattedDate: dateStr,
+    progressPercent: pulses.length > 1 ? Math.round((idx / (pulses.length - 1)) * 100) : 100,
+    category: `BlackBox: ${p.activityType.toUpperCase()}`,
+    rawText: `[${p.formattedTime}] ${p.headline}`,
+    cfi: `cfi:journal:${idx}`,
+    chapterTitle: `Pulse ${idx + 1}: ${p.headline.slice(0, 30)}...`,
+    paragraphIndex: idx,
+    paragraphSnippet: p.bodySnippet || p.headline,
+    intensityScore: p.intensity,
+    reactionImageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+    reactionGifCaption: p.headline,
+    emojiReactions: p.emojiBurst.length > 0 ? p.emojiBurst : ['📓', '⚡']
+  }));
+
+  const morningPulses = pulses.filter(p => p.formattedTime.includes('AM'));
+  const afternoonPulses = pulses.filter(p => p.formattedTime.includes('PM'));
+
+  return {
+    id: bookId,
+    title: `📓 BlackBox Daily Journal • ${dateDisplay}`,
+    author: "Captain's Log (MyBlackBox)",
+    coverColor: '#0f172a',
+    coverImageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+    totalChapters: 2,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    sidecarMarkdown,
+    resonanceStream,
+    chapters: [
+      {
+        title: 'Morning Focus & Active Pulses',
+        cfiBase: 'epubcfi(/6/2[ch1]!)',
+        paragraphs: morningPulses.length > 0 ? morningPulses.map(p => `[${p.formattedTime}] ${p.headline} (${p.bodySnippet || ''})`) : ['Morning routine and initial system check-in.']
+      },
+      {
+        title: 'Afternoon & Evening WYD Stream',
+        cfiBase: 'epubcfi(/6/4[ch2]!)',
+        paragraphs: afternoonPulses.length > 0 ? afternoonPulses.map(p => `[${p.formattedTime}] ${p.headline} (${p.bodySnippet || ''})`) : ['Afternoon deep focus and break pulls.']
+      }
+    ]
+  };
 }

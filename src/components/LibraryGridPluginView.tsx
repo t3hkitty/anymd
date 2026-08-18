@@ -93,6 +93,13 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
 
   const [curatedCollections, setCuratedCollections] = useState<CuratedCollection[]>([
     {
+      id: 'blackbox-journals',
+      name: '📓 MyBlackBox Daily Journals',
+      icon: '📓',
+      description: 'Daily WYD focus intervals, running litany pulses, and captain logs',
+      itemIds: ['journal-2026-08-18', 'journal-today']
+    },
+    {
       id: 'pop-collection',
       name: 'Pop Collection & Collectibles',
       icon: '🏛️',
@@ -138,6 +145,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
   };
 
   const getItemIcon = (b: Book): string => {
+    if (b.title.includes('Journal') || b.title.includes('BlackBox') || b.id.startsWith('journal-')) return '📓';
     if (b.title.includes('The Dress') || b.id.includes('dress')) return '👗';
     if (b.title.includes('Doge') || b.id.includes('doge')) return '🐕';
     if (b.title.includes('Spider-Man') || b.title.includes('Batman') || b.title.includes('X-Men') || b.title.includes('Comic') || b.sidecarMarkdown.includes('comic-book')) return '🦸‍♂️';

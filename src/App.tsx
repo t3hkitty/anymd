@@ -105,6 +105,7 @@ import {
   resetSandboxVault,
   type VaultMode
 } from './plugins/sandboxVaultPlugin';
+import { buildBlackBoxDailyJournalBook, loadRunningLitany } from './plugins/runningLitanyWatchdogPlugin';
 
 // Icons
 import {
@@ -115,7 +116,12 @@ const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
 
 export function App() {
   const [vaultMode, setVaultMode] = useState<VaultMode>(getSavedVaultMode);
-  const [books, setBooks] = useState<Book[]>(() => loadBooksForVault(getSavedVaultMode()));
+  const [books, setBooks] = useState<Book[]>(() => {
+    const loaded = loadBooksForVault(getSavedVaultMode());
+    const todayJournal = buildBlackBoxDailyJournalBook(loadRunningLitany());
+    const hasJournal = loaded.some(b => b.id === todayJournal.id);
+    return hasJournal ? loaded : [todayJournal, ...loaded];
+  });
   const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
   const [activeView, setActiveView] = useState<'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox'>('split');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
@@ -1145,7 +1151,26 @@ date_cataloged: "${new Date().toISOString()}"
         {/* Sovereign MyBlackBox Full Dashboard View */}
         {activeView === 'blackbox' && (
           <div className="w-full min-h-[calc(100vh-140px)]">
-            <MyBlackBoxView onBackToLibrary={() => setActiveView('library')} />
+            <MyBlackBoxView
+              onBackToLibrary={() => setActiveView('library')}
+              onOpenJournalInReader={(journalBookId) => {
+                const journalBook = buildBlackBoxDailyJournalBook(loadRunningLitany());
+                const targetId = journalBookId || journalBook.id;
+                handleUpdateBooks(prev => {
+                  const exists = prev.some(b => b.id === targetId);
+                  return exists ? prev.map(b => b.id === targetId ? journalBook : b) : [journalBook, ...prev];
+                });
+                setActiveBookId(targetId);
+                setActiveView('split');
+              }}
+              onSyncPulsesToBookshelf={(pulses) => {
+                const journalBook = buildBlackBoxDailyJournalBook(pulses);
+                handleUpdateBooks(prev => {
+                  const exists = prev.some(b => b.id === journalBook.id);
+                  return exists ? prev.map(b => b.id === journalBook.id ? journalBook : b) : [journalBook, ...prev];
+                });
+              }}
+            />
           </div>
         )}
       </main>

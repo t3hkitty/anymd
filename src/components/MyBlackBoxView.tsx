@@ -30,9 +30,15 @@ import {
 
 interface MyBlackBoxViewProps {
   onBackToLibrary: () => void;
+  onOpenJournalInReader?: (journalBookId: string) => void;
+  onSyncPulsesToBookshelf?: (pulses: LitanyPulseEntry[]) => void;
 }
 
-export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({ onBackToLibrary }) => {
+export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
+  onBackToLibrary,
+  onOpenJournalInReader,
+  onSyncPulsesToBookshelf
+}) => {
   const [activeTab, setActiveTab] = useState<'wyd' | 'litany' | 'watchdog' | 'morning' | 'spec'>('wyd');
 
   // 1. WYD Timer Engine State
@@ -136,6 +142,7 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({ onBackToLibrary 
     const updated = [newPulse, ...litanyEntries];
     setLitanyEntries(updated);
     saveRunningLitany(updated);
+    onSyncPulsesToBookshelf?.(updated);
     setWydInputText('');
     setIdleSeconds(0);
     setWydRemainingSeconds(wydIntervalMinutes * 60);
@@ -185,12 +192,26 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({ onBackToLibrary 
           </div>
         </div>
 
-        <button
-          onClick={onBackToLibrary}
-          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5"
-        >
-          <span>📚 Return to Grand Library</span>
-        </button>
+        <div className="flex items-center space-x-2.5 flex-wrap gap-2">
+          <button
+            onClick={() => {
+              const dateStr = new Date().toISOString().split('T')[0];
+              onOpenJournalInReader?.(`journal-${dateStr}`);
+            }}
+            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center space-x-1.5"
+            title="Open Today's BlackBox Daily Journal in Sovereign Reader Canvas"
+          >
+            <span>📓</span>
+            <span>Open in Reader Canvas</span>
+          </button>
+
+          <button
+            onClick={onBackToLibrary}
+            className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5"
+          >
+            <span>📚 Return to Grand Library</span>
+          </button>
+        </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
