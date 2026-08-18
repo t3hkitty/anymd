@@ -10,32 +10,47 @@ export interface BookmarkletTool {
 
 export function getAppTargetEndpoint(): string {
   if (typeof window !== 'undefined') {
-    // Preserves subpaths like /lcmd/ or /meow/lcmd/
     return window.location.href.split('?')[0].split('#')[0];
   }
-  return 'http://localhost:5175/';
+  return 'http://artkitty.net/meow/lcmd/';
+}
+
+export function createExecutableBookmarkletJs(rawJs: string): string {
+  /* 1. Strip single line comments */
+  const noLineComments = rawJs.replace(/\/\/[^\n\r]*/g, '');
+  /* 2. Strip multi-line comments */
+  const noComments = noLineComments.replace(/\/\*[\s\S]*?\*\//g, '');
+  /* 3. Compact whitespace */
+  const compacted = noComments.replace(/\s+/g, ' ').trim();
+  return `javascript:${compacted};void 0;`;
 }
 
 export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJs: string } {
   const host = getAppTargetEndpoint();
   const rawJs = `(function(){
     try {
-      var title = document.querySelector('.seriestitlenew')?.innerText?.trim() 
-        || document.querySelector('meta[property="og:title"]')?.content?.trim() 
-        || document.querySelector('h1.entry-title, .series-title, h4.item-title')?.innerText?.trim() 
+      var title = (document.querySelector('.seriestitlenew') && document.querySelector('.seriestitlenew').innerText.trim())
+        || (document.querySelector('meta[property="og:title"]') && document.querySelector('meta[property="og:title"]').content.trim())
+        || (document.querySelector('h1.entry-title, .series-title, h4.item-title') && document.querySelector('h1.entry-title, .series-title, h4.item-title').innerText.trim())
         || document.title.replace(/\\s*-\\s*Novel\\s*Updates.*/i, '').trim();
-      
-      var author = document.querySelector('#showauthors a, .author')?.innerText?.trim() 
-        || document.querySelector('meta[property="books:author"]')?.content?.trim() 
+
+      var author = (document.querySelector('#showauthors a, .author') && document.querySelector('#showauthors a, .author').innerText.trim())
+        || (document.querySelector('meta[property="books:author"]') && document.querySelector('meta[property="books:author"]').content.trim())
         || 'Asian Webnovel Author';
-      
+
       var tagNodes = document.querySelectorAll('#showtags a, a.genre, .genre a');
-      var tags = Array.from(tagNodes).map(function(e){ return e.innerText.trim(); }).filter(Boolean);
+      var tags = [];
+      for (var i = 0; i < tagNodes.length; i++) {
+        var t = tagNodes[i].innerText.trim();
+        if (t) tags.push(t);
+      }
       if (tags.length === 0) tags = ['Webnovel', 'Translated', 'NovelUpdates'];
 
-      var rating = document.querySelector('.uvote')?.innerText?.trim() || '4.5';
-      var coverUrl = document.querySelector('.seriesimg img, .series-thumb img, meta[property="og:image"]')?.src 
-        || document.querySelector('meta[property="og:image"]')?.content || '';
+      var ratingEl = document.querySelector('.uvote');
+      var rating = ratingEl ? ratingEl.innerText.trim() : '4.5';
+
+      var coverEl = document.querySelector('.seriesimg img, .series-thumb img');
+      var coverUrl = coverEl ? coverEl.src : ((document.querySelector('meta[property="og:image"]') && document.querySelector('meta[property="og:image"]').content) || '');
 
       var dataObj = {
         title: title,
@@ -47,14 +62,13 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
         format: 'dcmd/webnovel'
       };
 
-      // Create floating overlay to bypass popup blockers & CSP restrictions
       var oldModal = document.getElementById('lc-md-nu-modal');
       if (oldModal) oldModal.remove();
 
       var modal = document.createElement('div');
       modal.id = 'lc-md-nu-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);font-family:system-ui,sans-serif;font-size:12px;';
-      
+      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
+
       var targetUrl = '${host}?import_novel=' + encodeURIComponent(title) + '&author=' + encodeURIComponent(author) + '&tags=' + encodeURIComponent(tags.join(',')) + '&rating=' + encodeURIComponent(rating) + '&source=' + encodeURIComponent(window.location.href);
 
       modal.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
@@ -64,7 +78,7 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
         + '<div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;">'
         + '<div style="font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;">' + title + '</div>'
         + '<div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">By ' + author + ' &bull; ★ ' + rating + '</div>'
-        + '<div style="color:#cbd5e1;font-size:10px;">' + tags.slice(0, 6).map(function(t){ return '#' + t; }).join(' ') + '</div>'
+        + '<div style="color:#cbd5e1;font-size:10px;">' + tags.slice(0, 6).map(function(tg){ return '#' + tg; }).join(' ') + '</div>'
         + '</div>'
         + '<div style="display:flex;gap:8px;">'
         + '<a href="' + targetUrl + '" target="_blank" id="lc-open-btn" style="flex:1;text-align:center;padding:10px;background:#6366f1;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;">🚀 Open in LC-MD</a>'
@@ -81,7 +95,6 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
         this.style.color = '#ffffff';
       };
 
-      // Also attempt direct window.open
       var win = window.open(targetUrl, '_blank');
       if (win) {
         setTimeout(function(){ if (modal) modal.remove(); }, 3000);
@@ -91,7 +104,7 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
     }
   })();`;
 
-  const bookmarkletJs = `javascript:${encodeURIComponent(rawJs.replace(/\s+/g, ' '))}`;
+  const bookmarkletJs = createExecutableBookmarkletJs(rawJs);
   return { bookmarkletJs, rawJs };
 }
 
@@ -99,21 +112,23 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
   const host = getAppTargetEndpoint();
   const rawJs = `(function(){
     try {
-      // 1. Check for single book page
-      var singleTitle = document.querySelector('h1[data-testid="bookTitle"], h1.Text__title1, .BookPageTitleSection__title, #bookTitle')?.innerText?.trim()
-        || document.querySelector('meta[property="og:title"]')?.content?.trim();
-      
-      var author = document.querySelector('span[data-testid="name"], .ContributorLinksList a, .authorName, meta[property="books:author"]')?.innerText?.trim()
-        || document.querySelector('meta[property="books:author"]')?.content?.trim()
-        || 'Goodreads Author';
+      var singleEl = document.querySelector('h1[data-testid="bookTitle"], h1.Text__title1, .BookPageTitleSection__title, #bookTitle');
+      var singleTitle = singleEl ? singleEl.innerText.trim() : ((document.querySelector('meta[property="og:title"]') && document.querySelector('meta[property="og:title"]').content.trim()) || '');
 
-      var rating = document.querySelector('.RatingStatistics__rating, span[itemprop="ratingValue"]')?.innerText?.trim() || '4.2';
-      
+      var authorEl = document.querySelector('span[data-testid="name"], .ContributorLinksList a, .authorName');
+      var author = authorEl ? authorEl.innerText.trim() : ((document.querySelector('meta[property="books:author"]') && document.querySelector('meta[property="books:author"]').content.trim()) || 'Goodreads Author');
+
+      var ratingEl = document.querySelector('.RatingStatistics__rating, span[itemprop="ratingValue"]');
+      var rating = ratingEl ? ratingEl.innerText.trim() : '4.2';
+
       var listTitles = [];
       if (!singleTitle) {
         var elements = document.querySelectorAll('.listText a.bookTitle, tr.bookalike .title a, a.bookTitle span, a.bookTitle');
-        listTitles = Array.from(elements).map(function(e){ return e.innerText.trim(); }).filter(Boolean);
-        listTitles = Array.from(new Set(listTitles)).slice(0, 30); // Max 30 items
+        for (var i = 0; i < elements.length; i++) {
+          var t = elements[i].innerText.trim();
+          if (t && listTitles.indexOf(t) === -1) listTitles.push(t);
+          if (listTitles.length >= 30) break;
+        }
       }
 
       var finalTitle = singleTitle || (listTitles.length > 0 ? listTitles[0] : document.title.replace(/\\s*\\|\\s*Goodreads.*/i, '').trim());
@@ -128,13 +143,12 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
         format: 'dcmd/goodreads'
       };
 
-      // Create floating overlay to bypass popup blockers & CSP restrictions
       var oldModal = document.getElementById('lc-md-gr-modal');
       if (oldModal) oldModal.remove();
 
       var modal = document.createElement('div');
       modal.id = 'lc-md-gr-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);font-family:system-ui,sans-serif;font-size:12px;';
+      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
 
       var targetUrl = '${host}?import_goodreads=' + encodeURIComponent(titlesJson) + '&author=' + encodeURIComponent(author) + '&rating=' + encodeURIComponent(rating) + '&source=' + encodeURIComponent(window.location.href);
 
@@ -162,7 +176,6 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
         this.style.color = '#ffffff';
       };
 
-      // Also attempt direct window.open
       var win = window.open(targetUrl, '_blank');
       if (win) {
         setTimeout(function(){ if (modal) modal.remove(); }, 3000);
@@ -172,7 +185,7 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
     }
   })();`;
 
-  const bookmarkletJs = `javascript:${encodeURIComponent(rawJs.replace(/\s+/g, ' '))}`;
+  const bookmarkletJs = createExecutableBookmarkletJs(rawJs);
   return { bookmarkletJs, rawJs };
 }
 
@@ -180,19 +193,20 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
   const host = getAppTargetEndpoint();
   const rawJs = `(function(){
     try {
-      var title = document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title, meta[property="og:title"]')?.innerText?.trim()
-        || document.querySelector('meta[property="og:title"]')?.content?.trim()
-        || document.title.replace(/\\s*-\\s*(YouTube|Twitch|Kick).*/i, '').trim();
+      var titleEl = document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title');
+      var title = titleEl ? titleEl.innerText.trim() : ((document.querySelector('meta[property="og:title"]') && document.querySelector('meta[property="og:title"]').content.trim()) || document.title.replace(/\\s*-\\s*(YouTube|Twitch|Kick).*/i, '').trim());
 
-      var creator = document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1, meta[itemprop="name"]')?.innerText?.trim()
-        || document.querySelector('meta[name="author"]')?.content?.trim()
-        || 'Video Creator';
+      var creatorEl = document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1');
+      var creator = creatorEl ? creatorEl.innerText.trim() : ((document.querySelector('meta[name="author"]') && document.querySelector('meta[name="author"]').content.trim()) || 'Video Creator');
 
-      var descText = document.querySelector('#description-inline-expander, #description, .tw-rich-text, meta[property="og:description"]')?.innerText?.trim()
-        || document.querySelector('meta[property="og:description"]')?.content?.trim() || '';
+      var descEl = document.querySelector('#description-inline-expander, #description, .tw-rich-text');
+      var descText = descEl ? descEl.innerText.trim() : ((document.querySelector('meta[property="og:description"]') && document.querySelector('meta[property="og:description"]').content.trim()) || '');
 
-      var duration = document.querySelector('.ytp-time-duration, .tw-time')?.innerText?.trim() || 'N/A';
-      var thumb = document.querySelector('meta[property="og:image"]')?.content || '';
+      var durEl = document.querySelector('.ytp-time-duration, .tw-time');
+      var duration = durEl ? durEl.innerText.trim() : 'N/A';
+
+      var thumbMeta = document.querySelector('meta[property="og:image"]');
+      var thumb = thumbMeta ? thumbMeta.content : '';
 
       var dataObj = {
         title: title,
@@ -209,7 +223,7 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
 
       var modal = document.createElement('div');
       modal.id = 'lc-md-vod-modal';
-      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);font-family:system-ui,sans-serif;font-size:12px;';
+      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999999;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,sans-serif;font-size:12px;';
 
       var targetUrl = '${host}?import_vod=' + encodeURIComponent(title) + '&creator=' + encodeURIComponent(creator) + '&duration=' + encodeURIComponent(duration) + '&thumb=' + encodeURIComponent(thumb) + '&source=' + encodeURIComponent(window.location.href);
 
@@ -245,7 +259,7 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
     }
   })();`;
 
-  const bookmarkletJs = `javascript:${encodeURIComponent(rawJs.replace(/\s+/g, ' '))}`;
+  const bookmarkletJs = createExecutableBookmarkletJs(rawJs);
   return { bookmarkletJs, rawJs };
 }
 
