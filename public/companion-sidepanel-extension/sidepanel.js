@@ -1,32 +1,188 @@
-// Library Companion MD - Sovereign Side Panel Logic
+// Library Companion MD - Sovereign Side Panel & Kindle Inspector
 
 const BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
 
-let currentTab = null;
+let currentScannedData = null;
 let breakHits = [];
 
-async function updateActiveTabInfo() {
+/**
+ * Executes a live DOM scanner in the active tab to extract Kindle, Amazon, Twitch, AO3, or webnovel details
+ */
+async function scanActiveTab() {
+  const titleEl = document.getElementById('detected-title');
+  const subEl = document.getElementById('detected-sub');
+  const extraEl = document.getElementById('detected-extra');
+  const badgeEl = document.getElementById('tab-platform-badge');
+
+  titleEl.textContent = 'Scanning active page...';
+  subEl.textContent = 'Inspecting document DOM and metadata...';
+  extraEl.textContent = '';
+
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tabs && tabs.length > 0) {
-      currentTab = tabs[0];
-      const url = currentTab.url || '';
-      const title = currentTab.title || 'Untitled Page';
+    if (!tabs || tabs.length === 0) {
+      titleEl.textContent = 'No active tab found';
+      return;
+    }
 
-      const infoEl = document.getElementById('tab-info');
-      const badgeEl = document.getElementById('tab-platform-badge');
+    const tab = tabs[0];
+    const tabId = tab.id;
 
-      let platformName = 'Web Page';
-      if (url.includes('twitch.tv')) platformName = 'Twitch Stream/VOD';
-      else if (url.includes('youtube.com') || url.includes('youtu.be')) platformName = 'YouTube Video';
-      else if (url.includes('goodreads.com')) platformName = 'Goodreads';
-      else if (url.includes('novelupdates.com')) platformName = 'NovelUpdates';
+    if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://')) {
+      titleEl.textContent = 'Browser System Page';
+      subEl.textContent = tab.url || 'Cannot inspect internal browser tabs.';
+      badgeEl.textContent = 'System Tab';
+      currentScannedData = null;
+      return;
+    }
 
-      badgeEl.textContent = platformName;
-      infoEl.textContent = title;
+    // Execute in-page content scanner
+    const results = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        const url = window.location.href;
+        const docTitle = document.title;
+        let type = 'general';
+        let title = '';
+        let author = '';
+        let cover = '';
+        let progress = '';
+        let extra = {};
+
+        // 1. KINDLE CLOUD READER (read.amazon.com)
+        if (url.includes('read.amazon.com')) {
+          type = 'kindle_reader';
+          const titleEl = document.querySelector('#kindleReader_bookTitle, #top_bar_title, .top_bar_title, #header_title, .book-title');
+          title = titleEl ? titleEl.innerText.trim() : docTitle.replace(/Kindle Cloud Reader.*/i, '').trim();
+
+          const authorEl = document.querySelector('#kindleReader_author, .top_bar_author, #book_author, .author-name');
+          author = authorEl ? authorEl.innerText.trim() : 'Kindle Author';
+
+          const locEl = document.querySelector('#kindleReader_location, .location_text, #reading_progress');
+          progress = locEl ? locEl.innerText.trim() : '';
+
+          const selection = window.getSelection() ? window.getSelection().toString().trim() : '';
+          extra = { progress, highlightedQuote: selection };
+        }
+
+        // 2. AMAZON BOOK / KINDLE STORE (amazon.com)
+        else if (url.includes('amazon.') && (url.includes('/dp/') || url.includes('/gp/product/'))) {
+          type = 'amazon_kindle_book';
+          const titleEl = document.querySelector('#productTitle, #ebooksProductTitle, h1.a-size-extra-large');
+          title = titleEl ? titleEl.innerText.trim() : docTitle.replace(/Amazon\.com:?/i, '').trim();
+
+          const authorEl = document.querySelector('#bylineInfo .author a, .contributorNameID, .author a');
+          author = authorEl ? authorEl.innerText.trim() : 'Amazon Author';
+
+          const imgEl = document.querySelector('#ebooksImgBlkFront, #imgBlkFront, #landingImage');
+          cover = imgEl ? imgEl.src : '';
+
+          const ratingEl = document.querySelector('#acrPopover .a-icon-alt, span[data-hook="rating-out-of-text"]');
+          const rating = ratingEl ? ratingEl.innerText.trim() : '4.5';
+
+          const descEl = document.querySelector('#bookDescription_feature_div, #productDescription');
+          const desc = descEl ? descEl.innerText.trim().slice(0, 800) : '';
+
+          extra = { rating, cover, description: desc };
+        }
+
+        // 3. ARCHIVE OF OUR OWN (AO3)
+        else if (url.includes('archiveofourown.org/works/')) {
+          type = 'ao3_fic';
+          const titleEl = document.querySelector('h2.title');
+          title = titleEl ? titleEl.innerText.trim() : docTitle;
+
+          const authorEl = document.querySelector('a[rel="author"]');
+          author = authorEl ? authorEl.innerText.trim() : 'AO3 Author';
+
+          const tags = Array.from(document.querySelectorAll('.freeforms.tags a, .relationships.tags a')).slice(0, 8).map(a => a.innerText.trim());
+          extra = { tags };
+        }
+
+        // 4. NOVELUPDATES
+        else if (url.includes('novelupdates.com')) {
+          type = 'novelupdates';
+          const titleEl = document.querySelector('.seriestitlenew, h1.entry-title');
+          title = titleEl ? titleEl.innerText.trim() : docTitle;
+          const authorEl = document.querySelector('#showauthors a, .author');
+          author = authorEl ? authorEl.innerText.trim() : 'Asian Webnovel Author';
+        }
+
+        // 5. GOODREADS
+        else if (url.includes('goodreads.com')) {
+          type = 'goodreads';
+          const titleEl = document.querySelector('h1[data-testid="bookTitle"], #bookTitle');
+          title = titleEl ? titleEl.innerText.trim() : docTitle;
+          const authorEl = document.querySelector('span[data-testid="name"], .authorName');
+          author = authorEl ? authorEl.innerText.trim() : 'Goodreads Author';
+        }
+
+        // 6. TWITCH
+        else if (url.includes('twitch.tv')) {
+          type = 'twitch';
+          const titleEl = document.querySelector('h2[data-a-target="stream-title"], [data-a-target="video-title"], h1');
+          title = titleEl ? titleEl.innerText.trim() : docTitle;
+          const creatorEl = document.querySelector('a[data-a-target="user-channel-link"], [data-a-target="stream-broadcaster-name"]');
+          author = creatorEl ? creatorEl.innerText.trim() : 'undiisclosed';
+        }
+
+        // 7. YOUTUBE
+        else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          type = 'youtube';
+          const titleEl = document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1');
+          title = titleEl ? titleEl.innerText.trim() : docTitle;
+          const creatorEl = document.querySelector('ytd-channel-name a, #channel-name a');
+          author = creatorEl ? creatorEl.innerText.trim() : 'YouTube Creator';
+        }
+
+        // Default Fallback
+        if (!title) title = docTitle.replace(/[\-–—|].*/, '').trim() || 'Untitled Web Resource';
+        if (!author) author = 'Web Creator';
+
+        return {
+          url,
+          type,
+          title,
+          author,
+          cover,
+          progress,
+          extra
+        };
+      }
+    });
+
+    if (results && results[0] && results[0].result) {
+      const data = results[0].result;
+      currentScannedData = data;
+
+      titleEl.textContent = data.title;
+      subEl.textContent = `Author/Creator: ${data.author}`;
+
+      let badgeText = 'Web Page';
+      if (data.type === 'kindle_reader') badgeText = '📖 Kindle Cloud Reader';
+      else if (data.type === 'amazon_kindle_book') badgeText = '🛒 Amazon Kindle Store';
+      else if (data.type === 'ao3_fic') badgeText = '📜 AO3 Fanfic';
+      else if (data.type === 'novelupdates') badgeText = '🌐 NovelUpdates';
+      else if (data.type === 'goodreads') badgeText = '📖 Goodreads';
+      else if (data.type === 'twitch') badgeText = '🎬 Twitch Stream / VOD';
+      else if (data.type === 'youtube') badgeText = '▶️ YouTube Video';
+
+      badgeEl.textContent = badgeText;
+
+      if (data.progress) {
+        extraEl.textContent = `📍 Reading Location: ${data.progress}`;
+      } else if (data.extra && data.extra.rating) {
+        extraEl.textContent = `★ ${data.extra.rating} &bull; Amazon Kindle Edition`;
+      } else if (data.extra && data.extra.highlightedQuote) {
+        extraEl.textContent = `📝 Selected: "${data.extra.highlightedQuote.slice(0, 60)}..."`;
+      } else {
+        extraEl.textContent = `URL: ${data.url.slice(0, 50)}...`;
+      }
     }
   } catch (err) {
-    console.error('Failed to query active tab:', err);
+    console.error('Scan error:', err);
+    titleEl.textContent = 'Active Tab Detected';
+    subEl.textContent = 'Click "Import" to save current tab to your Sovereign Vault.';
   }
 }
 
@@ -66,7 +222,7 @@ function getCurrentFormattedTime() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateActiveTabInfo();
+  scanActiveTab();
 
   // Tab switching
   const tabs = document.querySelectorAll('.tab-btn');
@@ -86,24 +242,43 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.create({ url: BASE_VAULT_URL });
   });
 
-  // Refresh tab
-  document.getElementById('btn-refresh-tab')?.addEventListener('click', updateActiveTabInfo);
+  // Rescan active tab
+  document.getElementById('btn-refresh-tab')?.addEventListener('click', scanActiveTab);
 
   // Grab active tab to vault
   document.getElementById('btn-grab-active')?.addEventListener('click', () => {
-    if (!currentTab || !currentTab.url) return;
-    const url = currentTab.url;
-    const title = currentTab.title || 'Stream Video';
+    if (!currentScannedData) {
+      scanActiveTab().then(() => {
+        if (currentScannedData) openVaultWithData(currentScannedData);
+      });
+      return;
+    }
+    openVaultWithData(currentScannedData);
+  });
 
-    let targetUrl = `${BASE_VAULT_URL}?import_vod=${encodeURIComponent(title)}&source=${encodeURIComponent(url)}`;
-    if (url.includes('novelupdates.com')) {
-      targetUrl = `${BASE_VAULT_URL}?import_novel=${encodeURIComponent(title)}&source=${encodeURIComponent(url)}`;
-    } else if (url.includes('goodreads.com')) {
-      targetUrl = `${BASE_VAULT_URL}?import_goodreads=${encodeURIComponent(JSON.stringify([title]))}&source=${encodeURIComponent(url)}`;
+  // Grab Kindle button
+  document.getElementById('btn-grab-kindle')?.addEventListener('click', () => {
+    scanActiveTab().then(() => {
+      if (currentScannedData) {
+        openVaultWithData(currentScannedData);
+      }
+    });
+  });
+
+  function openVaultWithData(data) {
+    let targetUrl = `${BASE_VAULT_URL}?import_novel=${encodeURIComponent(data.title)}&author=${encodeURIComponent(data.author)}&source=${encodeURIComponent(data.url)}`;
+    
+    if (data.type === 'twitch' || data.type === 'youtube') {
+      targetUrl = `${BASE_VAULT_URL}?import_vod=${encodeURIComponent(data.title)}&creator=${encodeURIComponent(data.author)}&source=${encodeURIComponent(data.url)}`;
+    } else if (data.type === 'goodreads') {
+      targetUrl = `${BASE_VAULT_URL}?import_goodreads=${encodeURIComponent(JSON.stringify([data.title]))}&author=${encodeURIComponent(data.author)}&source=${encodeURIComponent(data.url)}`;
+    } else if (data.type === 'kindle_reader' || data.type === 'amazon_kindle_book') {
+      const quote = (data.extra && data.extra.highlightedQuote) ? encodeURIComponent(data.extra.highlightedQuote) : '';
+      targetUrl = `${BASE_VAULT_URL}?import_novel=${encodeURIComponent(data.title)}&author=${encodeURIComponent(data.author)}&source=${encodeURIComponent(data.url)}&quote=${quote}`;
     }
 
     chrome.tabs.create({ url: targetUrl });
-  });
+  }
 
   // Log Hit
   document.getElementById('btn-add-hit')?.addEventListener('click', () => {
@@ -127,8 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Save Complete Break Sidecar
   document.getElementById('btn-export-break')?.addEventListener('click', () => {
-    const url = (currentTab && currentTab.url) || 'https://www.twitch.tv/undiisclosed';
-    const streamTitle = (currentTab && currentTab.title) || 'undiisclosed TCG Break';
+    const url = (currentScannedData && currentScannedData.url) || 'https://www.twitch.tv/undiisclosed';
+    const streamTitle = (currentScannedData && currentScannedData.title) || 'undiisclosed TCG Break';
     const chaptersText = breakHits.map(h => `${h.time} - ${h.title}`).join('\n');
 
     const targetUrl = `${BASE_VAULT_URL}?import_vod=${encodeURIComponent(streamTitle)}&creator=undiisclosed&source=${encodeURIComponent(url)}&chapters=${encodeURIComponent(chaptersText)}`;

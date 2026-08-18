@@ -118,6 +118,13 @@
     .btn-primary:hover {
       background: #4f46e5;
     }
+    .btn-kindle {
+      background: #f59e0b;
+      color: #0f172a;
+    }
+    .btn-kindle:hover {
+      background: #d97706;
+    }
     .btn-break {
       background: #ef4444;
       color: #fff;
@@ -175,7 +182,7 @@
   <header>
     <div class="brand">
       <span>📚 LC-MD</span>
-      <span class="badge">SIDE PANEL</span>
+      <span class="badge">LIVE COMPANION</span>
     </div>
     <button id="btn-open-full" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">
       ↗ Full Vault
@@ -183,34 +190,60 @@
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="tab-quick">⚡ Quick Grab &amp; Break</button>
+    <button class="tab-btn active" data-tab="tab-quick">⚡ Live Page Inspector</button>
+    <button class="tab-btn" data-tab="tab-break">🎴 TCG Break Logger</button>
     <button class="tab-btn" data-tab="tab-app">📱 Live Vault App</button>
   </nav>
 
   <main>
-    <!-- TAB 1: QUICK GRAB & LIVE TCG BREAK TRACKER -->
+    <!-- TAB 1: LIVE PAGE INSPECTOR (KINDLE, AMAZON, TWITCH, WEBNOVELS) -->
     <div id="tab-quick" class="tab-content" style="display: flex; flex-direction: column; gap: 12px;">
       
-      <!-- Current Tab Context Card -->
+      <!-- Live Detected Context Card -->
       <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
         <div class="card-title">
-          <span>🎯 Active Browser Tab</span>
-          <span id="tab-platform-badge" class="pill">Detecting...</span>
+          <span>🎯 Active Window / Tab Scanner</span>
+          <span id="tab-platform-badge" class="pill">Scanning...</span>
         </div>
-        <div id="tab-info" style="font-size: 12px; color: #94a3b8; word-break: break-word;">
-          Checking current active tab...
+        
+        <!-- Detected Details Container -->
+        <div id="tab-detected-box" style="background: #050811; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+          <div id="detected-title" style="font-weight: bold; color: #f1f5f9; font-size: 12px; word-break: break-word;">
+            Checking active window...
+          </div>
+          <div id="detected-sub" style="font-size: 11px; color: #94a3b8;">
+            Click 'Scan Active Window' below to extract details.
+          </div>
+          <div id="detected-extra" style="font-size: 10px; color: #818cf8;"></div>
         </div>
+
         <div style="display: flex; gap: 6px;">
           <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;">
-            📥 Grab to Vault
+            📥 Import Book / Video to Vault
           </button>
-          <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;">
-            🔄
+          <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;" title="Re-scan active window">
+            🔄 Scan
           </button>
         </div>
       </div>
 
-      <!-- Live TCG Break Logger Card -->
+      <!-- Live Kindle Reading Tracker Section -->
+      <div class="card" style="border-color: rgba(245, 158, 11, 0.4);">
+        <div class="card-title">
+          <span style="color: #fbbf24;">📖 Kindle &amp; Web Reader Sync</span>
+          <span class="pill" style="color: #fbbf24; background: rgba(245, 158, 11, 0.15);">read.amazon.com</span>
+        </div>
+        <p style="font-size: 11px; color: #94a3b8;">
+          Reading Kindle in the main window? The dock captures your book title, author, reading progress, and selected text highlights with 1 click!
+        </p>
+        <button id="btn-grab-kindle" class="btn btn-kindle" style="width: 100%;">
+          ✨ Grab Kindle Details &amp; Quote to Sidecar
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: LIVE TCG BREAK LOGGER -->
+    <div id="tab-break" class="tab-content hidden" style="display: flex; flex-direction: column; gap: 12px;">
       <div class="card" style="border-color: rgba(239, 68, 68, 0.4);">
         <div class="card-title">
           <span style="color: #f87171;">🎴 Live TCG Break Logger</span>
@@ -227,7 +260,7 @@
           </button>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;" id="hits-list">
+        <div style="display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto;" id="hits-list">
           <div style="font-size: 11px; color: #64748b; font-style: italic;">No card pulls logged yet. Click '+ Log Hit' as packs open!</div>
         </div>
 
@@ -237,7 +270,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: EMBEDDED LIVE VAULT APP -->
+    <!-- TAB 3: EMBEDDED LIVE VAULT APP -->
     <div id="tab-app" class="tab-content hidden" style="flex: 1; height: 100%;">
       <div id="view-app">
         <iframe id="vault-iframe" class="app-frame" src="http://artkitty.net/meow/lcmd/"></iframe>
