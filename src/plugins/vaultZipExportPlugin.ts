@@ -1,16 +1,19 @@
 import JSZip from 'jszip';
 import type { Book } from '../types/resonance';
 import type { MediaItem } from '../types/mediaTypes';
+import type { CloudAccount } from '../types/cloudAccounts';
 import { slugifyTitle } from './zettelkastenSerialPlugin';
 
 /**
  * Exports the entire Sovereign Vault as a structured ZIP archive
  * with a separate /media/ folder containing all cropped card covers, 
- * uncropped original full-size sheet uploads, and reaction attachments.
+ * uncropped original full-size sheet uploads, reaction attachments,
+ * and optional encrypted/saved cloud accounts configuration.
  */
 export async function exportVaultZipWithMedia(
   books: Book[],
-  mediaItems: MediaItem[] = []
+  mediaItems: MediaItem[] = [],
+  cloudAccounts: CloudAccount[] = []
 ): Promise<Blob> {
   const zip = new JSZip();
 
@@ -22,6 +25,7 @@ export async function exportVaultZipWithMedia(
     exported_at: new Date().toISOString(),
     total_items: books.length,
     media_count: 0,
+    cloud_accounts_count: cloudAccounts.length,
     items: [] as any[]
   };
 
@@ -130,6 +134,11 @@ export async function exportVaultZipWithMedia(
 
   manifest.media_count = mediaCount;
   zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+  // Include Cloud Accounts Configuration
+  if (cloudAccounts && cloudAccounts.length > 0) {
+    zip.file('cloud_accounts.json', JSON.stringify(cloudAccounts, null, 2));
+  }
 
   // Generate ZIP Blob
   return await zip.generateAsync({

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Book } from '../types/resonance';
 import type { MediaItem } from '../types/mediaTypes';
+import type { CloudAccount } from '../types/cloudAccounts';
 import { generatePAGroceryListMarkdown } from '../plugins/paSourcingPlugin';
 import { exportVaultToGoogleSheetsCsv } from '../plugins/googleSheetsExportPlugin';
 import { generateStandaloneShowcaseHtml } from '../plugins/htmlPublisherPlugin';
@@ -24,6 +25,7 @@ interface UnifiedExportShareModalProps {
   books: Book[];
   activeBook: Book | null;
   mediaItems: MediaItem[];
+  cloudAccounts?: CloudAccount[];
   webdavConfig?: any;
   onClose: () => void;
   onExportObsidian?: (book: Book) => void;
@@ -34,11 +36,13 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
   books,
   activeBook,
   mediaItems,
+  cloudAccounts = [],
   onClose,
   onExportObsidian
 }) => {
   const [activeTab, setActiveTab] = useState<'vault_zip' | 'pa_sourcing' | 'google_sheets' | 'html_publish' | 'obsidian' | 'qr_share'>('vault_zip');
   const [isZipping, setIsZipping] = useState(false);
+  const [includeCloudAccounts, setIncludeCloudAccounts] = useState(true);
   
   // PA Sourcing State
   const [copiedPa, setCopiedPa] = useState(false);
@@ -254,13 +258,24 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between flex-wrap gap-3">
-                <div>
+                <div className="space-y-1">
                   <span className="font-bold text-slate-200 block text-xs">
                     Ready to Package {books.length} Vault Sidecars &amp; Attached Media
                   </span>
-                  <span className="text-slate-500 text-[11px]">
+                  <span className="text-slate-500 text-[11px] block">
                     Includes <code>/Sidecars/</code>, <code>/media/</code>, and <code>manifest.json</code>.
                   </span>
+                  {cloudAccounts.length > 0 && (
+                    <label className="flex items-center space-x-2 text-xs text-amber-300 cursor-pointer pt-1">
+                      <input
+                        type="checkbox"
+                        checked={includeCloudAccounts}
+                        onChange={(e) => setIncludeCloudAccounts(e.target.checked)}
+                        className="rounded bg-slate-900 border-slate-700 text-amber-500 accent-amber-500"
+                      />
+                      <span>Include {cloudAccounts.length} Configured Cloud Accounts (<code>cloud_accounts.json</code>)</span>
+                    </label>
+                  )}
                 </div>
 
                 <button
@@ -268,7 +283,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
                   onClick={async () => {
                     setIsZipping(true);
                     try {
-                      const zipBlob = await exportVaultZipWithMedia(books, mediaItems);
+                      const zipBlob = await exportVaultZipWithMedia(books, mediaItems, includeCloudAccounts ? cloudAccounts : []);
                       const url = URL.createObjectURL(zipBlob);
                       const link = document.createElement('a');
                       link.href = url;

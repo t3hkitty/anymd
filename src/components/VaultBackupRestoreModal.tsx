@@ -5,6 +5,7 @@ import {
   createVaultLockPayload,
   verifyAndUnlockVaultSession
 } from '../plugins/vaultSessionLockPlugin';
+import type { CloudAccount } from '../types/cloudAccounts';
 import {
   X,
   Archive,
@@ -18,23 +19,28 @@ import {
   ShieldCheck,
   Lock,
   Unlock,
-  RefreshCw
+  RefreshCw,
+  Cloud
 } from 'lucide-react';
 
 interface VaultBackupRestoreModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRestoreBooks: (newBooks: Book[], overwrite?: boolean) => void;
+  onRestoreCloudAccounts?: (accounts: CloudAccount[]) => void;
   activeBookId?: string;
   allBooks: Book[];
+  cloudAccounts?: CloudAccount[];
 }
 
 export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = ({
   isOpen,
   onClose,
   onRestoreBooks,
+  onRestoreCloudAccounts,
   activeBookId,
-  allBooks
+  allBooks,
+  cloudAccounts = []
 }) => {
   const [activeTab, setActiveTab] = useState<'zip_import' | 'folder_pin_lock'>('zip_import');
 
@@ -79,7 +85,13 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
   const handleCommitZipRestore = () => {
     if (!zipResult || zipResult.books.length === 0) return;
     onRestoreBooks(zipResult.books, overwriteLibrary);
-    alert(`✓ Successfully restored ${zipResult.importedCount} vault items and ${zipResult.mediaRestoredCount} media files!`);
+
+    if (zipResult.cloudAccounts && zipResult.cloudAccounts.length > 0 && onRestoreCloudAccounts) {
+      onRestoreCloudAccounts(zipResult.cloudAccounts);
+    }
+
+    const cloudMsg = zipResult.cloudAccounts?.length ? ` and ${zipResult.cloudAccounts.length} Cloud Accounts` : '';
+    alert(`✓ Successfully restored ${zipResult.importedCount} vault items, ${zipResult.mediaRestoredCount} media files${cloudMsg}!`);
     onClose();
   };
 
@@ -151,6 +163,9 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
         if (res.sessionData?.books && Array.isArray(res.sessionData.books)) {
           onRestoreBooks(res.sessionData.books, false);
         }
+        if (res.sessionData?.cloudAccounts && Array.isArray(res.sessionData.cloudAccounts) && onRestoreCloudAccounts) {
+          onRestoreCloudAccounts(res.sessionData.cloudAccounts);
+        }
       } else {
         setLockError(res.error || 'Incorrect PIN.');
       }
@@ -173,7 +188,8 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
       const lockPayload = await createVaultLockPayload(userPin, {
         books: allBooks,
         activeBookId: activeBookId,
-        vaultName: `${selectedFolderName || 'Sovereign'} Vault`
+        vaultName: `${selectedFolderName || 'Sovereign'} Vault`,
+        cloudAccounts: cloudAccounts
       });
 
       if (folderHandle && 'getFileHandle' in folderHandle) {
@@ -307,8 +323,11 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       <span>Archive Successfully Analyzed</span>
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-[10px] text-amber-300 font-bold">
-                      {zipResult.importedCount} Items &bull; {zipResult.mediaRestoredCount} Images
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-[10px] text-amber-300 font-bold flex items-center space-x-1.5">
+                      <span>{zipResult.importedCount} Items &bull; {zipResult.mediaRestoredCount} Images</span>
+                      {zipResult.cloudAccounts && zipResult.cloudAccounts.length > 0 && (
+                        <span className="text-cyan-300">&bull; {zipResult.cloudAccounts.length} Cloud Accounts</span>
+                      )}
                     </span>
                   </div>
 
@@ -458,7 +477,15 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
 
                   {lockStatus === 'unsealed' && (
                     <div className="space-y-3 pt-2">
-                      <label className="text-xs text-slate-300 font-bold block">Set a Sovereign PIN to Seal this Folder:</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-slate-300 font-bold block">Set a Sovereign PIN to Seal this Folder:</label>
+                        {cloudAccounts.length > 0 && (
+                          <span className="text-[10px] text-cyan-300 flex items-center space-x-1 font-mono">
+                            <Cloud className="w-3 h-3 text-cyan-400" />
+                            <span>Seals {cloudAccounts.length} Cloud Accounts</span>
+                          </span>
+                        )}
+                      </div>
                       <div className="flex gap-2">
                         <input
                           type="password"

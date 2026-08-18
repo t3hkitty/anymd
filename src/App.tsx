@@ -1864,6 +1864,7 @@ format: "dcmd/goodreads"
         books={books}
         activeBook={activeBook}
         mediaItems={SAMPLE_MEDIA_ITEMS}
+        cloudAccounts={cloudAccounts}
         webdavConfig={pluginState.webdavConfig}
         onClose={() => setIsUnifiedExportOpen(false)}
         onExportObsidian={handleExportObsidian}
@@ -1995,6 +1996,11 @@ format: "dcmd/goodreads"
         onClose={() => setIsVaultRestoreOpen(false)}
         activeBookId={activeBookId}
         allBooks={books}
+        cloudAccounts={cloudAccounts}
+        onRestoreCloudAccounts={(restored) => {
+          setCloudAccounts(restored);
+          localStorage.setItem('lc_md_cloud_accounts', JSON.stringify(restored));
+        }}
         onRestoreBooks={(newBooks, overwrite) => {
           if (overwrite) {
             handleUpdateBooks(() => newBooks);

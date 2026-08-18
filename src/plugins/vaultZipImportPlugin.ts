@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import type { Book, ResonanceEntry } from '../types/resonance';
+import type { CloudAccount } from '../types/cloudAccounts';
 
 export interface VaultZipImportResult {
   books: Book[];
@@ -7,6 +8,7 @@ export interface VaultZipImportResult {
   importedCount: number;
   mediaRestoredCount: number;
   rawFilenames: string[];
+  cloudAccounts?: CloudAccount[];
 }
 
 /**
@@ -184,7 +186,19 @@ export async function importVaultZipArchive(zipFileOrBlob: Blob | File): Promise
     }
   }
 
-  // 3. Process all .companion.md or .md sidecar files
+  // 3. Read optional cloud_accounts.json
+  let cloudAccounts: CloudAccount[] = [];
+  const cloudAccountsFile = zip.file('cloud_accounts.json');
+  if (cloudAccountsFile) {
+    try {
+      const jsonText = await cloudAccountsFile.async('text');
+      cloudAccounts = JSON.parse(jsonText);
+    } catch (e) {
+      console.warn('Failed to parse cloud_accounts.json:', e);
+    }
+  }
+
+  // 4. Process all .companion.md or .md sidecar files
   const books: Book[] = [];
   const sidecarEntries: { path: string; file: JSZip.JSZipObject }[] = [];
 
@@ -210,6 +224,7 @@ export async function importVaultZipArchive(zipFileOrBlob: Blob | File): Promise
     manifest,
     importedCount: books.length,
     mediaRestoredCount,
-    rawFilenames
+    rawFilenames,
+    cloudAccounts
   };
 }

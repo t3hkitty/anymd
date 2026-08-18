@@ -64,7 +64,7 @@ export async function derivePinKey(pin: string, salt: Uint8Array): Promise<{ has
  */
 export async function createVaultLockPayload(
   pin: string,
-  sessionData: { books: any[]; activeBookId?: string; vaultName?: string }
+  sessionData: { books: any[]; activeBookId?: string; vaultName?: string; cloudAccounts?: any[] }
 ): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
