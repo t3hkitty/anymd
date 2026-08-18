@@ -1,0 +1,9 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Route /api/webdav-proxy to php proxy
+    RewriteRule ^api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
+    RewriteRule ^lcmd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
+    RewriteRule ^meow/lcmd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
+</IfModule>

@@ -19,6 +19,47 @@ export interface RemoteFolderBrowseResult {
   error?: string;
 }
 
+/**
+ * Universal Proxy Fetcher supporting local dev server middleware and StackCP PHP proxy
+ */
+export async function proxyFetch(
+  targetUrl: string,
+  options: { method?: string; headers?: Record<string, string>; body?: any } = {}
+): Promise<Response> {
+  const method = options.method || 'GET';
+  const headers: Record<string, string> = {
+    'X-Target-Url': targetUrl,
+    ...(options.headers || {})
+  };
+
+  let proxyUrl = '/api/webdav-proxy';
+  if (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd')) {
+    const basePath = window.location.pathname.split('/lcmd')[0];
+    proxyUrl = `${basePath}/lcmd/api/webdav-proxy.php`;
+  }
+
+  try {
+    const res = await fetch(proxyUrl, {
+      method,
+      headers,
+      body: options.body
+    });
+
+    if (res.ok || res.status === 207 || res.status === 200 || res.status === 401 || res.status === 403 || res.status === 404) {
+      return res;
+    }
+
+    // Fallback attempt to root proxy path
+    if (res.status === 404 && proxyUrl.endsWith('.php')) {
+      return await fetch('/api/webdav-proxy', { method, headers, body: options.body });
+    }
+    return res;
+  } catch (err) {
+    // If proxy network failed, try direct fetch
+    return await fetch(targetUrl, { method, headers: options.headers, body: options.body });
+  }
+}
+
 export async function fetchRemoteFolderContents(
   account: CloudAccount,
   folderPath: string = '/'
@@ -154,9 +195,10 @@ export async function fetchRemoteFolderContents(
     }
   }
 
-  // 3. TORBOX REST API v1 BROWSER (Torrents, Debrid WebDL, Usenet)
+  // 3. TORBOX REST API v1 & WEBDAV BROWSER
   if (account.presetId === 'torbox' || targetUrl.includes('torbox.app')) {
-    if (!token) {
+    const apiKey = (account.apiKey || account.tokenOrPassword || '').trim();
+    if (!apiKey) {
       return {
         currentPath: cleanPath,
         items: [],
@@ -164,14 +206,58 @@ export async function fetchRemoteFolderContents(
       };
     }
 
+    // Attempt WebDAV if endpoint is webdav.torbox.app
+    if (targetUrl.includes('webdav.torbox.app')) {
+      try {
+        const cleanServer = targetUrl.replace(/\/$/, '');
+        const cleanDir = cleanPath.replace(/^\//, '');
+        const fullUrl = cleanDir ? `${cleanServer}/${cleanDir}` : cleanServer;
+
+        const username = account.username || 'torbox';
+        const creds = `${username}:${apiKey}`;
+        const authHeader = `Basic ${btoa(creds)}`;
+
+        const proxyRes = await proxyFetch(fullUrl, {
+          method: 'PROPFIND',
+          headers: {
+            'Depth': '1',
+            'Content-Type': 'application/xml',
+            'Authorization': authHeader
+          }
+        });
+
+        if (proxyRes.ok || proxyRes.status === 207 || proxyRes.status === 200) {
+          const xmlText = await proxyRes.text();
+          const items = parseWebDAVDirectoryXml(xmlText);
+          const mapped: RemoteNodeItem[] = items.map((it, idx) => ({
+            id: `tb-wd-${idx}-${it.filename}`,
+            name: it.filename.replace(/\/$/, '').split('/').pop() || it.filename,
+            path: it.filename,
+            isDir: it.isDir,
+            size: it.size,
+            lastModified: it.lastModified
+          }));
+
+          return {
+            currentPath: cleanPath,
+            items: mapped,
+            parentPath: cleanPath === '/' ? undefined : '/'
+          };
+        }
+      } catch (e) {
+        console.warn('TorBox WebDAV attempt failed, falling back to REST API via proxy:', e);
+      }
+    }
+
+    // TorBox REST API via Server-Side Proxy (Bypasses Cloudflare CORS)
     try {
       const items: RemoteNodeItem[] = [];
 
       // 1. Fetch Torrents
       try {
-        const torRes = await fetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
+        const torRes = await proxyFetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${apiKey}` }
         });
 
         if (torRes.ok) {
@@ -181,7 +267,7 @@ export async function fetchRemoteFolderContents(
               t.files.forEach((f: any) => {
                 items.push({
                   id: `tb-tor-${t.id}-${f.id}`,
-                  name: f.name || `${t.name} (File #${f.id})`,
+                  name: f.name || f.short_name || `${t.name} (File #${f.id})`,
                   path: `torrents/${t.id}/${f.id}`,
                   isDir: false,
                   size: f.size || t.size || 0,
@@ -202,14 +288,14 @@ export async function fetchRemoteFolderContents(
           });
         }
       } catch (e) {
-        console.warn('TorBox torrents fetch failed:', e);
+        console.warn('TorBox torrents proxy fetch failed:', e);
       }
 
       // 2. Fetch Web Downloads (Debrid)
       try {
-        const webRes = await fetch('https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true', {
+        const webRes = await proxyFetch('https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true', {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${apiKey}` }
         });
 
         if (webRes.ok) {
@@ -227,14 +313,14 @@ export async function fetchRemoteFolderContents(
           });
         }
       } catch (e) {
-        console.warn('TorBox webdl fetch failed:', e);
+        console.warn('TorBox webdl proxy fetch failed:', e);
       }
 
       // 3. Fetch Usenet
       try {
-        const useRes = await fetch('https://api.torbox.app/v1/api/usenet/mylist?bypass_cache=true', {
+        const useRes = await proxyFetch('https://api.torbox.app/v1/api/usenet/mylist?bypass_cache=true', {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${apiKey}` }
         });
 
         if (useRes.ok) {
@@ -252,10 +338,9 @@ export async function fetchRemoteFolderContents(
           });
         }
       } catch (e) {
-        console.warn('TorBox usenet fetch failed:', e);
+        console.warn('TorBox usenet proxy fetch failed:', e);
       }
 
-      // If user account is valid, return items cleanly with NO error even if empty (0 items)
       return {
         currentPath: '/',
         items,
@@ -265,12 +350,12 @@ export async function fetchRemoteFolderContents(
       return {
         currentPath: '/',
         items: [],
-        error: `TorBox API Error: ${err.message || 'Failed to list TorBox downloads.'}`
+        error: `TorBox Error: ${err.message || 'Failed to list TorBox downloads.'}`
       };
     }
   }
 
-  // 4. WEBDAV DIRECTORY PROPFIND BROWSER (Filejump, Koofr, Nextcloud, rclone)
+  // 4. STANDARD WEBDAV PROPFIND (Filejump, Koofr, Nextcloud, rclone)
   try {
     const cleanServer = targetUrl.replace(/\/$/, '');
     const cleanDir = cleanPath.replace(/^\//, '');
@@ -282,54 +367,63 @@ export async function fetchRemoteFolderContents(
       'X-Target-Url': fullUrl
     };
 
-    if (account.apiKey) {
+    const username = account.username || (targetUrl.includes('torbox.app') ? 'torbox' : '');
+    const password = account.apiKey || account.tokenOrPassword || '';
+
+    if (account.apiKey && !targetUrl.includes('torbox.app')) {
       headers['Authorization'] = `Bearer ${account.apiKey}`;
-    } else if (account.username || account.tokenOrPassword) {
-      const creds = `${account.username}:${account.tokenOrPassword}`;
+    } else if (username || password) {
+      const creds = `${username}:${password}`;
       headers['Authorization'] = `Basic ${btoa(creds)}`;
     }
 
-    const proxyRes = await fetch('/api/webdav-proxy', {
+    const proxyRes = await proxyFetch(fullUrl, {
       method: 'PROPFIND',
       headers
     });
 
-    if (!proxyRes.ok && proxyRes.status !== 207 && proxyRes.status !== 200) {
+    if (proxyRes.ok || proxyRes.status === 207 || proxyRes.status === 200) {
+      const xmlText = await proxyRes.text();
+      const items = parseWebDAVDirectoryXml(xmlText);
+
+      const mapped: RemoteNodeItem[] = items.map((it, idx) => ({
+        id: `node-${idx}-${it.filename}`,
+        name: it.filename.replace(/\/$/, '').split('/').pop() || it.filename,
+        path: it.filename,
+        isDir: it.isDir,
+        size: it.size,
+        lastModified: it.lastModified
+      }));
+
+      const pathParts = cleanPath.split('/').filter(Boolean);
+      pathParts.pop();
+      const parent = pathParts.length > 0 ? `/${pathParts.join('/')}` : '/';
+
       return {
         currentPath: cleanPath,
-        items: [],
-        error: `WebDAV server returned HTTP ${proxyRes.status}: ${proxyRes.statusText} for directory '${fullUrl}'. (Tip: Check your WebDAV App Password in Cloud Accounts or use Local Synced Directory picker below.)`
+        items: mapped,
+        parentPath: cleanPath === '/' ? undefined : parent
       };
     }
 
-    const xmlText = await proxyRes.text();
-    const parsedWebDAVItems = parseWebDAVDirectoryXml(xmlText);
-
-    const items: RemoteNodeItem[] = parsedWebDAVItems
-      .filter(item => item.filename !== cleanDir.split('/').pop() && item.filename !== '' && item.filename !== '.')
-      .map(item => ({
-        id: `${cleanPath}/${item.filename}`,
-        name: item.filename,
-        path: cleanPath === '/' ? `/${item.filename}` : `${cleanPath}/${item.filename}`,
-        isDir: item.isDir,
-        size: item.size,
-        lastModified: item.lastModified
-      }));
-
-    const pathParts = cleanPath.split('/').filter(Boolean);
-    pathParts.pop();
-    const parent = pathParts.length > 0 ? `/${pathParts.join('/')}` : '/';
+    if (proxyRes.status === 401) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: `WebDAV server returned HTTP 401: Unauthorized for directory '${fullUrl}'. (Tip: Check your WebDAV App Password in Cloud Accounts or use Local Synced Directory picker below.)`
+      };
+    }
 
     return {
       currentPath: cleanPath,
-      items,
-      parentPath: cleanPath === '/' ? undefined : parent
+      items: [],
+      error: `WebDAV Proxy returned HTTP ${proxyRes.status}: ${proxyRes.statusText}`
     };
   } catch (err: any) {
     return {
       currentPath: cleanPath,
       items: [],
-      error: `WebDAV Connection Failed: ${err.message || 'Check network / CORS proxy.'}`
+      error: `Failed to inspect WebDAV directory: ${err.message || 'Network error'}`
     };
   }
 }

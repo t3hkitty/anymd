@@ -117,7 +117,7 @@ export async function fetchWebDAVDirectoryItems(
     }
   }
 
-  // Direct TorBox REST API v1 Directory Fetching
+  // Direct TorBox REST API v1 & WebDAV Directory Fetching
   if (account?.presetId === 'torbox' || fullUrl.includes('torbox.app')) {
     const apiKey = (account?.apiKey || account?.tokenOrPassword || '').trim();
     if (!apiKey) {
@@ -128,13 +128,52 @@ export async function fetchWebDAVDirectoryItems(
       };
     }
 
+    // Try WebDAV first if configured as webdav.torbox.app
+    if (fullUrl.includes('webdav.torbox.app')) {
+      try {
+        const username = account?.username || 'torbox';
+        const credentials = `${username}:${apiKey}`;
+        const authHeader = `Basic ${btoa(credentials)}`;
+
+        const proxyRes = await fetch(
+          (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
+            ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+            : '/api/webdav-proxy',
+          {
+            method: 'PROPFIND',
+            headers: {
+              'Depth': '1',
+              'Content-Type': 'application/xml',
+              'X-Target-Url': fullUrl,
+              'Authorization': authHeader
+            }
+          }
+        );
+
+        if (proxyRes.ok || proxyRes.status === 207 || proxyRes.status === 200) {
+          const xmlText = await proxyRes.text();
+          const items = parseWebDAVDirectoryXml(xmlText);
+          return { items, xmlText, statusCode: proxyRes.status };
+        }
+      } catch (e) {
+        console.warn('TorBox WebDAV PROPFIND failed, trying REST API fallback:', e);
+      }
+    }
+
+    // TorBox REST API v1 via Server Proxy
     try {
       const items: WebDAVFileItem[] = [];
+      const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
+        ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+        : '/api/webdav-proxy';
 
       // 1. Fetch torrents and inner files
-      const torRes = await fetch('https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true', {
+      const torRes = await fetch(proxyUrl, {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${apiKey}` }
+        headers: {
+          'X-Target-Url': 'https://api.torbox.app/v1/api/torrents/mylist?bypass_cache=true',
+          'Authorization': `Bearer ${apiKey}`
+        }
       });
 
       if (torRes.ok) {
@@ -143,7 +182,7 @@ export async function fetchWebDAVDirectoryItems(
           if (t.files && t.files.length > 0) {
             t.files.forEach((f: any) => {
               items.push({
-                filename: f.name || `${t.name}/file_${f.id}`,
+                filename: f.name || f.short_name || `${t.name}/file_${f.id}`,
                 size: f.size || t.size || 0,
                 lastModified: t.updated_at ? t.updated_at.split('T')[0] : new Date().toISOString().split('T')[0],
                 isDir: false
@@ -161,9 +200,12 @@ export async function fetchWebDAVDirectoryItems(
       }
 
       // 2. Fetch web downloads (debrid)
-      const webRes = await fetch('https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true', {
+      const webRes = await fetch(proxyUrl, {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${apiKey}` }
+        headers: {
+          'X-Target-Url': 'https://api.torbox.app/v1/api/webdl/mylist?bypass_cache=true',
+          'Authorization': `Bearer ${apiKey}`
+        }
       });
 
       if (webRes.ok) {
@@ -196,15 +238,22 @@ export async function fetchWebDAVDirectoryItems(
     'X-Target-Url': fullUrl
   };
 
-  if (account?.apiKey) {
+  const username = account?.username || (fullUrl.includes('torbox.app') ? 'torbox' : '');
+  const password = account?.apiKey || account?.tokenOrPassword || '';
+
+  if (account?.apiKey && !fullUrl.includes('torbox.app')) {
     headers['Authorization'] = `Bearer ${account.apiKey}`;
-  } else if (account?.username || account?.tokenOrPassword) {
-    const credentials = `${account.username}:${account.tokenOrPassword}`;
+  } else if (username || password) {
+    const credentials = `${username}:${password}`;
     headers['Authorization'] = `Basic ${btoa(credentials)}`;
   }
 
   try {
-    const proxyRes = await fetch('/api/webdav-proxy', {
+    const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
+      ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+      : '/api/webdav-proxy';
+
+    const proxyRes = await fetch(proxyUrl, {
       method: 'PROPFIND',
       headers
     });
