@@ -230,9 +230,11 @@
       <span>📚 LC-MD</span>
       <span class="badge">MYBLACKBOX DOCK</span>
     </div>
-    <button id="btn-open-full" class="btn btn-secondary" style="padding: 3px 7px; font-size: 10.5px;">
-      ↗ Full Vault
-    </button>
+    <div style="display: flex; gap: 4px;">
+      <button id="btn-open-full" class="btn btn-secondary" style="padding: 3px 7px; font-size: 10.5px;">
+        ↗ Full Vault
+      </button>
+    </div>
   </header>
 
   <nav class="nav-tabs">
@@ -240,6 +242,7 @@
     <button class="tab-btn" data-tab="tab-sidecar">⚡ Active Sidecar</button>
     <button class="tab-btn" data-tab="tab-break">🎴 TCG Break</button>
     <button class="tab-btn" data-tab="tab-app">📱 Live App</button>
+    <button class="tab-btn" data-tab="tab-settings">⚙️ Host</button>
   </nav>
 
   <main>
@@ -257,7 +260,6 @@
           </span>
         </div>
 
-        <!-- Timer Display & Controls -->
         <div style="display: flex; align-items: center; justify-content: space-between; background: #050811; padding: 10px 14px; border-radius: 10px; border: 1px solid #1e293b;">
           <div>
             <div style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase;">Next Check-in in</div>
@@ -276,7 +278,6 @@
           </div>
         </div>
 
-        <!-- Timer Interval Selector -->
         <div style="display: flex; align-items: center; gap: 4px;">
           <span style="font-size: 10px; color: #64748b;">Interval:</span>
           <div style="display: flex; gap: 4px; flex: 1;">
@@ -295,7 +296,6 @@
           <span>⚡ What are you doing right now? (WYD)</span>
         </div>
 
-        <!-- Activity Tags -->
         <div style="display: flex; gap: 4px; flex-wrap: wrap;" id="wyd-activity-tags">
           <button class="tag-chip active" data-type="coding">💻 Coding</button>
           <button class="tag-chip" data-type="reading">📖 Reading</button>
@@ -415,6 +415,49 @@
         <iframe id="vault-iframe" class="app-frame" src="http://artkitty.net/meow/lcmd/"></iframe>
       </div>
     </div>
+
+    <!-- TAB 5: SETTINGS & CUSTOM VAULT HOST -->
+    <div id="tab-settings" class="tab-content hidden" style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
+        <div class="card-title">
+          <span>⚙️ Custom Vault Host &amp; Target</span>
+          <span id="host-status-pill" class="pill" style="color: #34d399; background: rgba(52, 211, 153, 0.15);">Synced</span>
+        </div>
+        <p style="font-size: 10.5px; color: #94a3b8;">
+          Configure where the extension sends captured sidecars, breaks, and notes. No package re-compilation required!
+        </p>
+
+        <div>
+          <label style="font-size: 10.5px; color: #cbd5e1; font-weight: 600;">Vault Host URL:</label>
+          <input id="setting-host-url" type="text" value="http://artkitty.net/meow/lcmd/" style="margin-top: 4px;" />
+        </div>
+
+        <!-- Quick Host Preset Chips -->
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 10px; color: #64748b;">Quick Presets:</span>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <button class="tag-chip preset-host-chip" data-url="http://artkitty.net/meow/lcmd/">🌐 Production (artkitty.net)</button>
+            <button class="tag-chip preset-host-chip" data-url="http://localhost:5173">💻 Localhost (5173)</button>
+            <button class="tag-chip preset-host-chip" data-url="https://artkitty-net.us.stackstaging.com/lcmd/">🔒 Staging Mirror</button>
+          </div>
+        </div>
+
+        <button id="btn-save-host" class="btn btn-primary" style="width: 100%; margin-top: 4px;">
+          💾 Save Host Configuration
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>🔔 Audio &amp; Check-in Preferences</span>
+        </div>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #cbd5e1; cursor: pointer;">
+          <input type="checkbox" id="setting-sound-enabled" checked style="width: auto;" />
+          Play chime sound on WYD timer expiry
+        </label>
+      </div>
+    </div>
+
   </main>
 
   <script src="sidepanel.js"></script>

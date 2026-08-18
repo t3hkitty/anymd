@@ -1,6 +1,7 @@
-// Library Companion MD - Sovereign Side Panel, MyBlackBox & WYD Timers
+// Library Companion MD - Sovereign Side Panel, MyBlackBox & Custom Host Manager
 
-const BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
+let BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
+let soundEnabled = true;
 
 let currentScannedData = null;
 let generatedSidecarMd = '';
@@ -274,7 +275,6 @@ function startWydTimer() {
       wydRemainingSeconds--;
       updateWydDisplay();
     } else {
-      // Timer hit 0!
       onWydTimerExpire();
       wydRemainingSeconds = wydIntervalMinutes * 60;
       updateWydDisplay();
@@ -294,21 +294,22 @@ function updateWydDisplay() {
 }
 
 function onWydTimerExpire() {
-  // Beep or chime
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-    osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.12); // A5
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.5);
-  } catch (e) {}
+  if (soundEnabled) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch (e) {}
+  }
 
   const input = document.getElementById('wyd-input');
   if (input) {
@@ -365,12 +366,24 @@ function renderBlackboxFeed() {
   });
 }
 
-function loadSavedPulses() {
+function loadSavedSettings() {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-    chrome.storage.local.get(['myblackbox_pulses'], (res) => {
+    chrome.storage.local.get(['myblackbox_pulses', 'vault_host_url', 'sound_enabled'], (res) => {
       if (res && Array.isArray(res.myblackbox_pulses)) {
         blackboxPulses = res.myblackbox_pulses;
         renderBlackboxFeed();
+      }
+      if (res && res.vault_host_url) {
+        BASE_VAULT_URL = res.vault_host_url;
+        const input = document.getElementById('setting-host-url');
+        if (input) input.value = BASE_VAULT_URL;
+        const iframe = document.getElementById('vault-iframe');
+        if (iframe) iframe.src = BASE_VAULT_URL;
+      }
+      if (res && typeof res.sound_enabled === 'boolean') {
+        soundEnabled = res.sound_enabled;
+        const chk = document.getElementById('setting-sound-enabled');
+        if (chk) chk.checked = soundEnabled;
       }
     });
   }
@@ -419,7 +432,7 @@ function getCurrentFormattedTime() {
 
 document.addEventListener('DOMContentLoaded', () => {
   scanActiveTab();
-  loadSavedPulses();
+  loadSavedSettings();
   startWydTimer();
 
   // Tab switching
@@ -496,7 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     input.value = '';
     renderBlackboxFeed();
-    // Reset timer on checkin
     wydRemainingSeconds = wydIntervalMinutes * 60;
     updateWydDisplay();
   });
@@ -652,5 +664,42 @@ Live TCG box break session cataloged with timestamped pulls.
 
     const targetUrl = `${BASE_VAULT_URL}?import_vod=${encodeURIComponent(streamTitle)}&creator=undiisclosed&source=${encodeURIComponent(url)}&chapters=${encodeURIComponent(chaptersText)}`;
     chrome.tabs.create({ url: targetUrl });
+  });
+
+  // Save Custom Host Configuration
+  document.getElementById('btn-save-host')?.addEventListener('click', () => {
+    const hostInput = document.getElementById('setting-host-url');
+    let url = (hostInput.value || '').trim();
+    if (!url.endsWith('/')) url += '/';
+
+    BASE_VAULT_URL = url;
+    const soundChk = document.getElementById('setting-sound-enabled');
+    soundEnabled = soundChk.checked;
+
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({
+        vault_host_url: BASE_VAULT_URL,
+        sound_enabled: soundEnabled
+      }, () => {
+        const pill = document.getElementById('host-status-pill');
+        pill.textContent = 'Saved!';
+        setTimeout(() => { pill.textContent = 'Synced'; }, 2000);
+      });
+    }
+
+    const iframe = document.getElementById('vault-iframe');
+    if (iframe) iframe.src = BASE_VAULT_URL;
+  });
+
+  // Host Preset chips
+  document.querySelectorAll('.preset-host-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const target = chip.getAttribute('data-url');
+      const input = document.getElementById('setting-host-url');
+      if (input && target) {
+        input.value = target;
+        document.getElementById('btn-save-host')?.click();
+      }
+    });
   });
 });
