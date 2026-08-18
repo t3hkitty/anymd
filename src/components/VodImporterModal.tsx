@@ -57,10 +57,16 @@ export const VodImporterModal: React.FC<VodImporterModalProps> = ({
       if (detected.thumbnailUrl && !thumbnailUrl) {
         setThumbnailUrl(detected.thumbnailUrl);
       }
-      if (!title && detected.platform === 'youtube') {
-        setTitle('YouTube VOD Stream Archive');
-      } else if (!title && detected.platform === 'twitch') {
-        setTitle('Twitch Broadcast VOD');
+      if (detected.suggestedCreator && !creator) {
+        setCreator(detected.suggestedCreator);
+      }
+      if (!title) {
+        if (detected.platform === 'twitch') {
+          setTitle(`Twitch Break: ${detected.suggestedCreator || 'undiisclosed'} (${detected.videoId || 'VOD'})`);
+          setTagsInput('tcg-break, card-opening, pokemon, live-break, twitch');
+        } else if (detected.platform === 'youtube') {
+          setTitle('YouTube VOD Stream Archive');
+        }
       }
     }
   }, [videoUrl]);
@@ -279,7 +285,27 @@ export const VodImporterModal: React.FC<VodImporterModalProps> = ({
                 <ListOrdered className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Spatial Chapters &amp; Timestamps (1 per line):</span>
               </label>
-              <span className="text-[10px] text-slate-500">Format: 00:00 - Chapter Title</span>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRawTimestamps('00:00 - Stream Kickoff & Welcome\n05:30 - Sealed Box Inspection & Shrinkwrap Check\n15:00 - Pack Opening & Hit Showcase\n45:00 - Chase Card Toploader & Sleeving\n01:10:00 - Break Recap & Orders Packaged');
+                    setTagsInput('tcg-break, card-opening, pokemon, sports-cards, live-break');
+                  }}
+                  className="text-[10px] text-amber-400 hover:text-amber-300 bg-amber-950/60 border border-amber-500/30 px-2 py-0.5 rounded-lg font-bold"
+                >
+                  🎴 TCG Break Preset
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRawTimestamps('00:00 - Stream Start & Intro\n15:30 - Deep Dive Discussion\n45:00 - Live Gameplay & Highlights\n01:30:00 - Chat Q&A & Outro');
+                  }}
+                  className="text-[10px] text-sky-400 hover:text-sky-300 bg-sky-950/60 border border-sky-500/30 px-2 py-0.5 rounded-lg font-bold"
+                >
+                  📺 Standard Stream
+                </button>
+              </div>
             </div>
             <textarea
               rows={4}

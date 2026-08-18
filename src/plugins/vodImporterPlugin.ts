@@ -64,6 +64,8 @@ export function detectPlatformAndThumbnail(url: string): {
   platform: VodPlatform;
   thumbnailUrl?: string;
   videoId?: string;
+  embedIframeUrl?: string;
+  suggestedCreator?: string;
 } {
   const clean = url.trim();
 
@@ -74,23 +76,41 @@ export function detectPlatformAndThumbnail(url: string): {
     return {
       platform: 'youtube',
       videoId,
-      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      embedIframeUrl: `https://www.youtube.com/embed/${videoId}`
     };
   }
 
-  // Twitch VOD or Clip
+  // Twitch VOD or Live Channel
   if (clean.includes('twitch.tv/videos/')) {
-    const vId = clean.split('twitch.tv/videos/')[1]?.split('?')[0];
+    const vId = clean.split('twitch.tv/videos/')[1]?.split('?')[0]?.split('/')[0];
     return {
       platform: 'twitch',
       videoId: vId,
-      thumbnailUrl: 'https://static-cdn.jtvnw.net/ttv-static/404_preview-640x360.jpg'
+      thumbnailUrl: 'https://static-cdn.jtvnw.net/ttv-static/404_preview-640x360.jpg',
+      embedIframeUrl: `https://player.twitch.tv/?video=${vId}&parent=artkitty.net&parent=localhost&parent=127.0.0.1&parent=artkitty-net.us.stackstaging.com&autoplay=false`,
+      suggestedCreator: 'undiisclosed'
+    };
+  }
+
+  if (clean.includes('twitch.tv/')) {
+    const channel = clean.split('twitch.tv/')[1]?.split('?')[0]?.split('/')[0];
+    return {
+      platform: 'twitch',
+      videoId: channel,
+      thumbnailUrl: 'https://static-cdn.jtvnw.net/ttv-static/404_preview-640x360.jpg',
+      embedIframeUrl: `https://player.twitch.tv/?channel=${channel}&parent=artkitty.net&parent=localhost&parent=127.0.0.1&parent=artkitty-net.us.stackstaging.com&autoplay=false`,
+      suggestedCreator: channel || 'undiisclosed'
     };
   }
 
   // Kick
-  if (clean.includes('kick.com/video/')) {
-    return { platform: 'kick' };
+  if (clean.includes('kick.com/')) {
+    const channel = clean.split('kick.com/')[1]?.split('?')[0]?.split('/')[0];
+    return {
+      platform: 'kick',
+      suggestedCreator: channel || 'Kick Streamer'
+    };
   }
 
   // Vimeo
@@ -98,53 +118,45 @@ export function detectPlatformAndThumbnail(url: string): {
   if (vimeoMatch && vimeoMatch[1]) {
     return {
       platform: 'vimeo',
-      videoId: vimeoMatch[1]
+      videoId: vimeoMatch[1],
+      embedIframeUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`
     };
   }
 
-  // TorBox Stream
-  if (clean.includes('torbox.app') || clean.includes('api.torbox.app')) {
-    return { platform: 'torbox' };
+  // TorBox debrid stream / local mp4
+  if (clean.includes('torbox.app') || clean.includes('stream') || clean.endsWith('.mp4') || clean.endsWith('.mkv') || clean.endsWith('.m3u8')) {
+    return {
+      platform: clean.includes('torbox.app') ? 'torbox' : 'direct_stream'
+    };
   }
 
-  // Direct HLS or MP4
-  if (clean.endsWith('.m3u8') || clean.endsWith('.mp4') || clean.endsWith('.webm')) {
-    return { platform: 'direct_stream' };
-  }
-
-  return { platform: 'direct_stream' };
+  return { platform: 'youtube' };
 }
 
 /**
- * Parses multi-line raw timestamp text into structured chapters
- * e.g.:
- * "00:00 - Stream Kickoff & Chat"
- * "14:20 - Deep Dive Breakdown"
- * "01:10:45 - Live Coding Review"
+ * Parses raw chapter timestamp lines into structured VodChapter[]
  */
 export function parseRawTimestampLines(text: string): VodChapter[] {
-  if (!text || !text.trim()) return [];
-
-  const lines = text.split('\n');
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const chapters: VodChapter[] = [];
 
-  const tsRegex = /(?:(\d{1,2}:\d{2}:\d{2})|(\d{1,2}:\d{2}))\s*[-–—:]*\s*(.*)/;
+  const timestampRegex = /^(?:\[?(\d{1,2}:\d{2}(?::\d{2})?)\]?)\s*(?:[-–—:]\s*)?(.*)$/;
 
   for (const line of lines) {
-    const match = line.match(tsRegex);
+    const match = line.match(timestampRegex);
     if (match) {
-      const timeStr = match[1] || match[2];
-      const title = match[3]?.trim() || `Chapter at ${timeStr}`;
-      const secs = parseTimestampToSeconds(timeStr);
+      const tsFormatted = match[1];
+      const title = match[2] ? match[2].trim() : `Chapter ${chapters.length + 1}`;
+      const secs = parseTimestampToSeconds(tsFormatted);
       chapters.push({
         timestampSeconds: secs,
-        timestampFormatted: timeStr,
-        title
+        timestampFormatted: tsFormatted,
+        title: title || `Chapter at ${tsFormatted}`
       });
     }
   }
 
-  return chapters.sort((a, b) => a.timestampSeconds - b.timestampSeconds);
+  return chapters;
 }
 
 /**
@@ -200,6 +212,10 @@ export function convertVodToVaultItem(
     });
   }
 
+  const embedSection = detected.embedIframeUrl
+    ? `\n### 📺 Stream Player Embed\n<iframe src="${detected.embedIframeUrl}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>\n`
+    : '';
+
   const sidecarMarkdown = `---
 title: "${input.title.replace(/"/g, '\\"')}"
 creator: "${input.creator.replace(/"/g, '\\"')}"
@@ -217,7 +233,7 @@ date_cataloged: "${nowIso}"
 
 > **Platform:** \`${platform.toUpperCase()}\` &bull; **Creator:** **${input.creator}** &bull; **Duration:** \`${input.durationFormatted || 'N/A'}\` &bull; **Resolution:** \`${input.resolution || '1080p60'}\`
 > **Stream URL:** [Watch Video Stream](${input.url})
-
+${embedSection}
 ---
 
 ## 📑 Spatial Chapters & Timestamp Anchors
