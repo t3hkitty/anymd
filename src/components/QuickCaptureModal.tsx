@@ -334,6 +334,77 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
             </div>
           </div>
 
+          {/* 🟩 Simlish (Simalese) & Plumbob Quick Phrases */}
+          <div className="p-3 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-2 text-xs font-mono">
+            <div className="flex items-center justify-between text-emerald-300 font-bold">
+              <span className="flex items-center space-x-1.5">
+                <span>🟩</span>
+                <span>Simlish (Simalese) & Plumbob Reactions</span>
+              </span>
+              <span className="text-[10px] text-emerald-400/80">Tap to insert phrase</span>
+            </div>
+
+            <div className="flex items-center flex-wrap gap-1.5 pt-0.5">
+              {[
+                { label: 'Sul Sul! 👋', text: 'SUL SUL! 👋 Dag dag normal speech, 100% Simlish energy!' },
+                { label: 'Dag Dag! 👋😭', text: 'DAG DAG! 👋😭 The heartbreak is too real, exiting simulation!' },
+                { label: 'Nooboo! 👶', text: 'NOOBOO! 👶 Adorable wholesome cuteness detected!' },
+                { label: 'Chumcha! 🍕', text: 'CHUMCHA! 🍕 Food emergency! Grabbing pizza immediately!' },
+                { label: 'Ooh Be Gah! 😡', text: 'OOH BE GAH! 😡 Very offended by this betrayal!' },
+                { label: 'WooHoo! 💕', text: 'WOOHOO! 💕 Absolute peak romance and happiness!' },
+                { label: 'Reticulating Splines... 🟩', text: 'RETICULATING SPLINES... 🟩 Deep simulation thoughts processing!' },
+                { label: 'Motherlode (§50,000) 💰', text: 'MOTHERLODE! §50,000 Simoleons added to sovereign vault!' }
+              ].map(s => (
+                <button
+                  key={s.label}
+                  type="button"
+                  onClick={() => {
+                    setRawText(s.text);
+                    setCustomCategory('Simlish / Simalese Reaction');
+                    if (!selectedEmojis.includes('🟩')) toggleEmojiReaction('🟩');
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-900/40 hover:bg-emerald-900/70 border border-emerald-500/40 text-emerald-200 text-[11px] font-bold transition-all hover:scale-105"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 🐾 Animal & Pet Task-Switching Quick Responses */}
+          <div className="p-3 rounded-2xl bg-amber-950/30 border border-amber-500/40 space-y-2 text-xs font-mono">
+            <div className="flex items-center justify-between text-amber-300 font-bold">
+              <span className="flex items-center space-x-1.5">
+                <span>🐾</span>
+                <span>Feline & Pet Priority Task-Switching Reactions</span>
+              </span>
+              <span className="text-[10px] text-amber-400/80">1-click pet status</span>
+            </div>
+
+            <div className="flex items-center flex-wrap gap-1.5 pt-0.5">
+              {[
+                { label: '⌨️ Cat Stepped on Enter', text: 'HELPFULLY SENT EARLY: 🐾 Cat stepped on ENTER key before I finished typing, then gave an offended look when I didn\'t immediately switch tasks to petting!' },
+                { label: '💆 Chin Scritches Priority', text: 'TASK SWITCHING: 🐱 Coding paused. Immediate mandatory chin scritches and petting protocol in progress!' },
+                { label: '😼 Offended Feline Stare', text: 'OFFENDED FELINE STARE: 😼 How dare human type on keyboard when cat belly is available for petting?' },
+                { label: '🐟 Purr Engine Engaged', text: 'PURR ENGINE ENGAGED: 🐾 100% compliance with cat petting demands.' }
+              ].map(p => (
+                <button
+                  key={p.label}
+                  type="button"
+                  onClick={() => {
+                    setRawText(p.text);
+                    setCustomCategory('Pet Task-Switching Protocol');
+                    if (!selectedEmojis.includes('🐾')) toggleEmojiReaction('🐾');
+                    if (!selectedEmojis.includes('🐱')) toggleEmojiReaction('🐱');
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-amber-900/40 hover:bg-amber-900/70 border border-amber-500/40 text-amber-200 text-[11px] font-bold transition-all hover:scale-105"
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Discord-Style Quick Emoji Reaction Responses */}
           <div className="p-3.5 rounded-2xl bg-slate-950 border border-amber-500/30 space-y-2">
             <div className="flex items-center justify-between">
@@ -348,7 +419,9 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
               {[
                 '🔥', '💀', '😭', '🤣', '🍿', '🤯', '💯', '👑', 
                 '💔', '🛋️', '🚀', '🐱', '🐕', '💩', '💖', '⚡', 
-                '👗', '💎', '☕', '🤦', '⚔️', '🌸', '🛡️', '🎨'
+                '👗', '💎', '☕', '🤦', '⚔️', '🌸', '🛡️', '🎨',
+                '🐾', '😼', '🐶', '⌨️', '💆', '🐟', '🟩', '🟨',
+                '🟥', '🍕', '💰', '🕹️', '🟡', '👻', '🍒'
               ].map((emoji) => {
                 const isSelected = selectedEmojis.includes(emoji);
                 return (

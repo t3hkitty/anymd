@@ -1,5 +1,58 @@
 import type { Book } from '../types/resonance';
 
+export type CurrencyCode = 'USD' | 'SIMOLEONS' | 'DOGE' | 'RUPEE' | 'GOLD';
+
+export interface CurrencyConfig {
+  code: CurrencyCode;
+  name: string;
+  symbol: string;
+  ratePerUsd: number;
+  format: (amount: number) => string;
+}
+
+export const CURRENCY_CONFIGS: Record<CurrencyCode, CurrencyConfig> = {
+  USD: {
+    code: 'USD',
+    name: 'US Dollar',
+    symbol: '$',
+    ratePerUsd: 1.0,
+    format: (amt: number) => `$${amt.toFixed(2)} USD`
+  },
+  SIMOLEONS: {
+    code: 'SIMOLEONS',
+    name: 'Simoleons (Sims)',
+    symbol: '§',
+    ratePerUsd: 10.0,
+    format: (amt: number) => `§${Math.round(amt * 10).toLocaleString()} Simoleons`
+  },
+  DOGE: {
+    code: 'DOGE',
+    name: 'Dogecoin',
+    symbol: 'Ð',
+    ratePerUsd: 8.5,
+    format: (amt: number) => `Ð${(amt * 8.5).toFixed(1)} DOGE`
+  },
+  RUPEE: {
+    code: 'RUPEE',
+    name: 'Indian Rupee',
+    symbol: '₹',
+    ratePerUsd: 85.0,
+    format: (amt: number) => `₹${Math.round(amt * 85).toLocaleString()} INR`
+  },
+  GOLD: {
+    code: 'GOLD',
+    name: 'LitRPG Gold Coins',
+    symbol: '🪙',
+    ratePerUsd: 5.0,
+    format: (amt: number) => `${Math.round(amt * 5).toLocaleString()} 🪙 Gold`
+  }
+};
+
+export function formatCurrencyValue(usdAmount: number, currency: CurrencyCode = 'USD'): string {
+  const config = CURRENCY_CONFIGS[currency] || CURRENCY_CONFIGS.USD;
+  return config.format(usdAmount);
+}
+
 export interface TradeItem {
   id: string;
   title: string;

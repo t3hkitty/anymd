@@ -122,6 +122,22 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
     category: 'wholesome',
     tags: ['pacman', 'waka', 'ghost', 'fruit', 'arcade', 'retro', 'alone', 'greenday', 'boulevard', 'eating', 'nostalgia', 'kid', 'tweet', 'punk', 'rock'],
     emoji: '🕹️'
+  },
+  {
+    id: 'gif-cat-keyboard-petting',
+    title: 'Cat Stepping on Keyboard & Demanding Priority Petting',
+    url: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400',
+    category: 'wholesome',
+    tags: ['cat', 'keyboard', 'petting', 'pet', 'kitty', 'taskswitch', 'sulsul', 'offended', 'feline', 'chin', 'scritch', 'enter', 'animal', 'purr'],
+    emoji: '🐾'
+  },
+  {
+    id: 'gif-sims-plumbob-sulsul',
+    title: 'Sims Sul Sul & Plumbob Reticulating Splines',
+    url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
+    category: 'mind-blown',
+    tags: ['sims', 'simlish', 'simalese', 'simoleon', 'plumbob', 'sulsul', 'dagdag', 'splines', 'motherlode', 'rosebud', 'woohoo'],
+    emoji: '🟩'
   }
 ];
 

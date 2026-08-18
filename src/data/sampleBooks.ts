@@ -776,5 +776,106 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
         ]
       }
     ]
+  },
+  {
+    id: 'feline-keyboard-stepper',
+    title: 'The Sovereign Keyboard Stepper (Feline Task-Switching & Petting Protocol)',
+    author: 'Chief Feline Operator & Meow Sovereign',
+    coverColor: '#059669',
+    coverImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=600',
+    originalImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=1200',
+    externalReaderUri: 'file://./Pets/Feline_Task_Switching_Protocol.dcmd',
+    totalChapters: 2,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    isWebPresenceOnly: false,
+    tradeValueUsd: 50.00,
+    isAvailableForTrade: false,
+    resonanceStream: [
+      {
+        id: 'res-cat-enter-early',
+        timestamp: '2026-08-17T15:30:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 50.0,
+        category: 'Pet Task-Switching Protocol',
+        presetTier: 'diaper-emergency',
+        rawText: 'HELPFULLY SENT EARLY: 🐾 CAT STEPPED ON THE ENTER KEY BEFORE THE SENTENCE WAS FINISHED, THEN LOOKED DEEPLY OFFENDED WHEN YELLED AT INSTEAD OF GETTING IMMEDIATE MANDATORY PETTING!',
+        cfi: 'pet://cat/ch1',
+        chapterTitle: 'Chapter 1: The Paws on the Enter Key',
+        paragraphIndex: 0,
+        paragraphSnippet: 'When human fingers are rapidly typing, the cat recognizes the glowing keyboard as a heated bed engineered solely for feline chin elevation.',
+        reactionImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400',
+        reactionGifCaption: 'Cat Stepped on Keyboard & Demanding Priority Petting',
+        intensityScore: 5,
+        emojiReactions: ['🐾', '🐱', '😼', '⌨️', '💆']
+      },
+      {
+        id: 'res-simlish-plumbob-sulsul',
+        timestamp: '2026-08-17T15:35:00Z',
+        formattedDate: '2026-08-17',
+        progressPercent: 100.0,
+        category: 'Simlish / Simalese Reaction',
+        presetTier: 'diaper-emergency',
+        rawText: 'SUL SUL! 🟩 DAG DAG CODE! RETICULATING SPLINES AND COMMENCING CHIN SCRITCHES! §50,000 SIMOLEONS PETTING BONUS APPLIED!',
+        cfi: 'pet://cat/ch2',
+        chapterTitle: 'Chapter 2: Simlish Translation & Plumbob Comfort',
+        paragraphIndex: 1,
+        paragraphSnippet: 'Plumbob status turns neon green (🟩) upon achieving 100% purring compliance and chin scratch satisfaction.',
+        reactionImageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
+        reactionGifCaption: 'Sims Sul Sul & Plumbob Reticulating Splines',
+        intensityScore: 5,
+        emojiReactions: ['🟩', '💰', '🐟', '👑', '💖']
+      }
+    ],
+    sidecarMarkdown: `---
+title: "The Sovereign Keyboard Stepper (Feline Task-Switching & Petting Protocol)"
+author: "Chief Feline Operator"
+format: "dcmd/feline-pet-companion"
+simoleon_value: "§500 Simoleons"
+trade_value_usd: 50.00
+available_for_trade: false
+cover_image: "./media/cover_cat_keyboard_stepper.png"
+original_uncropped_image: "./media/uncropped_cat_keyboard_stepper.jpg"
+rel_link_root: "./Pets"
+external_reader_uri: "file://./Pets/Feline_Task_Switching_Protocol.dcmd"
+tags: [cat, pet, feline, simlish, simoleons, sulsul, keyboard, taskswitch, scritches, purr]
+---
+
+# 🐾 Feline Task-Switching & Mandatory Petting Protocol
+
+> [!abstract] Sovereign Feline Companion Manifesto [ZK: \`20260817-CAT-KEYBOARD\`]
+> **Subject:** The Enter-Key Feline Operator
+> **Official Law:** Any message sent prematurely by feline paws is officially canonical.
+> **Mandatory Response:** Immediate human task-switching from keyboard typing to chin scritches.
+
+---
+
+## 🟩 Simlish / Simalese Phrases
+- **Sul Sul! 👋** — Hello human, look at me not the monitor.
+- **Dag Dag! 👋😭** — Goodbye unwritten code.
+- **Ooh Be Gah! 😡** — Why are you yelling when you should be petting?
+- **Motherlode! 💰** — §50,000 Simoleons worth of unconditional purrs.
+
+---
+*Cataloged in Sovereign Library Companion MD.*
+`,
+    chapters: [
+      {
+        title: 'Chapter 1: The Paws on the Enter Key',
+        cfiBase: 'pet://cat/ch1',
+        paragraphs: [
+          'When human fingers are rapidly typing, the cat recognizes the glowing keyboard as a heated bed engineered solely for feline chin elevation.',
+          'A single paw on the Enter key sends the message into the digital ether. The human gasps in horror; the cat looks mildly offended that petting has not commenced.'
+        ]
+      },
+      {
+        title: 'Chapter 2: Simlish Translation & Plumbob Comfort',
+        cfiBase: 'pet://cat/ch2',
+        paragraphs: [
+          '"Sul Sul!" cries the simulation. "Ooh Be Gah!" scoffs the feline.',
+          'Plumbob status turns neon green (🟩) upon achieving 100% purring compliance and chin scratch satisfaction.'
+        ]
+      }
+    ]
   }
 ];

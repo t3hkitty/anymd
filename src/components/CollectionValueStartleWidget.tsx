@@ -25,6 +25,7 @@ export type CurrencyMode =
   | 'EUR' 
   | 'JPY' 
   | 'INR' // Sovereign Republic of India Currency
+  | 'SIMOLEONS' // The Sims Simoleons (§)
   | 'HYRULE_RUPEES' // Legend of Zelda Green Rupees
   | 'DOGE' // Dogecoin (Much Wow)
   | 'NFT_APES' // Bored Ape Yacht Club Floor NFTs
@@ -92,6 +93,12 @@ export const CollectionValueStartleWidget: React.FC<CollectionValueStartleWidget
       rate: 83.5,
       label: 'Indian Rupees (Official Currency of India ₹)',
       format: (v) => `₹ ${Math.round(v).toLocaleString('en-IN')} INR`
+    },
+    SIMOLEONS: {
+      symbol: '§',
+      rate: 10,
+      label: 'Simoleons (The Sims § / Motherlode)',
+      format: (v) => `§ ${Math.round(v).toLocaleString()} Simoleons`
     },
     HYRULE_RUPEES: {
       symbol: '💎',

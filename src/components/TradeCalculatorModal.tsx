@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import type { Book } from '../types/resonance';
-import type { TradeItem } from '../plugins/tradeValuePlugin';
+import type { TradeItem, CurrencyCode } from '../plugins/tradeValuePlugin';
 import {
   extractTradeValueFromBook,
   updateBookTradeValue,
   calculateTradeBalance,
-  isBookAvailableForTrade
+  isBookAvailableForTrade,
+  CURRENCY_CONFIGS,
+  formatCurrencyValue
 } from '../plugins/tradeValuePlugin';
 import {
   X,
   Scale,
   Trash2,
   Sparkles,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Coins
 } from 'lucide-react';
 
 interface TradeCalculatorModalProps {
@@ -28,6 +31,7 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
   onClose,
   onUpdateBookTradeValue
 }) => {
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('USD');
   const [sideAItems, setSideAItems] = useState<TradeItem[]>(() => {
     return books.slice(0, 2).map(b => ({
       id: b.id,
@@ -153,6 +157,37 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
         {/* Content Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1 font-sans">
           
+          {/* 🪙 Currency Mode Selector Pill Bar */}
+          <div className="flex items-center justify-between flex-wrap gap-2 p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono">
+            <div className="flex items-center space-x-2 text-slate-300 font-bold">
+              <Coins className="w-4 h-4 text-amber-400" />
+              <span>Valuation Currency:</span>
+            </div>
+
+            <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+              {(Object.keys(CURRENCY_CONFIGS) as CurrencyCode[]).map(code => {
+                const conf = CURRENCY_CONFIGS[code];
+                const isActive = selectedCurrency === code;
+                return (
+                  <button
+                    key={code}
+                    onClick={() => setSelectedCurrency(code)}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center space-x-1 ${
+                      isActive
+                        ? code === 'SIMOLEONS'
+                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                          : 'bg-amber-500 text-slate-950 shadow-md'
+                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <span>{conf.symbol}</span>
+                    <span>{conf.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Trade Fairness Gauge Banner */}
           <div className={`p-5 rounded-3xl border transition-all space-y-3 font-mono text-xs shadow-xl ${
             tradeResult.fairnessStatus === 'EQUAL_FAIR'
@@ -165,7 +200,7 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
               <div className="flex items-center space-x-2">
                 <ArrowRightLeft className="w-5 h-5 text-amber-400" />
                 <span className="font-extrabold text-sm sm:text-base text-slate-100">
-                  Trade Balance: Side A (${tradeResult.sideATotal.toFixed(2)}) vs Side B (${tradeResult.sideBTotal.toFixed(2)})
+                  Trade Balance: Side A ({formatCurrencyValue(tradeResult.sideATotal, selectedCurrency)}) vs Side B ({formatCurrencyValue(tradeResult.sideBTotal, selectedCurrency)})
                 </span>
               </div>
 
@@ -185,17 +220,17 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px] border-t border-slate-800">
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-slate-400 block text-[10px]">Side A Total:</span>
-                <strong className="text-sky-400 text-sm font-bold">${tradeResult.sideATotal.toFixed(2)}</strong>
+                <strong className="text-sky-400 text-sm font-bold">{formatCurrencyValue(tradeResult.sideATotal, selectedCurrency)}</strong>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-slate-400 block text-[10px]">Side B Total:</span>
-                <strong className="text-purple-400 text-sm font-bold">${tradeResult.sideBTotal.toFixed(2)}</strong>
+                <strong className="text-purple-400 text-sm font-bold">{formatCurrencyValue(tradeResult.sideBTotal, selectedCurrency)}</strong>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-slate-400 block text-[10px]">Value Difference:</span>
-                <strong className="text-amber-300 text-sm font-bold">${tradeResult.differenceUsd.toFixed(2)}</strong>
+                <strong className="text-amber-300 text-sm font-bold">{formatCurrencyValue(tradeResult.differenceUsd, selectedCurrency)}</strong>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
@@ -209,7 +244,7 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
               <div className="p-3 rounded-2xl bg-slate-900 border border-amber-500/30 text-amber-200 text-xs font-sans flex items-center space-x-2">
                 <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  <strong>Balancing Suggestion:</strong> {tradeResult.cashBalanceSuggestion.debtorSide} should add <strong>${tradeResult.cashBalanceSuggestion.amountUsd.toFixed(2)} USD cash</strong> (or equivalent low-tier card/book) to make this trade perfectly equal.
+                  <strong>Balancing Suggestion:</strong> {tradeResult.cashBalanceSuggestion.debtorSide} should add <strong>{formatCurrencyValue(tradeResult.cashBalanceSuggestion.amountUsd, selectedCurrency)}</strong> (or equivalent low-tier card/book) to make this trade perfectly equal.
                 </span>
               </div>
             )}
