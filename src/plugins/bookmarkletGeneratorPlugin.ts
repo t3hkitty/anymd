@@ -176,9 +176,83 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
   return { bookmarkletJs, rawJs };
 }
 
+export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs: string } {
+  const host = getAppTargetEndpoint();
+  const rawJs = `(function(){
+    try {
+      var title = document.querySelector('h1.ytd-watch-metadata, h1.title, #title h1, h2[data-a-target="stream-title"], .tw-title, meta[property="og:title"]')?.innerText?.trim()
+        || document.querySelector('meta[property="og:title"]')?.content?.trim()
+        || document.title.replace(/\\s*-\\s*(YouTube|Twitch|Kick).*/i, '').trim();
+
+      var creator = document.querySelector('ytd-channel-name a, #channel-name a, a[data-a-target="user-channel-link"], .channel-header__user h1, meta[itemprop="name"]')?.innerText?.trim()
+        || document.querySelector('meta[name="author"]')?.content?.trim()
+        || 'Video Creator';
+
+      var descText = document.querySelector('#description-inline-expander, #description, .tw-rich-text, meta[property="og:description"]')?.innerText?.trim()
+        || document.querySelector('meta[property="og:description"]')?.content?.trim() || '';
+
+      var duration = document.querySelector('.ytp-time-duration, .tw-time')?.innerText?.trim() || 'N/A';
+      var thumb = document.querySelector('meta[property="og:image"]')?.content || '';
+
+      var dataObj = {
+        title: title,
+        creator: creator,
+        duration: duration,
+        streamUrl: window.location.href,
+        thumbnailUrl: thumb,
+        description: descText.slice(0, 1000),
+        format: 'dcmd/vod'
+      };
+
+      var oldModal = document.getElementById('lc-md-vod-modal');
+      if (oldModal) oldModal.remove();
+
+      var modal = document.createElement('div');
+      modal.id = 'lc-md-vod-modal';
+      modal.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);font-family:system-ui,sans-serif;font-size:12px;';
+
+      var targetUrl = '${host}?import_vod=' + encodeURIComponent(title) + '&creator=' + encodeURIComponent(creator) + '&duration=' + encodeURIComponent(duration) + '&thumb=' + encodeURIComponent(thumb) + '&source=' + encodeURIComponent(window.location.href);
+
+      modal.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+        + '<h3 style="margin:0;font-size:14px;color:#f87171;font-weight:bold;display:flex;align-items:center;gap:6px;"><span>🎬</span> VOD & Stream Grabber</h3>'
+        + '<button id="lc-close-btn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✖</button>'
+        + '</div>'
+        + '<div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin-bottom:12px;">'
+        + '<div style="font-weight:bold;color:#f1f5f9;font-size:13px;margin-bottom:4px;">' + title + '</div>'
+        + '<div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">By ' + creator + ' &bull; ⏱ ' + duration + '</div>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;">'
+        + '<a href="' + targetUrl + '" target="_blank" id="lc-open-btn" style="flex:1;text-align:center;padding:10px;background:#ef4444;color:#ffffff;border-radius:12px;font-weight:bold;text-decoration:none;font-size:12px;display:block;">🚀 Open in LC-MD</a>'
+        + '<button id="lc-copy-btn" style="padding:10px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:12px;font-weight:bold;cursor:pointer;font-size:12px;">📋 Copy JSON</button>'
+        + '</div>';
+
+      document.body.appendChild(modal);
+
+      document.getElementById('lc-close-btn').onclick = function(){ modal.remove(); };
+      document.getElementById('lc-copy-btn').onclick = function(){
+        navigator.clipboard.writeText(JSON.stringify(dataObj, null, 2));
+        this.innerText = '✓ Copied!';
+        this.style.background = '#059669';
+        this.style.color = '#ffffff';
+      };
+
+      var win = window.open(targetUrl, '_blank');
+      if (win) {
+        setTimeout(function(){ if (modal) modal.remove(); }, 3000);
+      }
+    } catch(err) {
+      alert('VOD Grabber Error: ' + err.message);
+    }
+  })();`;
+
+  const bookmarkletJs = `javascript:${encodeURIComponent(rawJs.replace(/\s+/g, ' '))}`;
+  return { bookmarkletJs, rawJs };
+}
+
 export function getBookmarkletTools(): BookmarkletTool[] {
   const nu = generateNovelUpdatesBookmarklet();
   const gr = generateGoodreadsBookmarklet();
+  const vod = generateYouTubeVodBookmarklet();
 
   return [
     {
@@ -198,6 +272,15 @@ export function getBookmarkletTools(): BookmarkletTool[] {
       description: 'Click while browsing any Goodreads book page, reading list, or custom bookshelf to grab titles and send them directly to your Sovereign Library with instant popup and clipboard fallback.',
       bookmarkletJs: gr.bookmarkletJs,
       rawJs: gr.rawJs
+    },
+    {
+      id: 'vod-stream-grabber',
+      name: '🎬 YouTube & Twitch VOD Grabber',
+      targetSite: 'YouTube.com / Twitch.tv / Kick.com',
+      icon: '🎬',
+      description: 'Click on any YouTube video, Twitch broadcast VOD, or Kick stream to instantly capture title, streamer name, duration, and timestamp chapters into your Sovereign Vault.',
+      bookmarkletJs: vod.bookmarkletJs,
+      rawJs: vod.rawJs
     }
   ];
 }

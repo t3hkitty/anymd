@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { generateNovelUpdatesBookmarklet, generateGoodreadsBookmarklet, getAppTargetEndpoint } from '../plugins/bookmarkletGeneratorPlugin';
+import {
+  generateNovelUpdatesBookmarklet,
+  generateGoodreadsBookmarklet,
+  generateYouTubeVodBookmarklet,
+  getAppTargetEndpoint
+} from '../plugins/bookmarkletGeneratorPlugin';
 import type { Book } from '../types/resonance';
 import {
   X,
@@ -10,7 +15,8 @@ import {
   BookOpen,
   MousePointer,
   Sparkles,
-  FileDown
+  FileDown,
+  Tv
 } from 'lucide-react';
 
 interface BookmarkletModalProps {
@@ -27,6 +33,7 @@ export const BookmarkletModal: React.FC<BookmarkletModalProps> = ({
   const [activeTab, setActiveTab] = useState<'bookmarklets' | 'manual_paste'>('bookmarklets');
   const [copiedNu, setCopiedNu] = useState(false);
   const [copiedGr, setCopiedGr] = useState(false);
+  const [copiedVod, setCopiedVod] = useState(false);
 
   // Manual Paste State
   const [pasteData, setPasteData] = useState('');
@@ -40,6 +47,7 @@ export const BookmarkletModal: React.FC<BookmarkletModalProps> = ({
 
   const nuResult = generateNovelUpdatesBookmarklet();
   const grResult = generateGoodreadsBookmarklet();
+  const vodResult = generateYouTubeVodBookmarklet();
   const targetHost = getAppTargetEndpoint();
 
   const handleCopyNu = () => {
@@ -52,6 +60,12 @@ export const BookmarkletModal: React.FC<BookmarkletModalProps> = ({
     navigator.clipboard.writeText(grResult.bookmarkletJs);
     setCopiedGr(true);
     setTimeout(() => setCopiedGr(false), 2000);
+  };
+
+  const handleCopyVod = () => {
+    navigator.clipboard.writeText(vodResult.bookmarkletJs);
+    setCopiedVod(true);
+    setTimeout(() => setCopiedVod(false), 2000);
   };
 
   const handleProcessManualPaste = () => {
@@ -286,6 +300,45 @@ Imported web presence entry. Local markdown sidecar initialized.
                   >
                     {copiedGr ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedGr ? 'Copied JavaScript Code!' : 'Copy JS Bookmarklet Code'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 3. YouTube & Twitch VOD Bookmarklet Card */}
+              <div className="p-5 rounded-2xl bg-slate-950 border border-red-500/40 space-y-3 shadow-lg">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-red-300 flex items-center space-x-2">
+                      <Tv className="w-4 h-4 text-red-400" />
+                      <span>YouTube &amp; Twitch VOD Grabber</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5 font-sans">
+                      Click while viewing any YouTube video, Twitch broadcast, or Kick livestream to capture duration, stream creator, and timestamp chapters!
+                    </p>
+                  </div>
+
+                  {/* Drag button */}
+                  <a
+                    href={vodResult.bookmarkletJs}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      alert("👆 Drag this button up to your browser's Bookmarks Bar, or click 'Copy JS Code' below to paste as a bookmark URL!");
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-slate-950 font-bold text-xs shadow-lg shadow-red-500/20 cursor-grab active:cursor-grabbing flex items-center space-x-1.5 transition-all shrink-0 select-none"
+                    title="Drag this button to your browser Bookmarks Bar!"
+                  >
+                    <span>🎬 Grab VOD Stream</span>
+                  </a>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-500">Target Site: youtube.com/watch &amp; twitch.tv/videos/*</span>
+                  <button
+                    onClick={handleCopyVod}
+                    className="text-xs text-sky-300 hover:underline flex items-center space-x-1"
+                  >
+                    {copiedVod ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedVod ? 'Copied JavaScript Code!' : 'Copy JS Bookmarklet Code'}</span>
                   </button>
                 </div>
               </div>

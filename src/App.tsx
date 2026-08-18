@@ -537,6 +537,71 @@ format: "dcmd/goodreads"
       } catch (err) {
         console.error('Failed to parse Goodreads bookmarklet param:', err);
       }
+    } else if (urlParams.get('import_vod')) {
+      const vodTitle = urlParams.get('import_vod') || 'Stream VOD';
+      const creator = urlParams.get('creator') || 'Video Creator';
+      const duration = urlParams.get('duration') || 'N/A';
+      const thumb = urlParams.get('thumb') || '';
+      const sourceUrl = urlParams.get('source') || '';
+
+      const newVodBook: Book = {
+        id: `vod-${Date.now()}`,
+        title: vodTitle,
+        author: creator,
+        coverColor: '#ef4444',
+        coverImageUrl: thumb || undefined,
+        externalReaderUri: sourceUrl,
+        totalChapters: 1,
+        currentChapterIndex: 0,
+        currentParagraphIndex: 0,
+        sidecarMarkdown: `---
+title: "${vodTitle}"
+creator: "${creator}"
+media_type: "vod"
+stream_url: "${sourceUrl}"
+duration: "${duration}"
+date_cataloged: "${new Date().toISOString()}"
+---
+
+# 🎬 ${vodTitle}
+
+- **Creator:** ${creator}
+- **Duration:** ${duration}
+- **Stream URL:** [Watch Stream](${sourceUrl})
+`,
+        resonanceStream: [
+          {
+            id: `res-vod-${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            formattedDate: new Date().toISOString().split('T')[0],
+            progressPercent: 0,
+            category: 'VOD & Stream Archive',
+            rawText: `Stream Archive: ${vodTitle}`,
+            cfi: 'cfi:vod:0',
+            chapterTitle: 'Overview',
+            paragraphIndex: 0,
+            paragraphSnippet: `Captured via Bookmarklet from ${sourceUrl}`,
+            intensityScore: 5,
+            reactionImageUrl: thumb || undefined,
+            reactionGifCaption: vodTitle,
+            emojiReactions: ['🎬', '🔥']
+          }
+        ],
+        chapters: [
+          {
+            title: 'Stream Overview',
+            cfiBase: 'cfi:vod:0',
+            paragraphs: [`Stream URL: ${sourceUrl}`, `Duration: ${duration}`]
+          }
+        ]
+      };
+
+      handleUpdateBooks(prev => [newVodBook, ...prev]);
+      setActiveBookId(newVodBook.id);
+      setActiveView('library');
+
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
     }
   }, []);
 
