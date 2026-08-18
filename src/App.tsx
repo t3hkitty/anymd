@@ -749,8 +749,47 @@ date_cataloged: "${new Date().toISOString()}"
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
       
-      {/* Top Application Navigation Bar */}
-      <header className="px-6 py-3.5 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
+      {/* Master Top Navigation Bar: Sovereign Library <-> User Account Profile <-> MyBlackBox */}
+      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2 flex items-center justify-between shadow-lg sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
+        
+        {/* Left: 📚 Sovereign Library Tab */}
+        <button
+          onClick={() => setActiveView('library')}
+          className={`flex items-center space-x-2 px-4 py-1.5 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
+            activeView === 'library' || activeView === 'split' || activeView === 'reader'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20 ring-2 ring-amber-400/40'
+              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
+          }`}
+          title="Switch to Sovereign Grand Library & Bookshelf"
+        >
+          <BookcaseIcon className="w-4 h-4" />
+          <span>📚 Sovereign Library</span>
+        </button>
+
+        {/* Center: 👤 Account & Profile Manager Button */}
+        <button
+          onClick={() => setIsProfileManagementOpen(true)}
+          className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-400/50 text-amber-200 text-xs font-extrabold shadow-sm transition-all group"
+          title="Account Management, Cloud Auth & Switch Profile (Invite Code: meow)"
+        >
+          <span className="text-sm group-hover:scale-110 transition-transform">{activeUserProfile.avatarEmoji || '👤'}</span>
+          <span className="tracking-tight">@{activeUserProfile.username}</span>
+          <span className="px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 text-[10px] font-mono font-bold">Account</span>
+        </button>
+
+        {/* Right: ⬛ MyBlackBox & WYD Timers Tab */}
+        <button
+          onClick={() => setIsBlackBoxOpen(true)}
+          className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 font-extrabold text-xs transition-all shadow-sm shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300"
+          title="Open Sovereign Black Box Architecture, Litany Pulse & WYD Timers"
+        >
+          <span className="text-emerald-400 font-mono text-sm">⬛</span>
+          <span>MyBlackBox &amp; WYD</span>
+        </button>
+      </div>
+
+      {/* Top Application Toolbar */}
+      <header className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[45px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
         <div className="flex items-center space-x-4">
           
           {/* Ornate Grand Bookcase Logo & Title */}
