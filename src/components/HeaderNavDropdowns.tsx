@@ -103,7 +103,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
   return (
     <div ref={containerRef} className="flex items-center space-x-2 font-sans text-xs flex-wrap gap-y-1">
       
-      {/* 1. 📥 INGEST & SCRAPERS DROPDOWN */}
+      {/* 1. 📥 IMPORT & INGEST DROPDOWN */}
       <div className="relative">
         <button
           onClick={() => toggleMenu('ingest')}
@@ -114,7 +114,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
           }`}
         >
           <Download className="w-3.5 h-3.5" />
-          <span>Ingest &amp; Sourcing</span>
+          <span>Import &amp; Ingest</span>
           {pendingMatches > 0 && (
             <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] animate-pulse">
               {pendingMatches}
@@ -130,7 +130,7 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
               className="w-full px-2.5 py-1.5 text-[10px] font-mono text-slate-300 uppercase font-bold border-b border-slate-800 flex items-center justify-between hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer text-left"
               title="Click to view and approve matching drive files"
             >
-              <span>Media Ingest &amp; Scrapers</span>
+              <span>Import &amp; Sourcing Engines</span>
               {pendingMatches > 0 ? (
                 <span className="text-amber-400 font-extrabold flex items-center space-x-1 group-hover:underline">
                   <span>💡 {pendingMatches} new match</span>
