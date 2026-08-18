@@ -1,13 +1,21 @@
-// Library Companion MD - Sovereign Side Panel & Sidecar Studio
+// Library Companion MD - Sovereign Side Panel, MyBlackBox & WYD Timers
 
 const BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
 
 let currentScannedData = null;
 let generatedSidecarMd = '';
 let breakHits = [];
+let blackboxPulses = [];
+
+// WYD Timer State
+let wydIntervalMinutes = 15;
+let wydRemainingSeconds = 15 * 60;
+let wydIsRunning = true;
+let wydTimerInterval = null;
+let currentActivityTag = 'coding';
 
 /**
- * Generates a clean sovereign markdown sidecar with YAML frontmatter
+ * Builds clean Markdown sidecar with YAML frontmatter
  */
 function buildSidecarMarkdown(data) {
   const nowIso = new Date().toISOString();
@@ -70,10 +78,12 @@ async function scanActiveTab() {
   const badgeEl = document.getElementById('tab-platform-badge');
   const previewEl = document.getElementById('sidecar-preview');
 
+  if (!titleEl) return;
+
   titleEl.textContent = 'Scanning active page...';
   subEl.textContent = 'Inspecting document DOM and metadata...';
   extraEl.textContent = '';
-  previewEl.textContent = 'Analyzing active window...';
+  if (previewEl) previewEl.textContent = 'Analyzing active window...';
 
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -225,17 +235,17 @@ async function scanActiveTab() {
       badgeEl.textContent = badgeText;
 
       if (data.progress) {
-        extraEl.textContent = `📍 Reading Location: ${data.progress}`;
+        extraEl.textContent = `📍 Location: ${data.progress}`;
       } else if (data.extra && data.extra.rating) {
-        extraEl.textContent = `★ ${data.extra.rating} • Amazon Kindle Edition`;
+        extraEl.textContent = `★ ${data.extra.rating} • Kindle Edition`;
       } else if (data.extra && data.extra.highlightedQuote) {
-        extraEl.textContent = `📝 Quote: "${data.extra.highlightedQuote.slice(0, 50)}..."`;
+        extraEl.textContent = `📝 Quote: "${data.extra.highlightedQuote.slice(0, 45)}..."`;
       } else {
-        extraEl.textContent = `URL: ${data.url.slice(0, 50)}...`;
+        extraEl.textContent = `URL: ${data.url.slice(0, 45)}...`;
       }
 
       generatedSidecarMd = buildSidecarMarkdown(data);
-      previewEl.textContent = generatedSidecarMd;
+      if (previewEl) previewEl.textContent = generatedSidecarMd;
     }
   } catch (err) {
     console.error('Scan error:', err);
@@ -244,8 +254,136 @@ async function scanActiveTab() {
   }
 }
 
+// ----------------------------------------------------
+// WYD ACCOUNTABILITY TIMER & BLACKBOX PULSES
+// ----------------------------------------------------
+
+function formatTimerSeconds(totalSecs) {
+  const m = Math.floor(totalSecs / 60);
+  const s = totalSecs % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function startWydTimer() {
+  if (wydTimerInterval) clearInterval(wydTimerInterval);
+
+  wydTimerInterval = setInterval(() => {
+    if (!wydIsRunning) return;
+
+    if (wydRemainingSeconds > 0) {
+      wydRemainingSeconds--;
+      updateWydDisplay();
+    } else {
+      // Timer hit 0!
+      onWydTimerExpire();
+      wydRemainingSeconds = wydIntervalMinutes * 60;
+      updateWydDisplay();
+    }
+  }, 1000);
+}
+
+function updateWydDisplay() {
+  const countEl = document.getElementById('wyd-countdown');
+  const pillEl = document.getElementById('wyd-status-pill');
+  if (countEl) countEl.textContent = formatTimerSeconds(wydRemainingSeconds);
+  if (pillEl) {
+    pillEl.textContent = wydIsRunning ? 'Active' : 'Paused';
+    pillEl.style.color = wydIsRunning ? '#34d399' : '#f59e0b';
+    pillEl.style.background = wydIsRunning ? 'rgba(52, 211, 153, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+  }
+}
+
+function onWydTimerExpire() {
+  // Beep or chime
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+    osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.12); // A5
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  } catch (e) {}
+
+  const input = document.getElementById('wyd-input');
+  if (input) {
+    input.focus();
+    input.placeholder = '⏰ WYD? (Interval check-in: type your current task here)';
+  }
+}
+
+function renderBlackboxFeed() {
+  const container = document.getElementById('blackbox-feed');
+  if (!container) return;
+
+  if (blackboxPulses.length === 0) {
+    container.innerHTML = '<div style="font-size: 11px; color: #64748b; font-style: italic;">No pulses logged yet today. Type above to record your first!</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  blackboxPulses.forEach((pulse, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;background:#050811;padding:6px 9px;border-radius:8px;border:1px solid #1e293b;font-size:11px;';
+    
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    
+    const time = document.createElement('span');
+    time.style.cssText = 'color:#64748b;font-size:10px;font-family:monospace;';
+    time.textContent = pulse.time;
+
+    const tag = document.createElement('span');
+    tag.style.cssText = 'color:#818cf8;font-size:10px;font-weight:bold;';
+    tag.textContent = `[${pulse.type}]`;
+
+    const text = document.createElement('span');
+    text.style.cssText = 'color:#f1f5f9;font-weight:500;';
+    text.textContent = pulse.text;
+
+    left.appendChild(time);
+    left.appendChild(tag);
+    left.appendChild(text);
+
+    const del = document.createElement('button');
+    del.style.cssText = 'background:none;border:none;color:#64748b;cursor:pointer;font-size:12px;';
+    del.textContent = '✖';
+    del.onclick = () => {
+      blackboxPulses.splice(idx, 1);
+      chrome.storage.local.set({ myblackbox_pulses: blackboxPulses });
+      renderBlackboxFeed();
+    };
+
+    row.appendChild(left);
+    row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
+function loadSavedPulses() {
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.get(['myblackbox_pulses'], (res) => {
+      if (res && Array.isArray(res.myblackbox_pulses)) {
+        blackboxPulses = res.myblackbox_pulses;
+        renderBlackboxFeed();
+      }
+    });
+  }
+}
+
+// ----------------------------------------------------
+// TCG BREAK LOGGER
+// ----------------------------------------------------
+
 function renderHits() {
   const container = document.getElementById('hits-list');
+  if (!container) return;
+
   if (breakHits.length === 0) {
     container.innerHTML = '<div style="font-size: 11px; color: #64748b; font-style: italic;">No card pulls logged yet. Click \'+ Log Hit\' as packs open!</div>';
     return;
@@ -276,11 +414,13 @@ function renderHits() {
 
 function getCurrentFormattedTime() {
   const d = new Date();
-  return `${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   scanActiveTab();
+  loadSavedPulses();
+  startWydTimer();
 
   // Tab switching
   const tabs = document.querySelectorAll('.tab-btn');
@@ -292,12 +432,92 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetId = btn.getAttribute('data-tab');
       document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
       document.getElementById(targetId)?.classList.remove('hidden');
+
+      if (targetId === 'tab-sidecar') {
+        scanActiveTab();
+      }
     });
   });
 
   // Open full vault
   document.getElementById('btn-open-full')?.addEventListener('click', () => {
     chrome.tabs.create({ url: BASE_VAULT_URL });
+  });
+
+  // WYD Timer Pause / Resume
+  document.getElementById('btn-toggle-wyd')?.addEventListener('click', () => {
+    wydIsRunning = !wydIsRunning;
+    const btn = document.getElementById('btn-toggle-wyd');
+    btn.textContent = wydIsRunning ? '⏸ Pause' : '▶ Resume';
+    updateWydDisplay();
+  });
+
+  // WYD Timer Reset
+  document.getElementById('btn-reset-wyd')?.addEventListener('click', () => {
+    wydRemainingSeconds = wydIntervalMinutes * 60;
+    updateWydDisplay();
+  });
+
+  // WYD Interval chips
+  document.querySelectorAll('.interval-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.interval-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      wydIntervalMinutes = parseInt(chip.getAttribute('data-min') || '15', 10);
+      wydRemainingSeconds = wydIntervalMinutes * 60;
+      updateWydDisplay();
+    });
+  });
+
+  // WYD Activity tags
+  document.querySelectorAll('#wyd-activity-tags .tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#wyd-activity-tags .tag-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentActivityTag = chip.getAttribute('data-type') || 'coding';
+    });
+  });
+
+  // Log WYD Pulse
+  document.getElementById('btn-submit-wyd')?.addEventListener('click', () => {
+    const input = document.getElementById('wyd-input');
+    const val = input.value.trim();
+    if (!val) return;
+
+    const newPulse = {
+      time: getCurrentFormattedTime(),
+      type: currentActivityTag,
+      text: val
+    };
+
+    blackboxPulses.unshift(newPulse);
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ myblackbox_pulses: blackboxPulses });
+    }
+    input.value = '';
+    renderBlackboxFeed();
+    // Reset timer on checkin
+    wydRemainingSeconds = wydIntervalMinutes * 60;
+    updateWydDisplay();
+  });
+
+  document.getElementById('wyd-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      document.getElementById('btn-submit-wyd')?.click();
+    }
+  });
+
+  // Copy BlackBox log
+  document.getElementById('btn-copy-blackbox')?.addEventListener('click', () => {
+    const dateStr = new Date().toLocaleDateString();
+    const lines = blackboxPulses.map(p => `- **[${p.time}]** \`[${p.type.toUpperCase()}]\` ${p.text}`).join('\n');
+    const md = `# ⬛ MyBlackBox Daily Pulse Log - ${dateStr}\n\n${lines || '*No activity logged.*'}\n`;
+    navigator.clipboard.writeText(md).then(() => {
+      const btn = document.getElementById('btn-copy-blackbox');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = old; }, 1800);
+    });
   });
 
   // Rescan active tab
@@ -361,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.create({ url: targetUrl });
   }
 
-  // Log Hit
+  // Log TCG Break Hit
   document.getElementById('btn-add-hit')?.addEventListener('click', () => {
     const input = document.getElementById('break-hit-input');
     const val = input.value.trim();

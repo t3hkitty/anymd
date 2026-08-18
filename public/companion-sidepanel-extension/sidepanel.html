@@ -10,6 +10,9 @@
       --card-bg: #0f172a;
       --border: #1e293b;
       --accent: #6366f1;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
       --text: #f8fafc;
       --muted: #94a3b8;
     }
@@ -25,7 +28,7 @@
       overflow: hidden;
     }
     header {
-      padding: 12px 16px;
+      padding: 10px 14px;
       background: #050811;
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -35,13 +38,13 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 12.5px;
       color: #cbd5e1;
     }
     .brand span.badge {
-      font-size: 10px;
+      font-size: 9.5px;
       background: rgba(99, 102, 241, 0.2);
       color: #818cf8;
       padding: 2px 6px;
@@ -51,21 +54,23 @@
     .nav-tabs {
       display: flex;
       background: #090d16;
-      padding: 6px 12px;
-      gap: 6px;
+      padding: 6px 10px;
+      gap: 4px;
       border-bottom: 1px solid var(--border);
+      overflow-x: auto;
     }
     .tab-btn {
       flex: 1;
-      padding: 6px 10px;
+      padding: 6px 8px;
       border-radius: 8px;
       background: transparent;
       border: 1px solid transparent;
       color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10.5px;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
+      white-space: nowrap;
       transition: all 0.15s;
     }
     .tab-btn.active {
@@ -76,22 +81,22 @@
     main {
       flex: 1;
       overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
     .card-title {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: #cbd5e1;
       display: flex;
@@ -99,16 +104,16 @@
       justify-content: space-between;
     }
     .btn {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.15s;
     }
     .btn-primary {
@@ -119,11 +124,19 @@
       background: #4f46e5;
     }
     .btn-success {
-      background: #10b981;
+      background: var(--emerald);
       color: #fff;
     }
     .btn-success:hover {
       background: #059669;
+    }
+    .btn-blackbox {
+      background: #18181b;
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+    .btn-blackbox:hover {
+      background: #27272a;
     }
     .btn-break {
       background: #ef4444;
@@ -145,9 +158,9 @@
       background: #090d16;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 7px 9px;
       color: #f8fafc;
-      font-size: 12px;
+      font-size: 11.5px;
       font-family: inherit;
     }
     input:focus, textarea:focus, select:focus {
@@ -158,7 +171,7 @@
       display: inline-block;
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 10px;
+      font-size: 9.5px;
       background: #1e293b;
       color: #94a3b8;
     }
@@ -173,20 +186,40 @@
       flex-direction: column;
       height: 100%;
       padding: 0;
-      margin: -14px;
+      margin: -12px;
     }
     pre.code-preview {
       background: #050811;
       border: 1px solid #1e293b;
-      border-radius: 10px;
-      padding: 10px;
+      border-radius: 8px;
+      padding: 8px;
       font-family: 'Fira Code', monospace;
-      font-size: 10.5px;
+      font-size: 10px;
       color: #94a3b8;
-      max-height: 160px;
+      max-height: 140px;
       overflow-y: auto;
       white-space: pre-wrap;
       word-break: break-word;
+    }
+    .tag-chip {
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: #050811;
+      border: 1px solid #1e293b;
+      color: #94a3b8;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .tag-chip:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .tag-chip.active {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: var(--accent);
+      color: #818cf8;
+      font-weight: bold;
     }
     .hidden { display: none !important; }
   </style>
@@ -195,81 +228,163 @@
   <header>
     <div class="brand">
       <span>📚 LC-MD</span>
-      <span class="badge">SIDECAR DOCK</span>
+      <span class="badge">MYBLACKBOX DOCK</span>
     </div>
-    <button id="btn-open-full" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">
+    <button id="btn-open-full" class="btn btn-secondary" style="padding: 3px 7px; font-size: 10.5px;">
       ↗ Full Vault
     </button>
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="tab-sidecar">⚡ Active Sidecar</button>
+    <button class="tab-btn active" data-tab="tab-blackbox">⬛ MyBlackBox &amp; WYD</button>
+    <button class="tab-btn" data-tab="tab-sidecar">⚡ Active Sidecar</button>
     <button class="tab-btn" data-tab="tab-break">🎴 TCG Break</button>
-    <button class="tab-btn" data-tab="tab-app">📱 Live Vault App</button>
+    <button class="tab-btn" data-tab="tab-app">📱 Live App</button>
   </nav>
 
   <main>
-    <!-- TAB 1: INSTANT SIDECAR GENERATOR & COPY (REPLACES BOOKMARKLETS) -->
-    <div id="tab-sidecar" class="tab-content" style="display: flex; flex-direction: column; gap: 12px;">
+    <!-- TAB 1: MYBLACKBOX & LIVE WYD TIMERS -->
+    <div id="tab-blackbox" class="tab-content" style="display: flex; flex-direction: column; gap: 10px;">
       
-      <!-- Detected Target Card -->
+      <!-- WYD Countdown Timer Card -->
+      <div class="card" style="border-color: rgba(52, 211, 153, 0.4); background: linear-gradient(180deg, #09121a 0%, #0f172a 100%);">
+        <div class="card-title">
+          <span style="color: #34d399; display: flex; align-items: center; gap: 5px;">
+            <span>⬛</span> WYD Accountability Timer
+          </span>
+          <span id="wyd-status-pill" class="pill" style="color: #34d399; background: rgba(52, 211, 153, 0.15);">
+            Active
+          </span>
+        </div>
+
+        <!-- Timer Display & Controls -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #050811; padding: 10px 14px; border-radius: 10px; border: 1px solid #1e293b;">
+          <div>
+            <div style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase;">Next Check-in in</div>
+            <div id="wyd-countdown" style="font-size: 24px; font-weight: 800; color: #f1f5f9; font-family: monospace; letter-spacing: 1px;">
+              15:00
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 4px;">
+            <button id="btn-toggle-wyd" class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">
+              ⏸ Pause
+            </button>
+            <button id="btn-reset-wyd" class="btn btn-secondary" style="padding: 6px 8px; font-size: 11px;" title="Reset Timer">
+              🔄
+            </button>
+          </div>
+        </div>
+
+        <!-- Timer Interval Selector -->
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="font-size: 10px; color: #64748b;">Interval:</span>
+          <div style="display: flex; gap: 4px; flex: 1;">
+            <button class="tag-chip active interval-chip" data-min="15">15m</button>
+            <button class="tag-chip interval-chip" data-min="20">20m</button>
+            <button class="tag-chip interval-chip" data-min="30">30m</button>
+            <button class="tag-chip interval-chip" data-min="45">45m</button>
+            <button class="tag-chip interval-chip" data-min="60">60m</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log WYD Pulse Check-in -->
+      <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
+        <div class="card-title">
+          <span>⚡ What are you doing right now? (WYD)</span>
+        </div>
+
+        <!-- Activity Tags -->
+        <div style="display: flex; gap: 4px; flex-wrap: wrap;" id="wyd-activity-tags">
+          <button class="tag-chip active" data-type="coding">💻 Coding</button>
+          <button class="tag-chip" data-type="reading">📖 Reading</button>
+          <button class="tag-chip" data-type="tcg">🎴 TCG Break</button>
+          <button class="tag-chip" data-type="deep_work">⚡ Deep Work</button>
+          <button class="tag-chip" data-type="writing">✍️ Drafting</button>
+          <button class="tag-chip" data-type="break">☕ Break</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <input id="wyd-input" type="text" placeholder="e.g. Tracking undiisclosed box break pulls..." />
+          <button id="btn-submit-wyd" class="btn btn-blackbox" style="shrink-0;">
+            Log Pulse
+          </button>
+        </div>
+      </div>
+
+      <!-- Today's BlackBox Microlog Stream -->
+      <div class="card">
+        <div class="card-title">
+          <span>📜 Today's BlackBox Pulse Stream</span>
+          <button id="btn-copy-blackbox" class="btn btn-secondary" style="padding: 2px 6px; font-size: 10px;">
+            📋 Copy Log
+          </button>
+        </div>
+
+        <div id="blackbox-feed" style="display: flex; flex-direction: column; gap: 4px; max-height: 160px; overflow-y: auto;">
+          <div style="font-size: 11px; color: #64748b; font-style: italic;">No pulses logged yet today. Type above to record your first!</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: ACTIVE SIDECAR STUDIO (KINDLE, AMAZON, TWITCH, NOVELUPDATES) -->
+    <div id="tab-sidecar" class="tab-content hidden" style="display: flex; flex-direction: column; gap: 10px;">
+      
       <div class="card" style="border-color: rgba(99, 102, 241, 0.4);">
         <div class="card-title">
           <span>🎯 Active Window / Book</span>
           <span id="tab-platform-badge" class="pill">Scanning...</span>
         </div>
         
-        <div id="tab-detected-box" style="background: #050811; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px;">
-          <div id="detected-title" style="font-weight: bold; color: #f1f5f9; font-size: 12px; word-break: break-word;">
+        <div id="tab-detected-box" style="background: #050811; border: 1px solid #1e293b; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 3px;">
+          <div id="detected-title" style="font-weight: bold; color: #f1f5f9; font-size: 11.5px; word-break: break-word;">
             Checking active window...
           </div>
-          <div id="detected-sub" style="font-size: 11px; color: #94a3b8;">
+          <div id="detected-sub" style="font-size: 10.5px; color: #94a3b8;">
             Auto-scanning Kindle, Amazon, Twitch, or Goodreads...
           </div>
-          <div id="detected-extra" style="font-size: 10px; color: #818cf8;"></div>
+          <div id="detected-extra" style="font-size: 9.5px; color: #818cf8;"></div>
         </div>
 
-        <!-- 3 Instant Action Buttons -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <div style="display: flex; gap: 6px;">
-            <button id="btn-copy-sidecar" class="btn btn-success" style="flex: 1;" title="Copy clean Markdown sidecar with YAML frontmatter to clipboard">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="display: flex; gap: 5px;">
+            <button id="btn-copy-sidecar" class="btn btn-success" style="flex: 1;">
               📋 Copy Markdown Sidecar
             </button>
-            <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 8px 10px;" title="Re-scan active window">
-              🔄 Scan
+            <button id="btn-refresh-tab" class="btn btn-secondary" style="padding: 6px 9px;">
+              🔄
             </button>
           </div>
-          <div style="display: flex; gap: 6px;">
-            <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;" title="Import into Sovereign Vault">
-              📥 Open &amp; Save in Vault
+          <div style="display: flex; gap: 5px;">
+            <button id="btn-grab-active" class="btn btn-primary" style="flex: 1;">
+              📥 Open in Vault
             </button>
-            <button id="btn-download-md" class="btn btn-secondary" style="flex: 1;" title="Download .md file directly">
+            <button id="btn-download-md" class="btn btn-secondary" style="flex: 1;">
               💾 Save .md File
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Live Generated Sidecar Markdown Preview -->
-      <div class="card" style="border-color: rgba(148, 163, 184, 0.2);">
+      <div class="card">
         <div class="card-title">
-          <span>📄 Live Sidecar Preview</span>
-          <span style="font-size: 10px; color: #64748b;">Ready to copy / export</span>
+          <span>📄 Live Sidecar Markdown</span>
         </div>
         <pre id="sidecar-preview" class="code-preview">Scanning active page...</pre>
       </div>
-
     </div>
 
-    <!-- TAB 2: LIVE TCG BREAK LOGGER -->
-    <div id="tab-break" class="tab-content hidden" style="display: flex; flex-direction: column; gap: 12px;">
+    <!-- TAB 3: LIVE TCG BREAK LOGGER -->
+    <div id="tab-break" class="tab-content hidden" style="display: flex; flex-direction: column; gap: 10px;">
       <div class="card" style="border-color: rgba(239, 68, 68, 0.4);">
         <div class="card-title">
           <span style="color: #f87171;">🎴 Live TCG Break Logger</span>
           <span class="pill" style="color: #f87171; background: rgba(239, 68, 68, 0.15);">undiisclosed / Twitch</span>
         </div>
-        <p style="font-size: 11px; color: #94a3b8;">
-          Watch the break on your main monitor and log card pulls, pack numbers, and timestamps here live without switching tabs!
+        <p style="font-size: 10.5px; color: #94a3b8;">
+          Watch the break on your main monitor and log card pulls and timestamps live without switching tabs!
         </p>
 
         <div style="display: flex; gap: 6px;">
@@ -294,7 +409,7 @@
       </div>
     </div>
 
-    <!-- TAB 3: EMBEDDED LIVE VAULT APP -->
+    <!-- TAB 4: EMBEDDED LIVE VAULT APP -->
     <div id="tab-app" class="tab-content hidden" style="flex: 1; height: 100%;">
       <div id="view-app">
         <iframe id="vault-iframe" class="app-frame" src="http://artkitty.net/meow/lcmd/"></iframe>
