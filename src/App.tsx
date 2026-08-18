@@ -86,6 +86,7 @@ import { parseInboundShareTarget, convertSharePayloadToBook } from './plugins/pw
 import { getActiveProfile, type UserProfile } from './plugins/profileManagementPlugin';
 import { SAMPLE_MEDIA_ITEMS } from './data/sampleMediaItems';
 import { BookcaseIcon } from './components/BookcaseIcon';
+import { HeaderNavDropdowns } from './components/HeaderNavDropdowns';
 
 // Plugins & Utilities
 import { parseEpubFile } from './plugins/epubReaderPlugin';
@@ -107,8 +108,7 @@ import {
 
 // Icons
 import {
-  BookOpen, Radio, FileText, Sparkles, Layers, Puzzle, Upload,
-  Cloud, Import, Grid, Globe, Share2, Lock, Tag, Bookmark
+  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock
 } from 'lucide-react';
 
 const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
@@ -858,345 +858,47 @@ date_cataloged: "${new Date().toISOString()}"
           </div>
         </div>
 
-        {/* Plugin Action Toolbar */}
-        <div className="flex items-center space-x-2 flex-wrap">
+        {/* Clean Categorized Dropdown Action Toolbar */}
+        <div className="flex items-center space-x-2.5 flex-wrap gap-y-2">
           
           {/* Prominent Collection Valuation Startle Widget */}
           <CollectionValueStartleWidget />
 
-          {/* Universal Physical Media & Location Manager Button */}
-          <button
-            onClick={() => setIsMediaTypeManagerOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-amber-200 text-xs font-semibold shadow-sm transition-all"
-            title="Universal Physical Media Manager (Books, Movies, Paintings, Shoes, Wardrobe, Music, Games & Location Hierarchy)"
-          >
-            <Layers className="w-3.5 h-3.5 text-amber-400" />
-            <span>Physical Media & Locations</span>
-          </button>
+          {/* Organized Dropdown Hubs: Ingest | Vault Tools | Cloud & Auth | Creative Studio */}
+          <HeaderNavDropdowns
+            onOpenVodImporter={() => setIsVodImporterOpen(true)}
+            onOpenNovelUpdates={() => setIsNovelUpdatesOpen(true)}
+            onOpenAnnasArchive={() => setIsAnnasArchiveOpen(true)}
+            onOpenPASourcing={() => setIsPASourcingOpen(true)}
+            onOpenBookmarklets={() => setIsBookmarkletModalOpen(true)}
+            onOpenCalibreImport={() => setIsCalibreImportOpen(true)}
+            onUploadEpubClick={() => fileInputRef.current?.click()}
 
-          {/* HTML Showcase & Self-Hosted Publisher Button */}
-          <button
-            onClick={() => setIsHtmlPublishOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold shadow-sm transition-all"
-            title="HTML Showcase & Self-Hosted WebDAV Publisher (Download static HTML, publish to server, copy share link & embed code)"
-          >
-            <Upload className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Publish HTML</span>
-          </button>
+            onOpenVaultRestore={() => setIsVaultRestoreOpen(true)}
+            onOpenGenreTagManager={() => setIsGenreTagManagerOpen(true)}
+            onOpenMediaTypeManager={() => setIsMediaTypeManagerOpen(true)}
+            onOpenBulkEdit={() => setIsBulkEditOpen(true)}
+            onOpenOPDSCatalog={() => setIsOPDSCatalogOpen(true)}
+            onOpenPwaInstall={() => setIsPwaInstallOpen(true)}
 
-          {/* Executive PA Sourcing Grocery List Button */}
-          <button
-            onClick={() => setIsPASourcingOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold shadow-sm transition-all"
-            title="Executive PA Sourcing 'Grocery List' (Shareable wishlist checklist, direct sourcing links, copy PA digest, WebDAV PA drop)"
-          >
-            <span>📋</span>
-            <span>PA Grocery List</span>
-          </button>
+            onOpenCloudAccounts={() => setIsCloudAccountsOpen(true)}
+            onOpenWebDAVIndexer={() => setIsWebDAVIndexerOpen(true)}
+            onOpenLocalSshAuth={() => setIsLocalSshAuthOpen(true)}
+            onOpenSovereignSmtp={() => setIsSovereignSmtpOpen(true)}
+            onOpenOpenSso={() => setIsOpenSsoOpen(true)}
+            onOpenStackcpDeploy={() => setIsStackcpDeployOpen(true)}
+            onOpenGoogleAuthDeploy={() => setIsGoogleAuthDeployOpen(true)}
+            onOpenRsyncSync={() => setIsRsyncModalOpen(true)}
 
-          {/* Anna's Archive & Library of Congress ISBN Resolver Button */}
-          <button
-            onClick={() => setIsAnnasArchiveOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 text-xs font-semibold shadow-sm transition-all"
-            title="Resolve ISBN-13, LoC MARC21 Call Numbers & Open Library records via Anna's Archive torrent database mirrors"
-          >
-            <span>🏛️</span>
-            <span>LoC / Anna's Archive</span>
-          </button>
+            onOpenArtistAiStudio={() => setIsArtistAiStudioOpen(true)}
+            onOpenStoryMakerBible={() => setIsStoryMakerBibleOpen(true)}
+            onOpenSpatialRoutine={() => setIsSpatialRoutineOpen(true)}
+            onOpenPersonaCollector={() => setIsPersonaCollectorOpen(true)}
+            onOpenHtmlPublish={() => setIsHtmlPublishOpen(true)}
+            onOpenCommunityHub={() => setActiveView('community')}
+          />
 
-          {/* NovelUpdates Webnovel Scraper Button */}
-          <button
-            onClick={() => setIsNovelUpdatesOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold shadow-sm transition-all"
-            title="NovelUpdates.com Scraper & Sourcing (Scrape Asian webnovel tags, native titles, ratings, publishers & chapter feeds)"
-          >
-            <Globe className="w-3.5 h-3.5 text-indigo-400" />
-            <span>NovelUpdates Scraper</span>
-          </button>
-
-          {/* Universal Media Category & Custom Tag Manager Button */}
-          <button
-            onClick={() => setIsGenreTagManagerOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 text-xs font-semibold shadow-sm transition-all"
-            title="Universal Media Category & Custom Tag Manager (Define custom tag presets for TCG Cards, Funko Pops, Wardrobe, Music & Ebooks)"
-          >
-            <Tag className="w-3.5 h-3.5 text-purple-400" />
-            <span>Category & Tags</span>
-          </button>
-
-          {/* 1-Click Bookmarklets Generator Button */}
-          <button
-            onClick={() => setIsBookmarkletModalOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold shadow-sm transition-all"
-            title="1-Click Browser Bookmarklet Generator for NovelUpdates.com & Goodreads Lists"
-          >
-            <Bookmark className="w-3.5 h-3.5 text-amber-400" />
-            <span>Bookmarklets</span>
-          </button>
-
-          {/* PWA App Install & Mobile Share Target Button */}
-          <button
-            onClick={() => setIsPwaInstallOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-500/20 to-indigo-500/20 hover:from-sky-500/30 hover:to-indigo-500/30 border border-sky-400/50 text-sky-200 text-xs font-bold shadow-sm transition-all"
-            title="Install PWA App Shortcut & Enable Mobile Share Target (Share books directly from mobile browser sheet!)"
-          >
-            <span>📲</span>
-            <span>Install App (Mobile Share)</span>
-          </button>
-
-          {/* Active User Profile & Registration (Invite Code 'meow') Button */}
-          <button
-            onClick={() => setIsProfileManagementOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/25 hover:bg-amber-500/40 border border-amber-400/50 text-amber-200 text-xs font-bold shadow-sm transition-all"
-            title="Profile Management, User Switching & Registration (Invite Code: meow)"
-          >
-            <span>{activeUserProfile.avatarEmoji || '👤'}</span>
-            <span>@{activeUserProfile.username}</span>
-            <span className="px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 text-[10px] font-mono font-bold">meow</span>
-          </button>
-
-          {/* Sovereign SMTP Email Verification & Zero-Cloud Accounts Button */}
-          <button
-            onClick={() => setIsSovereignSmtpOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold shadow-sm transition-all"
-            title="Unified Black Box & Library Email Verification via Self-Hosted SMTP (mail.artkitty.net)"
-          >
-            <span>📧</span>
-            <span>Sovereign Email Auth</span>
-          </button>
-
-          {/* OpenSSO, WebAuthn Passkeys & GitHub SSO Button */}
-          <button
-            onClick={() => setIsOpenSsoOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold shadow-sm transition-all"
-            title="OpenSSO, Biometric Hardware Passkeys (WebAuthn TouchID/FaceID) & GitHub OAuth SSO"
-          >
-            <span>🔑</span>
-            <span>OpenSSO & Passkeys</span>
-          </button>
-
-          {/* Midphase Hosting Server & Google Auth Setup Button */}
-          <button
-            onClick={() => setIsGoogleAuthDeployOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/40 text-sky-200 text-xs font-semibold shadow-sm transition-all"
-            title="Deploy to Midphase Server for Family Access & Store Accounts with Google Auth"
-          >
-            <Cloud className="w-3.5 h-3.5 text-sky-400" />
-            <span>Midphase & Google Auth</span>
-          </button>
-
-          {/* Local SSH Authentication & Zero Cloud Accounts Button */}
-          <button
-            onClick={() => setIsLocalSshAuthOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold shadow-sm transition-all"
-            title="Local SSH Authentication, Zero-Cloud Account Registration & ED25519 Key Vault"
-          >
-            <span>🔑</span>
-            <span>Local SSH & Accounts</span>
-          </button>
-
-          {/* Local SSL Client Certificate & mTLS Authentication Button */}
-          <button
-            onClick={() => setIsLocalSslAuthOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-200 text-xs font-semibold shadow-sm transition-all"
-            title="HTTPS Mutual TLS (mTLS) SSL Client Certificate Auth & Zero-Cloud Registration Engine"
-          >
-            <span>🔐</span>
-            <span>Local SSL & mTLS</span>
-          </button>
-
-          {/* Sovereign Privacy Shield & Zero-Telemetry Audit Button */}
-          <button
-            onClick={() => setIsSovereignPrivacyOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-200 text-xs font-semibold shadow-sm transition-all"
-            title="Sovereign Data Vault, Zero-Telemetry Audit & Anti-Scraper Protection"
-          >
-            <span>🛡️</span>
-            <span>Sovereign Privacy</span>
-          </button>
-
-          {/* Sovereign Black Box Architecture Manifest Button */}
-          <button
-            onClick={() => setIsBlackBoxOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-zinc-950/80 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-300 text-xs font-semibold shadow-sm transition-all"
-            title="Sovereign Black Box Architecture Manifest (Natural Expansion of Black Box Site)"
-          >
-            <span>⬛</span>
-            <span>Black Box Vault</span>
-          </button>
-
-          {/* StackCP FTP Auto-Deployment Button (meow.artkitty.net) */}
-          {/* 1. 📥 UNIVERSAL IMPORT & INTAKE STUDIO */}
-          <button
-            onClick={() => setIsUnifiedImportOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-500 hover:to-sky-500 text-white text-xs font-extrabold shadow-md transition-all"
-            title="Universal Import & Ingest Studio: Home Insurance Scanner, Card Scanner, Anna's Archive LoC, Reading Lists, Webnovels & Folder Sync"
-          >
-            <Import className="w-3.5 h-3.5" />
-            <span>📥 Import Studio</span>
-          </button>
-
-          {/* 2. 📤 UNIFIED EXPORT & SHARING STUDIO */}
-          <button
-            onClick={() => setIsUnifiedExportOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-slate-950 text-xs font-extrabold shadow-md transition-all"
-            title="Unified Export & Share Studio: Executive PA Grocery List, Google Sheets CSV, HTML Showcase, Obsidian Vault & QR Share"
-          >
-            <Share2 className="w-3.5 h-3.5" />
-            <span>📤 Export &amp; Share</span>
-          </button>
-
-          {/* 3. 💡 AUTO-DISCOVERED REAL-FILE MATCHES TRIGGER */}
-          {suggestedDriveLinks.filter(s => s.status === 'pending').length > 0 && (
-            <button
-              onClick={() => setIsSuggestedLinksOpen(true)}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold transition-all animate-pulse"
-              title="Auto-discovered matching files in your cloud storage & downloads"
-            >
-              <span>💡</span>
-              <span className="hidden sm:inline">
-                {suggestedDriveLinks.filter(s => s.status === 'pending').length} File Matches
-              </span>
-            </button>
-          )}
-
-          {/* 4. 📖 SOVEREIGN BOOKMATTER STUDIO */}
-          {pluginState.enabledPlugins['webdav-indexer'] && (
-            <button
-              onClick={() => setIsWebDAVIndexerOpen(true)}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 text-xs font-bold transition-all"
-              title="Sovereign Bookmatter Studio: Front Matter, Back Matter, Character Tables, Glossaries & Provenance Certificates"
-            >
-              <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">📖 Bookmatter</span>
-            </button>
-          )}
-
-          {/* 5. 🎵 SPOTIFY MUSIC LINKING */}
-          <button
-            onClick={() => setIsSpotifyMusicOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all"
-            title="Black Box Music Linking: Spotify Scrobbler, Vinyl & Lossless Albums"
-          >
-            <span>🎵</span>
-            <span className="hidden lg:inline">Spotify / Music</span>
-          </button>
-
-          {/* 6. ⏱️ VPS CRON SCHEDULER */}
-          <button
-            onClick={() => setIsCronSchedulerOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-sky-950/80 hover:bg-sky-900 border border-sky-500/40 text-sky-300 text-xs font-bold transition-all"
-            title="VPS Cron & Automation Scheduler for Plugin Creators"
-          >
-            <span>⏱️</span>
-            <span className="hidden lg:inline">VPS Cron</span>
-          </button>
-
-          {/* 7. 🌐 MEOW PORTAL & STACKCP */}
-          <button
-            onClick={() => setIsMeowPortalOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 text-xs font-semibold transition-all"
-            title="meow.artkitty.net Root Index Portal & StackCP Deploy"
-          >
-            <span>🐱</span>
-            <span className="hidden lg:inline">meow.artkitty.net</span>
-          </button>
-
-          {/* 8. 🎨 LOCAL AI CREATOR STUDIO */}
-          <button
-            onClick={() => setIsArtistAiStudioOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-pink-950/80 hover:bg-pink-900 border border-pink-500/40 text-pink-300 text-xs font-bold transition-all"
-            title="Local AI Creator Studio: Redbubble 50 Tags, Etsy 13 Tags, Royal Road Tropes & Ethical Disclosures"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            <span className="hidden lg:inline">Creator AI</span>
-          </button>
-
-          {/* 9. 🚪 SPATIAL-CHAINED ROUTINES & TTS */}
-          <button
-            onClick={() => setIsSpatialRoutineOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-blue-950/80 hover:bg-blue-900 border border-blue-500/40 text-blue-300 text-xs font-bold transition-all"
-            title="Spatial-Chained Routine Registry (Leaving House, Morning Wake, Sustenance, Bedtime) & 'No Bad Days' Script"
-          >
-            <span>🚪</span>
-            <span className="hidden xl:inline">Routines &amp; TTS</span>
-          </button>
-
-          {/* 10. 🎭 STORY MAKER & AUTHOR BIBLE */}
-          <button
-            onClick={() => setIsStoryMakerBibleOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all"
-            title="Story Maker & Author Bible: Inspo Ledger, Character Role Slugs ([MC], [ML]) & AI Drafting"
-          >
-            <span>🎭</span>
-            <span className="hidden xl:inline">Author Bible</span>
-          </button>
-
-          {/* 11. ⚡ RUNNING LITANY & WATCHDOG */}
-          <button
-            onClick={() => setIsRunningLitanyOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all"
-            title="Running Litany Real-Time Activity Pulse, Inactivity Watchdog & AuDHD Traffic Alarm"
-          >
-            <span>⚡</span>
-            <span className="hidden xl:inline">Litany Pulse</span>
-          </button>
-
-          {/* 12. 💖 PERSONA, PIPLUP & PLUSHIE CUBBIES */}
-          <button
-            onClick={() => setIsPersonaCollectorOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all"
-            title="Persona Sanctuary: Anxiety Reducer (Calm Mode), Suffering Ledger, Person Slugs, Piplup Radar & Plushie Cubbies"
-          >
-            <span>💖</span>
-            <span className="hidden xl:inline">Persona &amp; Plush</span>
-          </button>
-
-          {/* 13. 📦 VAULT RESTORE (ZIP / PIN LOCK) */}
-          <button
-            onClick={() => setIsVaultRestoreOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-950/90 hover:bg-amber-900 border border-amber-500/50 text-amber-300 text-xs font-bold transition-all"
-            title="Vault Backup Import (ZIP & /media/) & Local Folder PIN Session Restore (.vault-session.lock)"
-          >
-            <span>📦</span>
-            <span className="hidden xl:inline">Restore Vault</span>
-          </button>
-
-          {/* 14. 🎬 VOD & STREAM IMPORTER */}
-          <button
-            onClick={() => setIsVodImporterOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-950/90 hover:bg-red-900 border border-red-500/50 text-red-300 text-xs font-bold transition-all"
-            title="VOD & Stream Importer (YouTube, Twitch, Kick, TorBox Streams)"
-          >
-            <span>🎬</span>
-            <span className="hidden xl:inline">VODs</span>
-          </button>
-
-          {/* 6. ⚙️ CLOUD & PLUGINS */}
-          <button
-            onClick={() => setIsPluginManagerOpen(true)}
-            className="flex items-center space-x-1 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs transition-all"
-            title="Plugin Manager & Extension Settings"
-          >
-            <Puzzle className="w-3.5 h-3.5 text-indigo-400" />
-          </button>
-
-          <button
-            onClick={() => setIsCloudAccountsOpen(true)}
-            className="flex items-center space-x-1 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sky-300 text-xs transition-all"
-            title="Cloud Storage Account Manager (Filejump, Nextcloud, Koofr, GDrive)"
-          >
-            <Cloud className="w-3.5 h-3.5 text-sky-400" />
-          </button>
-
-          {/* Direct Upload EPUB File */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center space-x-1 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 text-xs transition-all"
-            title="Direct Upload EPUB File"
-          >
-            <Upload className="w-3.5 h-3.5" />
-          </button>
+          {/* Hidden EPUB File Input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -1207,18 +909,16 @@ date_cataloged: "${new Date().toISOString()}"
 
           {/* View Switcher */}
           <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center space-x-1 text-xs">
-            {pluginState.enabledPlugins['library-view'] && (
-              <button
-                onClick={() => setActiveView('library')}
-                className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
-                  activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-300 hover:text-amber-200'
-                }`}
-                title="Bookshelf Library Grid View"
-              >
-                <Grid className="w-3.5 h-3.5" />
-                <span className="text-[11px]">Library</span>
-              </button>
-            )}
+            <button
+              onClick={() => setActiveView('library')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
+                activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-300 hover:text-amber-200'
+              }`}
+              title="Bookshelf Library Grid View"
+            >
+              <Grid className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Library</span>
+            </button>
 
             <button
               onClick={() => setActiveView('split')}
@@ -1258,17 +958,6 @@ date_cataloged: "${new Date().toISOString()}"
               title="Sidecar .md"
             >
               <FileText className="w-3.5 h-3.5" />
-            </button>
-
-            <button
-              onClick={() => setActiveView('community')}
-              className={`px-2 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
-                activeView === 'community' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="Sovereign Community Hub & Sidecar Marketplace"
-            >
-              <Globe className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-[11px] font-mono font-bold hidden sm:inline">Community</span>
             </button>
           </div>
 

@@ -1,0 +1,456 @@
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Download,
+  Upload,
+  FolderOpen,
+  Cloud,
+  Key,
+  Mail,
+  Shield,
+  Layers,
+  Tag,
+  Bookmark,
+  Globe,
+  Sparkles,
+  ChevronDown,
+  FileText,
+  Boxes,
+  Database,
+  Smartphone,
+  Server
+} from 'lucide-react';
+
+interface HeaderNavDropdownsProps {
+  onOpenVodImporter: () => void;
+  onOpenNovelUpdates: () => void;
+  onOpenAnnasArchive: () => void;
+  onOpenPASourcing: () => void;
+  onOpenBookmarklets: () => void;
+  onOpenCalibreImport: () => void;
+  onUploadEpubClick: () => void;
+
+  onOpenVaultRestore: () => void;
+  onOpenGenreTagManager: () => void;
+  onOpenMediaTypeManager: () => void;
+  onOpenBulkEdit: () => void;
+  onOpenOPDSCatalog: () => void;
+  onOpenPwaInstall: () => void;
+
+  onOpenCloudAccounts: () => void;
+  onOpenWebDAVIndexer: () => void;
+  onOpenLocalSshAuth: () => void;
+  onOpenSovereignSmtp: () => void;
+  onOpenOpenSso: () => void;
+  onOpenStackcpDeploy: () => void;
+  onOpenGoogleAuthDeploy: () => void;
+  onOpenRsyncSync: () => void;
+
+  onOpenArtistAiStudio: () => void;
+  onOpenStoryMakerBible: () => void;
+  onOpenSpatialRoutine: () => void;
+  onOpenPersonaCollector: () => void;
+  onOpenHtmlPublish: () => void;
+  onOpenCommunityHub: () => void;
+}
+
+export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => {
+  const [openMenu, setOpenMenu] = useState<'ingest' | 'vault' | 'cloud' | 'studio' | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  const toggleMenu = (menu: 'ingest' | 'vault' | 'cloud' | 'studio') => {
+    setOpenMenu(prev => prev === menu ? null : menu);
+  };
+
+  const runAction = (fn: () => void) => {
+    setOpenMenu(null);
+    fn();
+  };
+
+  return (
+    <div ref={containerRef} className="flex items-center space-x-1.5 font-sans text-xs">
+      
+      {/* 1. 📥 INGEST & SCRAPERS DROPDOWN */}
+      <div className="relative">
+        <button
+          onClick={() => toggleMenu('ingest')}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
+            openMenu === 'ingest'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
+          }`}
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ingest &amp; Sourcing</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'ingest' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openMenu === 'ingest' && (
+          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
+              Media Ingest &amp; Scrapers
+            </div>
+            
+            <button
+              onClick={() => runAction(props.onOpenVodImporter)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-red-300 font-semibold transition-colors"
+            >
+              <span>🎬</span>
+              <div>
+                <div className="text-slate-100 font-bold">VOD &amp; Stream Importer</div>
+                <div className="text-[10px] text-slate-400">Twitch, YouTube, Kick &amp; TorBox</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenNovelUpdates)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-indigo-300 font-semibold transition-colors"
+            >
+              <Globe className="w-4 h-4 text-indigo-400" />
+              <div>
+                <div className="text-slate-100 font-bold">NovelUpdates Scraper</div>
+                <div className="text-[10px] text-slate-400">Asian webnovels, tags &amp; chapters</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenAnnasArchive)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-sky-300 font-semibold transition-colors"
+            >
+              <span>🏛️</span>
+              <div>
+                <div className="text-slate-100 font-bold">Anna's Archive &amp; LoC</div>
+                <div className="text-[10px] text-slate-400">ISBN-13, MARC21 &amp; torrent mirrors</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenPASourcing)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
+            >
+              <span>📋</span>
+              <div>
+                <div className="text-slate-100 font-bold">PA Grocery List</div>
+                <div className="text-[10px] text-slate-400">Wishlist checklist &amp; direct links</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenBookmarklets)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-purple-300 font-semibold transition-colors"
+            >
+              <Bookmark className="w-4 h-4 text-purple-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Browser Bookmarklets</div>
+                <div className="text-[10px] text-slate-400">Goodreads &amp; NovelUpdates scrapers</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenCalibreImport)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors"
+            >
+              <Database className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Calibre Library Sync</div>
+                <div className="text-[10px] text-slate-400">metadata.db &amp; Calibre collections</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onUploadEpubClick)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-200 font-semibold transition-colors border-t border-slate-800"
+            >
+              <Upload className="w-4 h-4 text-amber-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Upload Local EPUB File</div>
+                <div className="text-[10px] text-slate-400">Direct drag-and-drop parse</div>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 2. 🗃️ VAULT TOOLS DROPDOWN */}
+      <div className="relative">
+        <button
+          onClick={() => toggleMenu('vault')}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
+            openMenu === 'vault'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
+          }`}
+        >
+          <Boxes className="w-3.5 h-3.5" />
+          <span>Vault Tools</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'vault' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openMenu === 'vault' && (
+          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
+              Vault Organization &amp; Metadata
+            </div>
+
+            <button
+              onClick={() => runAction(props.onOpenMediaTypeManager)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
+            >
+              <Layers className="w-4 h-4 text-amber-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Physical Media &amp; Locations</div>
+                <div className="text-[10px] text-slate-400">Books, Vinyls, Paintings &amp; Rooms</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenGenreTagManager)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-purple-300 font-semibold transition-colors"
+            >
+              <Tag className="w-4 h-4 text-purple-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Category &amp; Tag Manager</div>
+                <div className="text-[10px] text-slate-400">TCG, LitRPG, Fashion &amp; Tropes</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenBulkEdit)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-indigo-300 font-semibold transition-colors"
+            >
+              <FileText className="w-4 h-4 text-indigo-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Bulk Metadata Editor</div>
+                <div className="text-[10px] text-slate-400">Batch retag, pricing &amp; authors</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenVaultRestore)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors"
+            >
+              <span>📦</span>
+              <div>
+                <div className="text-slate-100 font-bold">Vault Backup &amp; Restore</div>
+                <div className="text-[10px] text-slate-400">ZIP archive import &amp; session lock</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenOPDSCatalog)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-sky-300 font-semibold transition-colors"
+            >
+              <Server className="w-4 h-4 text-sky-400" />
+              <div>
+                <div className="text-slate-100 font-bold">OPDS Catalog Feed</div>
+                <div className="text-[10px] text-slate-400">Universal e-reader XML/Atom feed</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenPwaInstall)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-400 font-semibold transition-colors border-t border-slate-800"
+            >
+              <Smartphone className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Install PWA App Shortcut</div>
+                <div className="text-[10px] text-slate-400">Enable mobile share target sheet</div>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 3. ☁️ CLOUD & AUTH DROPDOWN */}
+      <div className="relative">
+        <button
+          onClick={() => toggleMenu('cloud')}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
+            openMenu === 'cloud'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
+          }`}
+        >
+          <Cloud className="w-3.5 h-3.5" />
+          <span>Cloud &amp; Auth</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'cloud' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openMenu === 'cloud' && (
+          <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
+              Sovereign Storage &amp; Authentication
+            </div>
+
+            <button
+              onClick={() => runAction(props.onOpenCloudAccounts)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-sky-300 font-semibold transition-colors"
+            >
+              <Cloud className="w-4 h-4 text-sky-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Cloud Storage Accounts</div>
+                <div className="text-[10px] text-slate-400">Filejump, Nextcloud, Koofr &amp; Drive</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenWebDAVIndexer)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-indigo-300 font-semibold transition-colors"
+            >
+              <FolderOpen className="w-4 h-4 text-indigo-400" />
+              <div>
+                <div className="text-slate-100 font-bold">WebDAV &amp; TorBox Cloud</div>
+                <div className="text-[10px] text-slate-400">Remote file browser &amp; proxy</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenLocalSshAuth)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors"
+            >
+              <Key className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Local SSH &amp; Zero-Cloud</div>
+                <div className="text-[10px] text-slate-400">Ed25519 keys &amp; local accounts</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenSovereignSmtp)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
+            >
+              <Mail className="w-4 h-4 text-amber-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Sovereign SMTP Auth</div>
+                <div className="text-[10px] text-slate-400">Self-hosted mail.artkitty.net</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenOpenSso)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-purple-300 font-semibold transition-colors"
+            >
+              <Shield className="w-4 h-4 text-purple-400" />
+              <div>
+                <div className="text-slate-100 font-bold">OpenSSO &amp; Passkeys</div>
+                <div className="text-[10px] text-slate-400">WebAuthn biometric TouchID &amp; GitHub</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenStackcpDeploy)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-400 font-semibold transition-colors border-t border-slate-800"
+            >
+              <span>🐱</span>
+              <div>
+                <div className="text-slate-100 font-bold">meow.artkitty.net Deploy</div>
+                <div className="text-[10px] text-slate-400">StackCP production FTP portal</div>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 4. 🎨 CREATIVE STUDIO DROPDOWN */}
+      <div className="relative">
+        <button
+          onClick={() => toggleMenu('studio')}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-sm ${
+            openMenu === 'studio'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 hover:border-amber-500/40'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Creative Studio</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === 'studio' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openMenu === 'studio' && (
+          <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn">
+            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800">
+              Author, AI &amp; Spatial Routines
+            </div>
+
+            <button
+              onClick={() => runAction(props.onOpenArtistAiStudio)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-pink-300 font-semibold transition-colors"
+            >
+              <Sparkles className="w-4 h-4 text-pink-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Local Creator AI Studio</div>
+                <div className="text-[10px] text-slate-400">Redbubble, Etsy &amp; Royal Road tropes</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenStoryMakerBible)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-purple-300 font-semibold transition-colors"
+            >
+              <span>🎭</span>
+              <div>
+                <div className="text-slate-100 font-bold">Author Bible &amp; Story Maker</div>
+                <div className="text-[10px] text-slate-400">Character role slugs &amp; inspo ledger</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenSpatialRoutine)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-blue-300 font-semibold transition-colors"
+            >
+              <span>🚪</span>
+              <div>
+                <div className="text-slate-100 font-bold">Spatial Routines &amp; TTS</div>
+                <div className="text-[10px] text-slate-400">Morning wake, leaving house &amp; bedtime</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenPersonaCollector)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-rose-300 font-semibold transition-colors"
+            >
+              <span>💖</span>
+              <div>
+                <div className="text-slate-100 font-bold">Persona &amp; Plushie Cubbies</div>
+                <div className="text-[10px] text-slate-400">Calm mode, Piplup radar &amp; sanctuary</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenHtmlPublish)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-indigo-300 font-semibold transition-colors"
+            >
+              <Upload className="w-4 h-4 text-indigo-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Publish HTML Showcase</div>
+                <div className="text-[10px] text-slate-400">Self-hosted static web showcase</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => runAction(props.onOpenCommunityHub)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-400 font-semibold transition-colors border-t border-slate-800"
+            >
+              <Globe className="w-4 h-4 text-emerald-400" />
+              <div>
+                <div className="text-slate-100 font-bold">Community Marketplace</div>
+                <div className="text-[10px] text-slate-400">Sidecar templates &amp; shared prompts</div>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+    </div>
+  );
+};
