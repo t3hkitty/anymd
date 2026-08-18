@@ -15,10 +15,12 @@
 **Library Companion MD (LC-MD)** is an open-source, local-first companion system and discovery library designed to keep your personal reading data, custom PC rig builds, trading card grails, home insurance valuations, and gift histories **100% private to your hardware**.
 
 - **Grand Bookcase & Multi-View Studio**: 3D bookshelf UI, realistic mahogany spines, wardrobe closet hangers, list view, and interactive 3D carousel showcase.
+- **🧪 Dedicated Sandbox Demo Vault**: Isolated non-sensitive sandbox playground to safely test bulk edits, batch tag replacements, bulk deletions, and ZIP exports, with 1-click restore.
+- **🎸 Music Album & Track-Linked Sidecars**: Full rock opera concept albums (e.g. Green Day's *American Idiot*) linking to individual song sidecars (*Boulevard of Broken Dreams*, *Holiday*, etc.) with nested Zettelkasten wikilinks.
 - **Auto-Card Cropper & Dual Media Linking**: Extracts individual slab-framed card covers from scans with HTML5 canvas while linking to raw full-resolution uncropped master uploads.
 - **Structured ZIP Archive & `/media/` Packaging**: 1-click full vault backup with `.companion.md` sidecars in `/Sidecars/`, all image covers & raw scans in `/media/`, and standard `manifest.json`.
 - **Storage Quota & Local Folder Upgrade**: Native File System Access API integration (`mountSovereignLocalFolder()`) to mount local drives without browser cache limitations.
-- **Discord-Style Reaction Bursts & Context GIFs**: Quick reaction capture with 24-emoji burst bar and smart GIF suggestions (Popcat, Vibing Cat, Doge, etc.).
+- **Discord-Style Reaction Bursts & Pac-Man Retro GIFs**: Quick reaction capture with 24-emoji burst bar and context GIFs (Pac-Man ghost-chasing & fruit chomp, Popcat, Doge).
 - **Natural Black Box Expansion**: Tamper-proof, zero-cloud data processing with controlled outbound egress.
 - **Hardware Passkeys & OpenSSO**: Biometric Touch ID, Face ID, Windows Hello (WebAuthn), GitHub OAuth, or self-hosted SMTP email verification.
 - **Fair Trade Calculator & Sourcing Digest**: Decimal precision asset comparator, executive PA procurement lists, and Google Sheets CSV exports.
