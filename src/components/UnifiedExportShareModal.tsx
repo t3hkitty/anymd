@@ -17,7 +17,9 @@ import {
   QrCode,
   BookOpen,
   ClipboardList,
-  FolderArchive
+  FolderArchive,
+  KeyRound,
+  RefreshCw
 } from 'lucide-react';
 
 interface UnifiedExportShareModalProps {
@@ -43,6 +45,8 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
   const [activeTab, setActiveTab] = useState<'vault_zip' | 'pa_sourcing' | 'google_sheets' | 'html_publish' | 'obsidian' | 'qr_share'>('vault_zip');
   const [isZipping, setIsZipping] = useState(false);
   const [includeCloudAccounts, setIncludeCloudAccounts] = useState(true);
+  const [zipPin, setZipPin] = useState<string>(() => String(Math.floor(1000 + Math.random() * 9000)));
+  const [copiedZipPin, setCopiedZipPin] = useState(false);
   
   // PA Sourcing State
   const [copiedPa, setCopiedPa] = useState(false);
@@ -257,13 +261,73 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
                 </p>
               </div>
 
+              {/* 🔐 Sovereign Archive Access PIN Display Card */}
+              <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-indigo-950/40 border border-amber-500/40 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center space-x-2">
+                    <KeyRound className="w-4 h-4 text-amber-400" />
+                    <span className="font-bold text-slate-100 text-xs">Sovereign Archive Access PIN</span>
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
+                      AES-GCM LOCKFILE
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setZipPin(String(Math.floor(1000 + Math.random() * 9000)))}
+                      className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center space-x-1 transition-colors"
+                      title="Generate new random PIN"
+                    >
+                      <RefreshCw className="w-3 h-3 text-amber-400" />
+                      <span>New PIN</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(zipPin);
+                        setCopiedZipPin(true);
+                        setTimeout(() => setCopiedZipPin(false), 2000);
+                      }}
+                      className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-[10px] font-bold font-mono flex items-center space-x-1 transition-colors shadow-sm"
+                    >
+                      {copiedZipPin ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      <span>{copiedZipPin ? 'Copied!' : 'Copy PIN'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Big Prominent PIN Digits */}
+                <div className="flex items-center space-x-2 pt-1">
+                  {zipPin.split('').map((digit, idx) => (
+                    <span
+                      key={idx}
+                      className="w-10 h-11 rounded-2xl bg-slate-950 border border-amber-500/70 text-amber-300 text-2xl font-black font-mono flex items-center justify-center shadow-lg shadow-amber-500/10 select-all"
+                    >
+                      {digit}
+                    </span>
+                  ))}
+                  <div className="ml-3 flex items-center space-x-2">
+                    <input
+                      type="text"
+                      maxLength={8}
+                      value={zipPin}
+                      onChange={(e) => setZipPin(e.target.value.replace(/\D/g, ''))}
+                      className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 text-xs font-mono w-28 focus:outline-none focus:border-amber-400 text-center tracking-wider"
+                      placeholder="Custom PIN"
+                    />
+                    <span className="text-[10px] text-slate-500 font-mono">(Custom)</span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  This 4-digit PIN is embedded in the archive's encrypted <code>.vault-session.lock</code> file and will be used to unlock your library upon session restore.
+                </p>
+              </div>
+
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between flex-wrap gap-3">
                 <div className="space-y-1">
                   <span className="font-bold text-slate-200 block text-xs">
                     Ready to Package {books.length} Vault Sidecars &amp; Attached Media
                   </span>
                   <span className="text-slate-500 text-[11px] block">
-                    Includes <code>/Sidecars/</code>, <code>/media/</code>, and <code>manifest.json</code>.
+                    Includes <code>/Sidecars/</code>, <code>/media/</code>, <code>.vault-session.lock</code>, and <code>manifest.json</code>.
                   </span>
                   {cloudAccounts.length > 0 && (
                     <label className="flex items-center space-x-2 text-xs text-amber-300 cursor-pointer pt-1">
@@ -283,7 +347,12 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
                   onClick={async () => {
                     setIsZipping(true);
                     try {
-                      const zipBlob = await exportVaultZipWithMedia(books, mediaItems, includeCloudAccounts ? cloudAccounts : []);
+                      const zipBlob = await exportVaultZipWithMedia(
+                        books,
+                        mediaItems,
+                        includeCloudAccounts ? cloudAccounts : [],
+                        zipPin
+                      );
                       const url = URL.createObjectURL(zipBlob);
                       const link = document.createElement('a');
                       link.href = url;
@@ -301,7 +370,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
                   className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-amber-500 hover:from-indigo-500 hover:to-amber-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-indigo-500/20 flex items-center space-x-2 transition-all disabled:opacity-50"
                 >
                   <Download className="w-4 h-4 text-slate-950" />
-                  <span>{isZipping ? 'Compiling ZIP with /media/...' : '📦 Download Vault .ZIP Archive'}</span>
+                  <span>{isZipping ? 'Compiling Protected ZIP with /media/...' : '📦 Download Vault .ZIP Archive'}</span>
                 </button>
               </div>
 

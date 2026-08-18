@@ -9,6 +9,9 @@ export interface VaultZipImportResult {
   mediaRestoredCount: number;
   rawFilenames: string[];
   cloudAccounts?: CloudAccount[];
+  isPinProtected?: boolean;
+  pinHint?: string;
+  lockFileContent?: string;
 }
 
 /**
@@ -198,7 +201,21 @@ export async function importVaultZipArchive(zipFileOrBlob: Blob | File): Promise
     }
   }
 
-  // 4. Process all .companion.md or .md sidecar files
+  // 4. Check for optional PIN lockfile (.vault-session.lock)
+  let lockFileContent: string | undefined;
+  const lockFile = zip.file('.vault-session.lock');
+  if (lockFile) {
+    try {
+      lockFileContent = await lockFile.async('text');
+    } catch (e) {
+      console.warn('Failed to read .vault-session.lock from ZIP:', e);
+    }
+  }
+
+  const isPinProtected = Boolean(manifest?.is_pin_protected || lockFileContent);
+  const pinHint = manifest?.pin_hint;
+
+  // 5. Process all .companion.md or .md sidecar files
   const books: Book[] = [];
   const sidecarEntries: { path: string; file: JSZip.JSZipObject }[] = [];
 
@@ -225,6 +242,9 @@ export async function importVaultZipArchive(zipFileOrBlob: Blob | File): Promise
     importedCount: books.length,
     mediaRestoredCount,
     rawFilenames,
-    cloudAccounts
+    cloudAccounts,
+    isPinProtected,
+    pinHint,
+    lockFileContent
   };
 }

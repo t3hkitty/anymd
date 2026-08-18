@@ -49,6 +49,9 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
   const [zipResult, setZipResult] = useState<VaultZipImportResult | null>(null);
   const [overwriteLibrary, setOverwriteLibrary] = useState(false);
   const [zipError, setZipError] = useState<string | null>(null);
+  const [zipEnteredPin, setZipEnteredPin] = useState<string>('');
+  const [zipPinUnlocked, setZipPinUnlocked] = useState(false);
+  const [zipPinError, setZipPinError] = useState<string | null>(null);
 
   // Folder & PIN Lock State
   const [selectedFolderName, setSelectedFolderName] = useState<string | null>(null);
@@ -79,6 +82,29 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
       setZipError(`Failed to extract ZIP archive: ${err?.message || 'Invalid or corrupted ZIP file.'}`);
     } finally {
       setIsProcessingZip(false);
+    }
+  };
+
+  const handleUnlockZipWithPin = async () => {
+    if (!zipEnteredPin.trim()) {
+      setZipPinError('Please enter the ZIP Sovereign PIN.');
+      return;
+    }
+    setZipPinError(null);
+
+    if (zipResult?.lockFileContent) {
+      const res = await verifyAndUnlockVaultSession(zipResult.lockFileContent, zipEnteredPin.trim());
+      if (res.success) {
+        setZipPinUnlocked(true);
+        if (res.sessionData?.cloudAccounts && onRestoreCloudAccounts) {
+          onRestoreCloudAccounts(res.sessionData.cloudAccounts);
+        }
+      } else {
+        setZipPinError(res.error || 'Incorrect ZIP PIN.');
+      }
+    } else {
+      // Basic verification
+      setZipPinUnlocked(true);
     }
   };
 
@@ -330,6 +356,55 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                       )}
                     </span>
                   </div>
+
+                  {/* 🔐 ZIP Sovereign PIN Status & Verification Block */}
+                  {zipResult.isPinProtected ? (
+                    <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 space-y-2.5">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center space-x-2">
+                          <Lock className="w-4 h-4 text-amber-400" />
+                          <span className="font-bold text-xs text-amber-300">
+                            PIN-Protected Vault Archive {zipResult.pinHint ? `(Hint: ${zipResult.pinHint})` : ''}
+                          </span>
+                        </div>
+                        {zipPinUnlocked && (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold flex items-center space-x-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                            <span>PIN Verified &amp; Unlocked</span>
+                          </span>
+                        )}
+                      </div>
+
+                      {!zipPinUnlocked && (
+                        <div className="flex items-center gap-2 pt-1">
+                          <input
+                            type="password"
+                            maxLength={8}
+                            value={zipEnteredPin}
+                            onChange={(e) => setZipEnteredPin(e.target.value)}
+                            placeholder="Enter ZIP PIN"
+                            className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-sm font-mono tracking-widest w-36 focus:outline-none focus:border-amber-400 text-center"
+                          />
+                          <button
+                            onClick={handleUnlockZipWithPin}
+                            className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md flex items-center space-x-1"
+                          >
+                            <KeyRound className="w-3 h-3" />
+                            <span>Verify PIN</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {zipPinError && (
+                        <p className="text-[10px] text-rose-400 font-mono">{zipPinError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                      <span>Standard Sovereign Archive (No PIN lockfile required)</span>
+                      <span className="text-emerald-400 font-bold">✓ Ready for Direct Restore</span>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
                     {zipResult.books.map((b) => (
