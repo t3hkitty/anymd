@@ -52,7 +52,8 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
   onUpdateLocalAccessMode,
   onUpdateConfigStorageLocation,
 }) => {
-  const [activeTab, setActiveTab] = useState<'installed' | 'repos' | 'instructions'>('installed');
+  const [activeTab, setActiveTab] = useState<'installed' | 'repos' | 'instructions' | 'community_lab'>('installed');
+  const [copiedKit, setCopiedKit] = useState<string | null>(null);
   const [customJsonInput, setCustomJsonInput] = useState('');
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
@@ -150,7 +151,18 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
                 }`}
               >
                 <BookOpen className="w-3 h-3 text-amber-300" />
-                <span>Directory Guide</span>
+                <span>Guide</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('community_lab')}
+                className={`px-2.5 py-1 rounded-lg transition-all flex items-center space-x-1 ${
+                  activeTab === 'community_lab' ? 'bg-purple-600 text-white font-bold' : 'text-purple-300 hover:text-purple-100'
+                }`}
+                title="Untested & Experimental PKM Plugins (Obsidian, Joplin, Anytype, Logseq)"
+              >
+                <ShieldCheck className="w-3 h-3 text-purple-300" />
+                <span>🧪 Community Lab</span>
               </button>
             </div>
 
@@ -476,6 +488,179 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
                     </a>
                   </div>
                 </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 4: UNTESTED COMMUNITY LAB & PKM STARTER KITS */}
+          {activeTab === 'community_lab' && (
+            <div className="space-y-5 animate-fadeIn">
+              
+              {/* Hands-Off Philosophy Banner */}
+              <div className="p-4 rounded-2xl bg-purple-950/40 border border-purple-500/40 space-y-2 font-sans">
+                <div className="flex items-center space-x-2 text-purple-300 font-bold text-xs font-mono">
+                  <ShieldCheck className="w-4 h-4 text-purple-400" />
+                  <span>🧪 Zero-Maintenance Community Staging Lab</span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  <strong>Hands-Off Architecture:</strong> Third-party plugins for Obsidian, Joplin, Anytype, and Logseq are created, tested, and maintained independently by the community. Core Library Companion MD outputs standard, non-proprietary Markdown files with Zettelkasten serials requiring zero maintenance from core developers.
+                </p>
+                <div className="flex items-center space-x-2 pt-1 font-mono text-[10px] text-purple-200">
+                  <span className="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700/50">100% User-Space</span>
+                  <span className="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700/50">Zero Core Liability</span>
+                  <span className="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700/50">Open Zettelkasten Spec</span>
+                </div>
+              </div>
+
+              {/* PKM Starter Boilerplates */}
+              <div className="space-y-3 font-mono text-xs">
+                <span className="font-bold text-slate-400 uppercase tracking-wider block">
+                  PKM Starter Kits &amp; Manifest Boilerplates
+                </span>
+
+                {/* 1. Obsidian Bridge */}
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="p-1.5 rounded-lg bg-purple-500/20 text-purple-300 font-bold text-xs">🪨 Obsidian</span>
+                      <h4 className="font-bold text-slate-200 text-xs">Obsidian Sidecar Companion Bridge</h4>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const obsidianCode = `// Obsidian Community Plugin: Library Companion MD Sidecar Bridge
+// manifest.json + main.ts
+import { Plugin, ItemView, WorkspaceLeaf } from 'obsidian';
+
+export default class LibraryCompanionPlugin extends Plugin {
+  async onload() {
+    console.log('[LC-MD Bridge] Loaded Sovereign Obsidian Sidecar Viewer.');
+    this.registerView('lc-md-sidecar-view', (leaf) => new CompanionSidecarView(leaf));
+  }
+}
+class CompanionSidecarView extends ItemView {
+  getViewType() { return 'lc-md-sidecar-view'; }
+  getDisplayText() { return 'Resonance Stream'; }
+  async onOpen() {
+    const container = this.containerEl.children[1];
+    container.empty();
+    container.createEl('h4', { text: '📖 Sovereign Resonance Notes' });
+  }
+}`;
+                        navigator.clipboard.writeText(obsidianCode);
+                        setCopiedKit('obsidian');
+                        setTimeout(() => setCopiedKit(null), 2000);
+                      }}
+                      className="px-3 py-1 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center space-x-1 transition-all"
+                    >
+                      <Check className={`w-3 h-3 ${copiedKit === 'obsidian' ? 'opacity-100' : 'opacity-30'}`} />
+                      <span>{copiedKit === 'obsidian' ? 'Copied Boilerplate!' : 'Copy Starter Kit'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-sans">
+                    Renders <code>.companion.md</code> resonance streams in Obsidian's right pane and autolinks <code>[[ZK: YYYYMMDDHHmmss-slug]]</code> notes in Graph View.
+                  </p>
+                </div>
+
+                {/* 2. Joplin Sync */}
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="p-1.5 rounded-lg bg-sky-500/20 text-sky-300 font-bold text-xs">📓 Joplin</span>
+                      <h4 className="font-bold text-slate-200 text-xs">Joplin Sovereign WebDAV Sync Extension</h4>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const joplinCode = `// joplin-plugin.json
+{
+  "manifest_version": 1,
+  "id": "joplin.plugin.library.companion.md",
+  "app_min_version": "2.8",
+  "name": "Library Companion MD Sync",
+  "version": "1.0.0",
+  "description": "Two-way sidecar mirroring between Joplin notebooks and sovereign WebDAV vault.",
+  "author": "Community Maintainer"
+}`;
+                        navigator.clipboard.writeText(joplinCode);
+                        setCopiedKit('joplin');
+                        setTimeout(() => setCopiedKit(null), 2000);
+                      }}
+                      className="px-3 py-1 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center space-x-1 transition-all"
+                    >
+                      <Check className={`w-3 h-3 ${copiedKit === 'joplin' ? 'opacity-100' : 'opacity-30'}`} />
+                      <span>{copiedKit === 'joplin' ? 'Copied Boilerplate!' : 'Copy Starter Kit'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-sans">
+                    Mounts WebDAV/Nextcloud sidecar notes into Joplin notebook folders with automatic YAML tag synchronization.
+                  </p>
+                </div>
+
+                {/* 3. Anytype Relations */}
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300 font-bold text-xs">🪐 Anytype</span>
+                      <h4 className="font-bold text-slate-200 text-xs">Anytype Relation &amp; Object Type Schema</h4>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const anytypeCode = `{
+  "type": "ObjectTypeDef",
+  "name": "Companion Book",
+  "relations": [
+    { "key": "zettelkasten_uid", "type": "text", "format": "timestamp-serial" },
+    { "key": "progress_percent", "type": "number", "unit": "%" },
+    { "key": "epub_locator_cfi", "type": "text" },
+    { "key": "fair_trade_valuation_usd", "type": "currency" },
+    { "key": "spotify_uri", "type": "url" }
+  ]
+}`;
+                        navigator.clipboard.writeText(anytypeCode);
+                        setCopiedKit('anytype');
+                        setTimeout(() => setCopiedKit(null), 2000);
+                      }}
+                      className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center space-x-1 transition-all"
+                    >
+                      <Check className={`w-3 h-3 ${copiedKit === 'anytype' ? 'opacity-100' : 'opacity-30'}`} />
+                      <span>{copiedKit === 'anytype' ? 'Copied Boilerplate!' : 'Copy Starter Kit'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-sans">
+                    Imports reading collections and Black Box vinyl/music valuations into Anytype Sets and Relations graph.
+                  </p>
+                </div>
+
+                {/* 4. Logseq / SilverBullet */}
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs">🪵 Logseq</span>
+                      <h4 className="font-bold text-slate-200 text-xs">Logseq Outliner &amp; Wikilink Hook</h4>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const logseqCode = `// logseq-plugin.json
+{
+  "id": "logseq-lc-md-bridge",
+  "name": "Logseq Zettelkasten Sidecar Bridge",
+  "description": "Auto-links [[YYYYMMDDHHmmss-slug]] references in Logseq Journals and flashcards."
+}`;
+                        navigator.clipboard.writeText(logseqCode);
+                        setCopiedKit('logseq');
+                        setTimeout(() => setCopiedKit(null), 2000);
+                      }}
+                      className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center space-x-1 transition-all"
+                    >
+                      <Check className={`w-3 h-3 ${copiedKit === 'logseq' ? 'opacity-100' : 'opacity-30'}`} />
+                      <span>{copiedKit === 'logseq' ? 'Copied Boilerplate!' : 'Copy Starter Kit'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-sans">
+                    Parses 14-digit Zettelkasten timestamp serials directly in Logseq journals and outline hierarchy.
+                  </p>
+                </div>
+
               </div>
 
             </div>

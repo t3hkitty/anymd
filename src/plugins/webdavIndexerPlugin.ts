@@ -17,6 +17,105 @@ export async function fetchWebDAVDirectoryItems(
   const cleanServer = serverUrl.replace(/\/$/, '');
   const cleanDir = dirPath.replace(/^\//, '');
   const fullUrl = cleanDir ? `${cleanServer}/${cleanDir}` : cleanServer;
+  const providerName = account?.name || 'Cloud Storage';
+
+  // Direct Google Drive API v3 Directory Fetching
+  if (account?.presetId === 'google-drive' && fullUrl.includes('googleapis.com')) {
+    const token = (account.apiKey || account.tokenOrPassword || '').trim();
+    if (!token) {
+      return {
+        items: [],
+        xmlText: '',
+        error: 'Google Drive Auth Error: Please enter your Google OAuth Access Token (ya29.a0...) in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      const gRes = await fetch('https://www.googleapis.com/drive/v3/files?pageSize=100&fields=files(id,name,mimeType,size,modifiedTime)', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!gRes.ok) {
+        return {
+          items: [],
+          xmlText: '',
+          statusCode: gRes.status,
+          error: `Google Drive API returned HTTP ${gRes.status}: ${gRes.statusText}. Please verify your OAuth Access Token in Cloud Storage Account Manager.`
+        };
+      }
+
+      const gData = await gRes.json();
+      const items: WebDAVFileItem[] = (gData.files || []).map((f: any) => ({
+        filename: f.name,
+        size: parseInt(f.size || '0', 10),
+        lastModified: f.modifiedTime ? f.modifiedTime.split('T')[0] : new Date().toISOString().split('T')[0],
+        isDir: f.mimeType === 'application/vnd.google-apps.folder'
+      }));
+
+      const mockXml = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${items.map(i => `<d:response><d:href>${i.filename}</d:href><d:propstat><d:prop><d:getcontentlength>${i.size}</d:getcontentlength></d:prop></d:propstat></d:response>`).join('')}</d:multistatus>`;
+
+      return { items, xmlText: mockXml, statusCode: 200 };
+    } catch (err: any) {
+      return {
+        items: [],
+        xmlText: '',
+        error: `Google Drive API Error: ${err.message || 'Failed to connect to Google Drive API.'}`
+      };
+    }
+  }
+
+  // Direct Dropbox API v2 Directory Fetching
+  if (account?.presetId === 'dropbox' && fullUrl.includes('dropboxapi.com')) {
+    const token = (account.apiKey || account.tokenOrPassword || '').trim();
+    if (!token) {
+      return {
+        items: [],
+        xmlText: '',
+        error: 'Dropbox Auth Error: Please enter your Dropbox OAuth Access Token in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      const dbxRes = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: '' })
+      });
+
+      if (!dbxRes.ok) {
+        return {
+          items: [],
+          xmlText: '',
+          statusCode: dbxRes.status,
+          error: `Dropbox API returned HTTP ${dbxRes.status}: ${dbxRes.statusText}. Please check your Dropbox Access Token.`
+        };
+      }
+
+      const dbxData = await dbxRes.json();
+      const items: WebDAVFileItem[] = (dbxData.entries || []).map((e: any) => ({
+        filename: e.name,
+        size: e.size || 0,
+        lastModified: e.server_modified ? e.server_modified.split('T')[0] : new Date().toISOString().split('T')[0],
+        isDir: e['.tag'] === 'folder'
+      }));
+
+      const mockXml = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${items.map(i => `<d:response><d:href>${i.filename}</d:href><d:propstat><d:prop><d:getcontentlength>${i.size}</d:getcontentlength></d:prop></d:propstat></d:response>`).join('')}</d:multistatus>`;
+
+      return { items, xmlText: mockXml, statusCode: 200 };
+    } catch (err: any) {
+      return {
+        items: [],
+        xmlText: '',
+        error: `Dropbox API Error: ${err.message || 'Failed to connect to Dropbox API.'}`
+      };
+    }
+  }
 
   const headers: Record<string, string> = {
     'Depth': '1',
@@ -31,7 +130,6 @@ export async function fetchWebDAVDirectoryItems(
     headers['Authorization'] = `Basic ${btoa(credentials)}`;
   }
 
-  // Perform request via Node.js Vite proxy middleware (/api/webdav-proxy) to completely eliminate browser CORS blocks
   try {
     const proxyRes = await fetch('/api/webdav-proxy', {
       method: 'PROPFIND',
@@ -44,13 +142,12 @@ export async function fetchWebDAVDirectoryItems(
       return { items, xmlText, statusCode: proxyRes.status };
     }
 
-    // Explicit HTTP Status Error Diagnostics
     if (proxyRes.status === 401) {
       return {
         items: [],
         xmlText: '',
         statusCode: 401,
-        error: `HTTP 401 Unauthorized: Filejump credentials failed. Please verify your Username (${account?.username || 'None'}) and App Password in Cloud Accounts.`
+        error: `HTTP 401 Unauthorized: ${providerName} credentials failed. Please verify your Username (${account?.username || 'None'}) and App Password / Token in Cloud Accounts.`
       };
     }
 
@@ -59,7 +156,7 @@ export async function fetchWebDAVDirectoryItems(
         items: [],
         xmlText: '',
         statusCode: 404,
-        error: `HTTP 404 Not Found: Directory '${fullUrl}' was not found on Filejump. Try changing your directory path to '/' or '/md_library'.`
+        error: `HTTP 404 Not Found: Directory '${fullUrl}' was not found on ${providerName}. Try changing your directory path to '/' or '/md_library'.`
       };
     }
 
@@ -68,7 +165,7 @@ export async function fetchWebDAVDirectoryItems(
         items: [],
         xmlText: '',
         statusCode: 403,
-        error: `HTTP 403 Forbidden: Filejump WebDAV access denied for this directory.`
+        error: `HTTP 403 Forbidden: ${providerName} WebDAV access denied for this directory.`
       };
     }
 
@@ -77,7 +174,7 @@ export async function fetchWebDAVDirectoryItems(
       items: [],
       xmlText: '',
       statusCode: proxyRes.status,
-      error: `Filejump WebDAV returned HTTP ${proxyRes.status} ${proxyRes.statusText}: ${errText.slice(0, 150)}`
+      error: `${providerName} WebDAV returned HTTP ${proxyRes.status} ${proxyRes.statusText}: ${errText.slice(0, 150)}`
     };
 
   } catch (err: any) {

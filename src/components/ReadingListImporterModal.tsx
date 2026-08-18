@@ -15,6 +15,7 @@ export const ReadingListImporterModal: React.FC<ReadingListImporterModalProps> =
   onProceedToVerification,
 }) => {
   const [sourceType, setSourceType] = useState<ImportSourceType>('auto');
+  const [isWebPresenceOnly, setIsWebPresenceOnly] = useState(false);
   const [inputText, setInputText] = useState(`Book Id,Title,Author,My Rating,Date Read,Shelves
 1042,"The Hyperion Resonance","Kaelen Vance",5,2026/08/17,"scifi, favorites"
 2048,"The Alchemy of Midnight Coffee","Seraphina Vance",4,2026/08/16,"drama"
@@ -42,7 +43,8 @@ export const ReadingListImporterModal: React.FC<ReadingListImporterModalProps> =
 
     const items = parseReadingListContent(inputText, sourceType);
     if (items.length > 0) {
-      onProceedToVerification(items);
+      const enriched = items.map(i => ({ ...i, isWebPresenceOnly }));
+      onProceedToVerification(enriched);
       onClose();
     } else {
       alert('No valid book entries could be parsed from the provided input.');
@@ -111,6 +113,20 @@ export const ReadingListImporterModal: React.FC<ReadingListImporterModalProps> =
               className="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:border-indigo-500"
               required
             />
+          </div>
+
+          {/* Web Presence Only Option Toggle */}
+          <div className="p-3.5 rounded-2xl bg-indigo-950/30 border border-indigo-500/40 flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="webPresenceOnlyToggle"
+              checked={isWebPresenceOnly}
+              onChange={(e) => setIsWebPresenceOnly(e.target.checked)}
+              className="rounded bg-slate-950 border-indigo-500 text-indigo-500 focus:ring-0 w-4 h-4 cursor-pointer"
+            />
+            <label htmlFor="webPresenceOnlyToggle" className="text-xs text-indigo-200 font-mono font-bold cursor-pointer">
+              🌐 Mark all imported items as Web Presence Only (Online Webnovel / Digital-Only Dreamlist)
+            </label>
           </div>
 
           {/* Footer */}

@@ -19,6 +19,18 @@ export const ResonanceStreamView: React.FC<ResonanceStreamViewProps> = ({
   onOpenShareModal,
 }) => {
   const [filterTier, setFilterTier] = useState<string>('all');
+  const [activeReactions, setActiveReactions] = useState<Record<string, string[]>>({});
+  const [activeReactionPickerId, setActiveReactionPickerId] = useState<string | null>(null);
+
+  const toggleReactionOnEntry = (entryId: string, emoji: string) => {
+    setActiveReactions(prev => {
+      const current = prev[entryId] || [];
+      const updated = current.includes(emoji)
+        ? current.filter(e => e !== emoji)
+        : [...current, emoji];
+      return { ...prev, [entryId]: updated };
+    });
+  };
 
   const filteredEntries = entries.filter(e => {
     if (filterTier === 'all') return true;
@@ -173,6 +185,85 @@ export const ResonanceStreamView: React.FC<ResonanceStreamViewProps> = ({
                 <div className="p-3 rounded-xl bg-slate-900 border border-slate-800/80 text-sm font-sans font-medium text-slate-200 tracking-wide italic leading-snug">
                   "{entry.rawText}"
                 </div>
+
+                {/* Attached Reaction Image or GIF (Discord Style) */}
+                {entry.reactionImageUrl && (
+                  <div className="rounded-2xl overflow-hidden border border-indigo-500/40 bg-slate-950/80 shadow-md max-w-sm">
+                    <img
+                      src={entry.reactionImageUrl}
+                      alt={entry.reactionGifCaption || 'Reaction GIF'}
+                      className="w-full max-h-48 object-cover rounded-t-2xl"
+                    />
+                    {entry.reactionGifCaption && (
+                      <div className="px-3 py-1.5 bg-slate-950 text-[10px] font-mono text-indigo-300 flex items-center justify-between">
+                        <span>{entry.reactionGifCaption}</span>
+                        <span className="text-[9px] text-slate-500">GIF Reaction</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Discord-Style Emoji Reaction Bursts & Interactive Reactor */}
+                {(() => {
+                  const combinedEmojis = Array.from(
+                    new Set([
+                      ...(entry.emojiReactions || []),
+                      ...(activeReactions[entry.id] || [])
+                    ])
+                  );
+
+                  return (
+                    <div className="flex items-center flex-wrap gap-1.5 pt-1">
+                      {combinedEmojis.map((emoji) => {
+                        const isUserReacted = (activeReactions[entry.id] || []).includes(emoji);
+                        return (
+                          <button
+                            key={emoji}
+                            onClick={() => toggleReactionOnEntry(entry.id, emoji)}
+                            className={`px-2 py-0.5 rounded-full text-xs font-mono flex items-center space-x-1 transition-all transform hover:scale-110 active:scale-95 ${
+                              isUserReacted
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-400/60 shadow-sm'
+                                : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:border-slate-700'
+                            }`}
+                            title={`Toggle ${emoji} reaction`}
+                          >
+                            <span>{emoji}</span>
+                            <span className="text-[10px] text-slate-400 font-bold">{isUserReacted ? 2 : 1}</span>
+                          </button>
+                        );
+                      })}
+
+                      {/* Add Emoji Reaction Picker Quick Trigger */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setActiveReactionPickerId(activeReactionPickerId === entry.id ? null : entry.id)}
+                          className="px-2 py-0.5 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-300 border border-slate-800 text-xs font-mono flex items-center space-x-0.5 transition-all"
+                          title="Add emoji reaction"
+                        >
+                          <span>+</span>
+                          <span>😀</span>
+                        </button>
+
+                        {activeReactionPickerId === entry.id && (
+                          <div className="absolute left-0 bottom-full mb-1.5 p-2 rounded-2xl bg-slate-950 border border-slate-700 shadow-2xl z-30 flex items-center space-x-1 animate-fadeIn">
+                            {['🔥', '💀', '😭', '🤣', '🍿', '🤯', '💯', '👑', '💖', '⚡'].map((emoji) => (
+                              <button
+                                key={emoji}
+                                onClick={() => {
+                                  toggleReactionOnEntry(entry.id, emoji);
+                                  setActiveReactionPickerId(null);
+                                }}
+                                className="p-1 rounded-lg text-sm hover:scale-125 transition-transform hover:bg-slate-900"
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Paragraph Snippet & Intensity Footer */}
                 <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60 font-mono">

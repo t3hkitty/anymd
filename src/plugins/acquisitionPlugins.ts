@@ -2,6 +2,101 @@ import type { AcquisitionProviderPlugin, AcquisitionLink } from '../types/import
 
 export const ACQUISITION_PROVIDERS: AcquisitionProviderPlugin[] = [
   {
+    id: 'novelupdates-series',
+    name: 'NovelUpdates Webnovel Series & Translators',
+    description: 'Generates NovelUpdates.com series links for Asian webnovels, chapter feeds, and official translation groups.',
+    icon: '🌐',
+    generateLinks: (title: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(title);
+      return [
+        {
+          providerId: 'novelupdates-search',
+          providerName: 'NovelUpdates Series Page',
+          icon: '🌐',
+          label: 'Find on NovelUpdates.com',
+          url: `https://www.novelupdates.com/?s=${query}&post_type=series`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
+    id: 'ebay-marketplace',
+    name: 'eBay Auctions & Marketplace',
+    description: 'Generates live search links for eBay auctions, TCG cards, rare books, artwork, and physical collectibles.',
+    icon: '🏷️',
+    generateLinks: (title: string, author: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(`${title} ${author}`);
+      return [
+        {
+          providerId: 'ebay-search',
+          providerName: 'eBay Live Auctions & Listings',
+          icon: '🏷️',
+          label: 'Search eBay Auctions & Marketplace',
+          url: `https://www.ebay.com/sch/i.html?_nkw=${query}`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
+    id: 'newegg-marketplace',
+    name: 'Newegg Tech & Gaming Marketplace',
+    description: 'Generates search links for Newegg physical media, retro games, hardware, and tech acquisitions.',
+    icon: '💻',
+    generateLinks: (title: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(title);
+      return [
+        {
+          providerId: 'newegg-search',
+          providerName: 'Newegg Electronics & Gaming',
+          icon: '💻',
+          label: 'Search Newegg Tech Marketplace',
+          url: `https://www.newegg.com/p/pl?d=${query}`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
+    id: 'facebook-marketplace',
+    name: 'Facebook Local Marketplace',
+    description: 'Generates local neighborhood search links for Facebook Marketplace physical items and local pickups.',
+    icon: '🏪',
+    generateLinks: (title: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(title);
+      return [
+        {
+          providerId: 'facebook-marketplace-search',
+          providerName: 'Facebook Marketplace',
+          icon: '🏪',
+          label: 'Search Facebook Local Marketplace',
+          url: `https://www.facebook.com/marketplace/search/?query=${query}`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
+    id: 'nextdoor-marketplace',
+    name: 'Nextdoor Neighborhood Marketplace',
+    description: 'Generates hyper-local neighborhood garage sale and trading links on Nextdoor.',
+    icon: '🏘️',
+    generateLinks: (title: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(title);
+      return [
+        {
+          providerId: 'nextdoor-search',
+          providerName: 'Nextdoor Neighborhood Yard Sales',
+          icon: '🏘️',
+          label: 'Search Nextdoor Neighborhood Marketplace',
+          url: `https://nextdoor.com/for_sale_and_free/?query=${query}`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
     id: 'kindle',
     name: 'Amazon Kindle App & Store',
     description: 'Generates kindle:// App deep-links and Amazon Store links for instant e-reader purchasing or opening.',

@@ -1,0 +1,45 @@
+{
+  "name": "Library Companion MD - Sovereign Discovery Vault",
+  "short_name": "LC-MD",
+  "description": "Local-first sovereign library companion, discovery vault, and 3D Grand Bookcase with Web Share Target mobile import.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "share_title",
+      "text": "share_text",
+      "url": "share_url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Grand Bookcase",
+      "short_name": "Library",
+      "description": "Open your sovereign Grand Bookcase library",
+      "url": "./#library",
+      "icons": [{ "src": "favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Trade Calculator",
+      "short_name": "Trade",
+      "description": "Open the Decimal Fair Trade Calculator",
+      "url": "./#trade",
+      "icons": [{ "src": "favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

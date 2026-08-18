@@ -1,5 +1,6 @@
 import type { CloudAccount } from '../types/cloudAccounts';
 import { parseWebDAVDirectoryXml } from './webdavIndexerPlugin';
+import { normalizeCloudServerUrl } from './cloudAccountManager';
 
 export interface WebDAVTestResult {
   success: boolean;
@@ -11,7 +12,7 @@ export interface WebDAVTestResult {
 
 export async function testRealWebDAVConnection(account: CloudAccount): Promise<WebDAVTestResult> {
   try {
-    const targetUrl = account.serverUrl;
+    const targetUrl = normalizeCloudServerUrl(account.serverUrl, account.presetId);
     const headers: Record<string, string> = {
       'Depth': '1',
       'X-Target-Url': targetUrl
@@ -24,7 +25,119 @@ export async function testRealWebDAVConnection(account: CloudAccount): Promise<W
       headers['Authorization'] = `Basic ${btoa(creds)}`;
     }
 
-    // 1. Perform PROPFIND Read Test via proxy
+    // Direct Google Drive API v3 Authentication Test
+    if (account.presetId === 'google-drive' && targetUrl.includes('googleapis.com')) {
+      const token = (account.apiKey || account.tokenOrPassword || '').trim();
+      if (!token) {
+        return {
+          success: false,
+          message: 'Google Drive Auth Error: Please enter your Google OAuth Access Token (ya29.a0...) or API Key in the field above.',
+          writeVerified: false
+        };
+      }
+
+      try {
+        // Try OAuth Bearer Token first
+        let gRes = await fetch('https://www.googleapis.com/drive/v3/files?pageSize=25&fields=files(id,name,mimeType,size)', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Fallback: If 401/400 and token looks like an API Key or Client Secret, try ?key= parameter
+        if (!gRes.ok && (gRes.status === 401 || gRes.status === 400) && !token.startsWith('ya29')) {
+          const keyUrl = `https://www.googleapis.com/drive/v3/files?key=${encodeURIComponent(token)}&pageSize=25&fields=files(id,name,mimeType,size)`;
+          const altRes = await fetch(keyUrl, { method: 'GET' });
+          if (altRes.ok) {
+            gRes = altRes;
+          }
+        }
+
+        if (!gRes.ok) {
+          const isClientId = token.includes('.apps.googleusercontent.com') || /^\d{10,}/.test(token);
+          let detail = `Google Drive API returned HTTP ${gRes.status}: ${gRes.statusText}.`;
+          if (isClientId) {
+            detail += ` (Note: You entered a Google OAuth Client ID. Direct REST API calls require an Access Token starting with 'ya29.a0...' from OAuth Playground, or run local rclone bridge: 'rclone serve webdav gdrive: --addr :8080').`;
+          } else {
+            detail += ` Ensure your OAuth token starts with 'ya29.a0...' or run local rclone bridge: 'rclone serve webdav gdrive: --addr :8080'.`;
+          }
+
+          return {
+            success: false,
+            statusCode: gRes.status,
+            message: detail,
+            writeVerified: false
+          };
+        }
+
+        const gData = await gRes.json();
+        const count = gData.files?.length || 0;
+        return {
+          success: true,
+          statusCode: 200,
+          message: `Google Drive OAuth API SUCCESSFUL! Verified drive access (${count} files discovered).`,
+          itemsDiscovered: count,
+          writeVerified: account.accessMode !== 'read-only'
+        };
+      } catch (err: any) {
+        return {
+          success: false,
+          message: `Google Drive API Error: ${err.message || 'Failed to reach Google Drive API.'}`,
+          writeVerified: false
+        };
+      }
+    }
+
+    // Direct Dropbox API v2 OAuth Authentication Test
+    if (account.presetId === 'dropbox' && targetUrl.includes('dropboxapi.com')) {
+      const token = account.apiKey || account.tokenOrPassword;
+      if (!token) {
+        return {
+          success: false,
+          message: 'Dropbox Auth Error: Please enter your Dropbox OAuth Access Token in the field above.',
+          writeVerified: false
+        };
+      }
+
+      try {
+        const dbxRes = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ path: '' })
+        });
+
+        if (!dbxRes.ok) {
+          return {
+            success: false,
+            statusCode: dbxRes.status,
+            message: `Dropbox API returned HTTP ${dbxRes.status}: ${dbxRes.statusText}. Please check your Dropbox Access Token.`,
+            writeVerified: false
+          };
+        }
+
+        const dbxData = await dbxRes.json();
+        const count = dbxData.entries?.length || 0;
+        return {
+          success: true,
+          statusCode: 200,
+          message: `Dropbox API v2 SUCCESSFUL! Verified account access (${count} items discovered).`,
+          itemsDiscovered: count,
+          writeVerified: account.accessMode !== 'read-only'
+        };
+      } catch (err: any) {
+        return {
+          success: false,
+          message: `Dropbox API Error: ${err.message || 'Failed to reach Dropbox API.'}`,
+          writeVerified: false
+        };
+      }
+    }
+
+    // 1. Perform Standard PROPFIND WebDAV Read Test via proxy
     const res = await fetch('/api/webdav-proxy', {
       method: 'PROPFIND',
       headers
@@ -84,7 +197,8 @@ export async function testWebDAVWritePermission(
   account: CloudAccount
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const cleanServer = account.serverUrl.replace(/\/$/, '');
+    const normServer = normalizeCloudServerUrl(account.serverUrl, account.presetId);
+    const cleanServer = normServer.replace(/\/$/, '');
     const writeTestUrl = `${cleanServer}/.lc-md-write-test.txt`;
 
     const headers: Record<string, string> = {

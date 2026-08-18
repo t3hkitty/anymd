@@ -28,7 +28,7 @@ export const PostImportVerificationModal: React.FC<PostImportVerificationModalPr
     setItems(prev => prev.map(i => i.id === id ? { ...i, selected: !i.selected } : i));
   };
 
-  const handleEditItem = (id: string, field: 'title' | 'author', val: string) => {
+  const handleEditItem = (id: string, field: 'title' | 'author' | 'isWebPresenceOnly', val: string | boolean) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: val } : i));
   };
 
@@ -62,6 +62,7 @@ export const PostImportVerificationModal: React.FC<PostImportVerificationModalPr
         totalChapters: 2,
         currentChapterIndex: 0,
         currentParagraphIndex: 0,
+        isWebPresenceOnly: item.isWebPresenceOnly,
         resonanceStream: [],
         sidecarMarkdown: mdBody,
         chapters: [
@@ -135,6 +136,7 @@ export const PostImportVerificationModal: React.FC<PostImportVerificationModalPr
                     <th className="p-3 w-10 text-center">Verify</th>
                     <th className="p-3">Book Title</th>
                     <th className="p-3">Author</th>
+                    <th className="p-3 text-center">Presence</th>
                     <th className="p-3 text-center">Confidence</th>
                     <th className="p-3 text-center">Acquisition Links</th>
                   </tr>
@@ -164,6 +166,20 @@ export const PostImportVerificationModal: React.FC<PostImportVerificationModalPr
                           onChange={(e) => handleEditItem(item.id, 'author', e.target.value)}
                           className="w-full bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 text-slate-400 text-xs focus:outline-none"
                         />
+                      </td>
+
+                      <td className="p-3 text-center">
+                        <button
+                          onClick={() => handleEditItem(item.id, 'isWebPresenceOnly', !item.isWebPresenceOnly)}
+                          className={`px-2 py-0.5 rounded-full font-mono text-[10px] border transition-all ${
+                            item.isWebPresenceOnly
+                              ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold'
+                              : 'bg-slate-900 text-slate-500 border-slate-800'
+                          }`}
+                          title="Toggle Web Presence Only"
+                        >
+                          {item.isWebPresenceOnly ? '🌐 Web Only' : '📁 Local EPUB'}
+                        </button>
                       </td>
 
                       <td className="p-3 text-center">

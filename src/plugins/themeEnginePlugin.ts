@@ -1,6 +1,6 @@
 import type { PluginManifest, PluginState } from '../types/plugins';
 
-export type ThemeId = 'midnight' | 'sepia' | 'nord' | 'dracula' | 'e-ink';
+export type ThemeId = 'midnight' | 'sepia' | 'nord' | 'dracula' | 'e-ink' | 'piplup-dawn';
 
 export interface ThemeConfig {
   id: ThemeId;
@@ -15,6 +15,17 @@ export interface ThemeConfig {
 }
 
 export const THEME_PRESETS: Record<ThemeId, ThemeConfig> = {
+  'piplup-dawn': {
+    id: 'piplup-dawn',
+    name: '🐧 Piplup & Dawn (Sinnoh Sapphire & Ice Pearl)',
+    bg: 'bg-[#0c192c]',
+    text: 'text-[#e0f2fe]',
+    cardBg: 'bg-[#162a45]',
+    border: 'border-[#0284c7]',
+    accent: '#38bdf8',
+    badgeBg: 'bg-sky-500/20 text-sky-200 border-sky-400/50',
+    description: 'Sinnoh Pokemon Contest Pearl & Ocean Sapphire theme featuring Piplup Bubble Beam blue, Dawn Pink Ribbon accents & Penguin Beak Amber!'
+  },
   midnight: {
     id: 'midnight',
     name: 'Midnight Sovereign (Dark)',
@@ -78,6 +89,42 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Sovereign Grand Library Bookshelf & YAML Processor',
     version: '1.0.0',
     description: 'Renders the Grand Library Bookshelf View and processes custom YAML frontmatter metadata in sidecars.',
+    author: 'LC-MD Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
+    id: 'list-view',
+    name: 'Library Tabular List View Plugin',
+    version: '1.0.0',
+    description: 'Detailed list rows view with cover thumbnails, series badges, chapter metrics, and quick action buttons.',
+    author: 'LC-MD Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
+    id: 'carousel-view',
+    name: '3D Interactive Cover Showcase Carousel Plugin',
+    version: '1.0.0',
+    description: '3D sliding cover flow carousel with active hero card showcase and smooth navigation.',
+    author: 'LC-MD Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
+    id: 'bookshelf-spines',
+    name: 'Realistic Physical Bookshelf & Spines View Plugin',
+    version: '1.0.0',
+    description: 'Realistic wood-textured mahogany bookshelf with vertical embossed book spines, gold foil titles, and pull-out animations.',
+    author: 'LC-MD Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
+    id: 'wardrobe-hangers',
+    name: 'Wardrobe Closet & Dress Hangers View Plugin',
+    version: '1.0.0',
+    description: 'Hang your books and media items on wooden dress coat hangers inside a cedar closet rack.',
     author: 'LC-MD Core',
     enabledByDefault: true,
     category: 'reader'
@@ -170,6 +217,10 @@ const LOCAL_PLUGIN_STATE_KEY = 'lc_md_plugin_state_v3';
 export const INITIAL_PLUGIN_STATE: PluginState = {
   enabledPlugins: {
     'library-view': true,
+    'list-view': true,
+    'carousel-view': true,
+    'bookshelf-spines': true,
+    'wardrobe-hangers': true,
     'selective-metadata': true,
     'micro-tweets': true,
     'moonplus-rel-root': false,
@@ -199,12 +250,12 @@ export function loadSavedPluginState(): PluginState {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object' && parsed.enabledPlugins) {
-        if (parsed.enabledPlugins['library-view'] === undefined) {
-          parsed.enabledPlugins['library-view'] = true;
-        }
-        if (parsed.enabledPlugins['custom-monetizer-plugin'] === undefined) {
-          parsed.enabledPlugins['custom-monetizer-plugin'] = false;
-        }
+        if (parsed.enabledPlugins['library-view'] === undefined) parsed.enabledPlugins['library-view'] = true;
+        if (parsed.enabledPlugins['list-view'] === undefined) parsed.enabledPlugins['list-view'] = true;
+        if (parsed.enabledPlugins['carousel-view'] === undefined) parsed.enabledPlugins['carousel-view'] = true;
+        if (parsed.enabledPlugins['bookshelf-spines'] === undefined) parsed.enabledPlugins['bookshelf-spines'] = true;
+        if (parsed.enabledPlugins['wardrobe-hangers'] === undefined) parsed.enabledPlugins['wardrobe-hangers'] = true;
+        if (parsed.enabledPlugins['custom-monetizer-plugin'] === undefined) parsed.enabledPlugins['custom-monetizer-plugin'] = false;
         return parsed;
       }
     }

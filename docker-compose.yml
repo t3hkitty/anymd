@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  library-companion-md:
+    build: .
+    container_name: sovereign-blackbox-lcmd
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_INVITE_CODE=meow
+    volumes:
+      - ./vault:/data/vault

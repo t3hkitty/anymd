@@ -1,26 +1,257 @@
 import React, { useState } from 'react';
-import { X, BookOpen, Radio, Cloud, Sparkles, ChevronRight, ChevronLeft, ExternalLink, Puzzle, Check } from 'lucide-react';
+import type { PluginId } from '../types/plugins';
+import { X, BookOpen, Sparkles, ChevronRight, ChevronLeft, ExternalLink, Puzzle, Check, HardDrive, Globe, Layers, Filter, Palette } from 'lucide-react';
 import { BookcaseIcon } from './BookcaseIcon';
 
 interface OnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCraftingOfChess: () => void;
+  onApplyPersonalizedPlugins?: (enabledPlugins: Record<PluginId, boolean>, localAccessMode: 'read-only' | 'read-write') => void;
 }
+
+export type HostingMode = 'offline' | 'cloud';
 
 export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   isOpen,
   onClose,
   onSelectCraftingOfChess,
+  onApplyPersonalizedPlugins,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [hostingMode, setHostingMode] = useState<HostingMode>('offline');
+  const [isCreatorMode, setIsCreatorMode] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(['books', 'tcg', 'collectibles']);
   const [isKuEnabled, setIsKuEnabled] = useState(true);
+  const [appliedPersonalization, setAppliedPersonalization] = useState(false);
 
   if (!isOpen) return null;
 
+  const toggleInterest = (id: string) => {
+    if (selectedInterests.includes(id)) {
+      setSelectedInterests(selectedInterests.filter(i => i !== id));
+    } else {
+      setSelectedInterests([...selectedInterests, id]);
+    }
+  };
+
+  const handleApplyDeclutter = () => {
+    if (onApplyPersonalizedPlugins) {
+      const enabled: Record<PluginId, boolean> = {
+        'library-view': true,
+        'list-view': true,
+        'carousel-view': true,
+        'bookshelf-spines': true,
+        'wardrobe-hangers': selectedInterests.includes('wardrobe') || selectedInterests.includes('books'),
+        'selective-metadata': true,
+        'micro-tweets': true,
+        'moonplus-rel-root': false,
+        'epub-engine': true,
+        'calibre-db': true,
+        'obsidian-notion-sync': true,
+        'webnovel-reader': true,
+        'webdav-indexer': hostingMode === 'cloud',
+        'theme-engine': true,
+        'custom-monetizer-plugin': false,
+      };
+
+      onApplyPersonalizedPlugins(enabled, hostingMode === 'offline' ? 'read-write' : 'read-write');
+      setAppliedPersonalization(true);
+    }
+  };
+
   const steps = [
     {
-      title: "Welcome to Library Companion MD (LC-MD)!",
+      title: "Step 1: Hosting & File Setup Mode",
+      subtitle: "Choose Online Self-Hosted Cloud or Offline Local Vault",
+      icon: <HardDrive className="w-6 h-6 text-amber-400" />,
+      content: (
+        <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
+          <p className="font-medium text-slate-200">
+            How would you like to access and store your library files and companion sidecars?
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Offline Local Mode */}
+            <div
+              onClick={() => setHostingMode('offline')}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                hostingMode === 'offline'
+                  ? 'bg-amber-500/20 border-amber-500 text-amber-300 ring-2 ring-amber-500/40 shadow-lg'
+                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-slate-100 flex items-center space-x-1.5">
+                  <HardDrive className="w-4 h-4 text-amber-400" />
+                  <span>📁 Offline Local Mode</span>
+                </span>
+                {hostingMode === 'offline' && <Check className="w-4 h-4 text-amber-400" />}
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Keep all books, TCG cards, and Markdown sidecars 100% offline on your device or local Obsidian folder bridge. Zero network requirements.
+              </p>
+            </div>
+
+            {/* Online Self-Hosted Cloud Mode */}
+            <div
+              onClick={() => setHostingMode('cloud')}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                hostingMode === 'cloud'
+                  ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 ring-2 ring-indigo-500/40 shadow-lg'
+                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-slate-100 flex items-center space-x-1.5">
+                  <Globe className="w-4 h-4 text-indigo-400" />
+                  <span>☁️ Self-Hosted Cloud Mode</span>
+                </span>
+                {hostingMode === 'cloud' && <Check className="w-4 h-4 text-indigo-400" />}
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Connect your self-hosted WebDAV server (Filejump, Nextcloud, NAS, or Google Drive bridge) for remote synchronization and public HTML publishing!
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Step 2: Creator & Maker Portfolio Profile",
+      subtitle: "Are you an Artist, Designer, Author, or Craftsperson documenting your own works?",
+      icon: <Palette className="w-6 h-6 text-amber-400" />,
+      content: (
+        <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
+          <p className="font-medium text-slate-200">
+            Tell us how you intend to use Library Companion MD:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Collector Mode */}
+            <div
+              onClick={() => setIsCreatorMode(false)}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                !isCreatorMode
+                  ? 'bg-amber-500/20 border-amber-500 text-amber-300 ring-2 ring-amber-500/40 shadow-lg'
+                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-slate-100 flex items-center space-x-1.5">
+                  <Layers className="w-4 h-4 text-amber-400" />
+                  <span>🏛️ Collector & Curator</span>
+                </span>
+                {!isCreatorMode && <Check className="w-4 h-4 text-amber-400" />}
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Cataloging acquired books, TCG card slabs, physical items, movies, and media collections.
+              </p>
+            </div>
+
+            {/* Creator / Maker Mode */}
+            <div
+              onClick={() => setIsCreatorMode(true)}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                isCreatorMode
+                  ? 'bg-purple-600/20 border-purple-500 text-purple-300 ring-2 ring-purple-500/40 shadow-lg'
+                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-slate-100 flex items-center space-x-1.5">
+                  <Palette className="w-4 h-4 text-purple-400" />
+                  <span>🎨 Creator, Artist & Designer</span>
+                </span>
+                {isCreatorMode && <Check className="w-4 h-4 text-purple-400" />}
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Documenting your own original creations (paintings, 3D models, book manuscripts, leatherwork, design proofs, edition #s, and medium/tools).
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Step 2: Collector Interest Profile",
+      subtitle: "Select Built-In Options for Physical Goods & Collectibles",
+      icon: <Layers className="w-6 h-6 text-sky-400" />,
+      content: (
+        <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
+          <p className="font-medium text-slate-200">
+            What types of items do you plan to track in your sovereign vault? (Select all that apply)
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: 'books', name: '📚 Books & Ebooks', desc: 'Hardcovers, paperbacks, EPUBs' },
+              { id: 'tcg', name: '🃏 TCG & Cards', desc: 'Pokemon, MTG, PSA Slabs' },
+              { id: 'collectibles', name: '🏛️ Pop Figures / Relics', desc: 'Funko Pops, statues, Loki notes' },
+              { id: 'movies', name: '🎬 Movies & Steelbooks', desc: '4K UHD Blu-rays & DVDs' },
+              { id: 'paintings', name: '🖼️ Art & Paintings', desc: 'Canvas prints & gallery mounts' },
+              { id: 'shoes', name: '👟 Shoes & Sneakers', desc: 'Jordan drop boxes & footwear' },
+              { id: 'wardrobe', name: '👗 Wardrobe & Outfits', desc: 'Hanging coat dress hangers' },
+              { id: 'games', name: '🎮 Video Games', desc: 'Retro cartridges & discs' },
+            ].map((interest) => {
+              const isSel = selectedInterests.includes(interest.id);
+              return (
+                <button
+                  key={interest.id}
+                  type="button"
+                  onClick={() => toggleInterest(interest.id)}
+                  className={`p-3 rounded-2xl border text-left transition-all ${
+                    isSel
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-300 font-bold shadow-md'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <p className="font-bold text-xs truncate">{interest.name}</p>
+                  <p className="text-[10px] text-slate-500 truncate mt-0.5">{interest.desc}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Step 3: Auto-Clutter Reduction & Personalization",
+      subtitle: "Automatically Disable Unused Plugins to Clean Up UI",
+      icon: <Filter className="w-6 h-6 text-purple-400" />,
+      content: (
+        <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
+          <div className="p-4 rounded-2xl bg-slate-950 border border-purple-500/40 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-purple-300 text-xs flex items-center space-x-1.5">
+                <Puzzle className="w-4 h-4 text-purple-400" />
+                <span>Smart Plugin De-Cluttering Engine</span>
+              </span>
+              {appliedPersonalization && (
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
+                  ✓ PERSONALIZATION APPLIED
+                </span>
+              )}
+            </div>
+
+            <p className="text-slate-300">
+              Based on your selection (<strong>{hostingMode.toUpperCase()}</strong> hosting & <strong>{selectedInterests.length} interest categories</strong>), we can automatically configure plugin toggles to hide unnecessary buttons and keep your navigation bar lean!
+            </p>
+
+            <button
+              type="button"
+              onClick={handleApplyDeclutter}
+              className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Apply Personalized Setup & De-Clutter UI Now</span>
+            </button>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Step 4: Featured Sourcing Demo",
       subtitle: "Featuring 'The Crafting of Chess' by Kit Falbo (ASIN: B07P1YRHTX)",
       icon: <BookcaseIcon className="w-8 h-8 text-amber-400" />,
       content: (
@@ -40,7 +271,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </div>
             <h4 className="font-bold text-slate-100 text-sm">The Crafting of Chess — LitRPG Novel by Kit Falbo</h4>
             <p className="text-slate-300 text-xs">
-              Follow Nate in the virtual fantasy world of <em>Fair Quest</em> as he leverages real-world chess strategy to level up his crafting skills, outsmart opponents, and build a sovereign legacy!
+              Follow Nate in the virtual fantasy world of <em>Fair Quest</em> as he leverages real-world chess strategy to level up his crafting skills and outsmart opponents!
             </p>
 
             {/* Kindle Unlimited (KU) Toggle */}
@@ -49,6 +280,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 📚 Kindle Unlimited (KU) Sourcing:
               </span>
               <button
+                type="button"
                 onClick={() => setIsKuEnabled(!isKuEnabled)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-1 ${
                   isKuEnabled
@@ -60,81 +292,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 <span>{isKuEnabled ? 'KU Borrowed (Nov 8, 2020)' : 'Enable KU Sourcing'}</span>
               </button>
             </div>
-          </div>
-
-          <p>
-            <strong>Library Companion MD</strong> is your sovereign, zero-bloat reading companion. It pairs your ebook files (.epub, .pdf) with 100% portable Markdown sidecars (<code>.md</code> / <code>.dcmd</code>) without lock-in or messy folder paths.
-          </p>
-        </div>
-      )
-    },
-    {
-      title: "Step 1: Sovereign Reader & Chapter Canvas",
-      subtitle: "Chapter CFI Tracking & 5 Presets Visual Themes",
-      icon: <BookOpen className="w-6 h-6 text-sky-400" />,
-      content: (
-        <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
-          <p>
-            Experience seamless reading with precise Canonical Fragment Identifier (CFI) tracking across chapters.
-          </p>
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
-            <h5 className="font-bold text-amber-300 text-xs flex items-center space-x-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>5 Visual Reading Engine Presets:</span>
-            </h5>
-            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-              <div className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200">
-                🌙 Midnight Sovereign (Dark)
-              </div>
-              <div className="p-2 rounded-xl bg-[#fbf0d9] text-[#433422] font-semibold">
-                📜 Solarized Sepia (Paper)
-              </div>
-              <div className="p-2 rounded-xl bg-[#2e3440] text-[#eceff4]">
-                ❄️ Nord Aurora (Cool)
-              </div>
-              <div className="p-2 rounded-xl bg-[#282a36] text-[#ff79c6]">
-                🧛 Dracula (Neon)
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Step 2: Instant Quick Capture Reactions",
-      subtitle: "Alt+R / Ctrl+K Shortcodes & Micro-Tweet #Hashtags",
-      icon: <Radio className="w-6 h-6 text-rose-400" />,
-      content: (
-        <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
-          <p>
-            Never lose a reading thought! Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300 font-mono text-[10px]">Alt+R</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300 font-mono text-[10px]">Ctrl+K</kbd> anywhere in the reader to open the Expressive Reaction Capture modal.
-          </p>
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1.5 font-mono text-[11px]">
-            <p className="text-amber-300 font-bold">⚡ Reaction Categories:</p>
-            <p className="text-slate-400">&bull; 🤣 Laughter Exile (Rib-seizing comedy)</p>
-            <p className="text-slate-400">&bull; 💡 Mind-Blown Genius Play (LitRPG crafting tactics)</p>
-            <p className="text-slate-400">&bull; 😡 Betrayal Rage &bull; 😭 Snot Cascade</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Step 3: WebDAV & 1-Click Filejump Scraper",
-      subtitle: "On-Screen Pop-Up Bookmarklet & Cloud Synchronization",
-      icon: <Cloud className="w-6 h-6 text-sky-400" />,
-      content: (
-        <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
-          <p>
-            Sync directly with your Filejump, Koofr, or Nextcloud WebDAV cloud storage without CORS issues using our Node.js proxy bridge.
-          </p>
-          <div className="p-3.5 rounded-2xl bg-sky-950/40 border border-sky-500/40 space-y-1 text-xs">
-            <h5 className="font-bold text-sky-300 flex items-center space-x-1.5">
-              <Puzzle className="w-3.5 h-3.5 text-sky-400" />
-              <span>1-Click Extractor Bookmarklet Included:</span>
-            </h5>
-            <p className="text-slate-300">
-              Scrape all your Filejump book filenames into an On-Screen Pop-Up Box in 1 click!
-            </p>
           </div>
         </div>
       )
@@ -179,6 +336,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
@@ -199,6 +357,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             {steps.map((_, idx) => (
               <button
                 key={idx}
+                type="button"
                 onClick={() => setCurrentStep(idx)}
                 className={`h-2 rounded-full transition-all ${
                   idx === currentStep
@@ -213,6 +372,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           <div className="flex items-center space-x-2">
             {currentStep > 0 && (
               <button
+                type="button"
                 onClick={handlePrev}
                 className="px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300 hover:bg-slate-800 flex items-center space-x-1"
               >
@@ -222,10 +382,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             )}
 
             <button
+              type="button"
               onClick={handleNext}
               className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-slate-950 font-bold text-xs shadow-lg flex items-center space-x-1.5 transition-all"
             >
-              <span>{currentStep === steps.length - 1 ? "🚀 Start Reading 'The Crafting of Chess'" : "Next Step"}</span>
+              <span>{currentStep === steps.length - 1 ? "🚀 Complete Setup & Start Demo" : "Next Step"}</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>

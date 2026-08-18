@@ -28,4 +28,7 @@ export interface CloudAccount {
   accessMode: StorageAccessMode;
   configStorageLocation: ConfigStorageLocation;
   lastSyncedAt?: string;
+  enableBackgroundIdleScan?: boolean;
+  scanFolderScope?: string; // e.g. "/ebooks" or locked subfolder
+  localDownloadsScanOnly?: boolean;
 }

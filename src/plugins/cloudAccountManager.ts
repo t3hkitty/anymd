@@ -76,7 +76,7 @@ export const INITIAL_CLOUD_ACCOUNTS: CloudAccount[] = [
     name: 'My Filejump Vault',
     presetId: 'filejump',
     serverUrl: 'https://uploads.filejump.com/dav/',
-    username: 'lorikitty@gmail.com',
+    username: 'reader@example.com',
     tokenOrPassword: '',
     remoteRootFolder: '/md_library',
     isActive: true,
@@ -144,4 +144,37 @@ export function saveCloudAccounts(accounts: CloudAccount[]): void {
 export function buildRelLinkRootForAccount(account: CloudAccount): string {
   const providerName = CLOUD_PROVIDER_PRESETS.find(p => p.id === account.presetId)?.name.split(' ')[0] || 'Cloud';
   return `cloud://${providerName}${account.remoteRootFolder}`;
+}
+
+export function normalizeCloudServerUrl(rawUrl: string, presetId: string): string {
+  let trimmed = (rawUrl || '').trim();
+
+  // If empty, supply default for preset
+  if (!trimmed) {
+    if (presetId === 'google-drive') return 'https://www.googleapis.com/drive/v3';
+    if (presetId === 'dropbox') return 'https://api.dropboxapi.com/2';
+    if (presetId === 'torbox') return 'https://webdav.torbox.app/';
+    return 'https://uploads.filejump.com/dav/';
+  }
+
+  // Handle drive.google.com folder share links
+  if (trimmed.includes('drive.google.com')) {
+    return 'https://www.googleapis.com/drive/v3';
+  }
+
+  // Auto-prepend protocol if missing
+  if (!/^https?:\/\//i.test(trimmed)) {
+    if (trimmed.startsWith('localhost') || trimmed.startsWith('127.0.0.1') || trimmed.startsWith('192.168.')) {
+      trimmed = `http://${trimmed}`;
+    } else {
+      trimmed = `https://${trimmed}`;
+    }
+  }
+
+  // Ensure trailing slash unless API query
+  if (!trimmed.endsWith('/') && !trimmed.includes('?') && !trimmed.endsWith('/v3')) {
+    trimmed = `${trimmed}/`;
+  }
+
+  return trimmed;
 }

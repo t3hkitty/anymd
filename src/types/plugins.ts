@@ -2,6 +2,10 @@ import type { StorageAccessMode, ConfigStorageLocation } from './cloudAccounts';
 
 export type PluginId =
   | 'library-view'
+  | 'list-view'
+  | 'carousel-view'
+  | 'bookshelf-spines'
+  | 'wardrobe-hangers'
   | 'selective-metadata'
   | 'micro-tweets'
   | 'moonplus-rel-root'

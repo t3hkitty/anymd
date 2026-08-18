@@ -8,6 +8,7 @@ import {
   parseTextDirectoryListing,
   fetchWebDAVDirectoryItems
 } from '../plugins/webdavIndexerPlugin';
+import { RemoteCloudBrowserModal } from './RemoteCloudBrowserModal';
 import { X, Cloud, RefreshCw, Folder, FileText, Download, Upload, Server, AlertCircle, CheckCircle, FolderSync, Terminal, Activity, HardDrive, Copy, Sparkles, Puzzle, Trash2 } from 'lucide-react';
 
 interface WebDAVIndexerModalProps {
@@ -50,6 +51,7 @@ export const WebDAVIndexerModal: React.FC<WebDAVIndexerModalProps> = ({
   const [scanNotice, setScanNotice] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
   const [copiedBookmarklet, setCopiedBookmarklet] = useState(false);
+  const [isBrowserOpen, setIsBrowserOpen] = useState(false);
 
   // Loading Announcer & Progress State
   const [reticulatorMsg, setReticulatorMsg] = useState('🌀 Reticulating splines...');
@@ -286,10 +288,20 @@ Filejump_Sovereign_Guide.pdf`);
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center space-x-1">
-                <FolderSync className="w-3.5 h-3.5 text-amber-400" />
-                <span>Library / Backup Directory Path</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                  <FolderSync className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Library / Backup Directory Path</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsBrowserOpen(true)}
+                  className="text-[11px] font-mono text-sky-400 hover:underline flex items-center space-x-1"
+                >
+                  <Folder className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Browse Remote Folders</span>
+                </button>
+              </div>
               <input
                 type="text"
                 value={dirPath}
@@ -343,12 +355,12 @@ Filejump_Sovereign_Guide.pdf`);
             </div>
           </div>
 
-          {/* 1-Click Filejump Extractor Bookmarklet Section */}
+          {/* 1-Click On-Screen Pop-Up Scraper Tool Section */}
           <div className="p-4 rounded-2xl bg-sky-950/40 border border-sky-500/40 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-sky-300 uppercase tracking-wider font-mono flex items-center space-x-1.5">
                 <Puzzle className="w-4 h-4 text-sky-400" />
-                <span>1-Click On-Screen Pop-Up Scraper Tool for Filejump</span>
+                <span>1-Click On-Screen Pop-Up Scraper Tool ({activeAccount?.name || 'Cloud Provider'})</span>
               </span>
 
               <button
@@ -360,7 +372,7 @@ Filejump_Sovereign_Guide.pdf`);
               </button>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              <strong>How to use:</strong> Click <code>Copy 1-Click Pop-Up Bookmarklet</code> above. Save it as a browser bookmark. Open your Filejump webpage tab and click the bookmark! It launches a sleek <strong>On-Screen Extractor Pop-Up Box</strong> right on Filejump with all filenames pre-selected and a 1-click Copy button!
+              <strong>How to use:</strong> Click <code>Copy 1-Click Pop-Up Bookmarklet</code> above. Save it as a browser bookmark. Open your cloud storage tab ({activeAccount?.name || 'Filejump'}) and click the bookmark! It launches a sleek <strong>On-Screen Extractor Pop-Up Box</strong> right on the webpage with all filenames pre-selected and a 1-click Copy button!
             </p>
           </div>
 
@@ -375,11 +387,11 @@ Filejump_Sovereign_Guide.pdf`);
             </div>
           )}
 
-          {/* Paste or Upload Custom Filejump Files */}
+          {/* Paste or Upload Custom Ebook Files */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-                Paste Filejump Directory File Listing / Filenames (or Upload Local Files)
+                Paste {activeAccount?.name || 'Cloud'} Directory File Listing / Filenames (or Upload Local Files)
               </label>
 
               <div className="flex items-center space-x-3">
@@ -404,7 +416,7 @@ Filejump_Sovereign_Guide.pdf`);
               value={pasteInput}
               onChange={(e) => setPasteInput(e.target.value)}
               rows={3}
-              placeholder="Paste your Filejump filenames (one per line, e.g. My_Filejump_Book.epub) or copy/paste from Filejump..."
+              placeholder={`Paste your ${activeAccount?.name || 'Cloud'} filenames (one per line, e.g. My_Ebook.epub) or copy/paste directory listing...`}
               className="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:border-sky-500 resize-none"
             />
 
@@ -495,6 +507,26 @@ Filejump_Sovereign_Guide.pdf`);
         </div>
 
       </div>
+
+      {/* Remote Cloud File & Folder Browser Modal */}
+      {activeAccount && (
+        <RemoteCloudBrowserModal
+          isOpen={isBrowserOpen}
+          account={activeAccount}
+          initialPath={dirPath || '/'}
+          onClose={() => setIsBrowserOpen(false)}
+          onSelectFolder={(selectedPath) => {
+            setDirPath(selectedPath);
+          }}
+          onLocalFolderPicked={(fileNames) => {
+            const items = parseTextDirectoryListing(fileNames.join('\n'));
+            setFileList(items);
+            const indexMd = generateWebDAVDirectoryMarkdownIndex(serverUrl, dirPath, items);
+            setGeneratedIndexMd(indexMd);
+            addLog(`[${new Date().toLocaleTimeString()}] 📁 Discovered ${items.length} files from local synced directory!`);
+          }}
+        />
+      )}
     </div>
   );
 };

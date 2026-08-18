@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { EMOTIONAL_PRESETS } from '../data/emotionalPresets';
 import type { EmotionalTier, ReadingPosition, ResonanceEntry } from '../types/resonance';
-import { X, Sparkles, Send, Clock, Percent, Anchor, Flame, CheckCircle2, Quote } from 'lucide-react';
+import { getContextAwareGifs, type ReactionGifItem } from '../data/reactionGifs';
+import { X, Sparkles, Send, Clock, Percent, Anchor, Flame, CheckCircle2, Quote, Image as ImageIcon, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface QuickCaptureModalProps {
@@ -21,6 +22,19 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
   const [rawText, setRawText] = useState<string>('');
   const [intensityScore, setIntensityScore] = useState<number>(5);
   const [customCategory, setCustomCategory] = useState<string>('');
+  const [selectedGif, setSelectedGif] = useState<ReactionGifItem | null>(null);
+  const [customImageUrl, setCustomImageUrl] = useState<string>('');
+  const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
+  const [selectedEmojis, setSelectedEmojis] = useState<string[]>(['🔥']);
+
+  // Get context-aware GIF and reaction suggestions dynamically
+  const suggestedGifs = getContextAwareGifs(selectedPreset, `${rawText} ${position.paragraphSnippet}`);
+
+  const toggleEmojiReaction = (emoji: string) => {
+    setSelectedEmojis(prev =>
+      prev.includes(emoji) ? prev.filter(e => e !== emoji) : [...prev, emoji]
+    );
+  };
 
   // Update text when preset changes
   useEffect(() => {
@@ -46,11 +60,14 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
 
   const handleCommit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rawText.trim()) return;
+    if (!rawText.trim() && !selectedGif && !customImageUrl && selectedEmojis.length === 0) return;
 
     const now = new Date();
     const formattedDate = now.toISOString().split('T')[0];
     const timestampStr = now.toISOString();
+
+    const finalImageUrl = customImageUrl.trim() || selectedGif?.url || undefined;
+    const finalCaption = selectedGif?.title || undefined;
 
     const newEntry: ResonanceEntry = {
       id: `res-${Date.now()}`,
@@ -59,12 +76,15 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
       progressPercent: position.progressPercent,
       category: customCategory || 'General Reaction',
       presetTier: selectedPreset || undefined,
-      rawText: rawText.trim().toUpperCase(),
+      rawText: rawText.trim().toUpperCase() || (selectedGif ? `[REACTION GIF: ${selectedGif.title.toUpperCase()}]` : 'REACTION CAPTURE'),
       cfi: position.cfi,
       chapterTitle: position.chapterTitle,
       paragraphIndex: position.paragraphIndex,
       paragraphSnippet: position.paragraphSnippet,
-      intensityScore
+      intensityScore,
+      reactionImageUrl: finalImageUrl,
+      reactionGifCaption: finalCaption,
+      emojiReactions: selectedEmojis.length > 0 ? selectedEmojis : undefined
     };
 
     // Confetti celebration burst
@@ -185,11 +205,169 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
             <textarea
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              rows={3}
+              rows={2}
               placeholder="Type raw visceral thoughts... e.g. LAUGHED SO HARD THE RIBS SEIZED..."
               className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-100 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 placeholder-slate-600 shadow-inner"
-              required
             />
+          </div>
+
+          {/* Context-Aware Reaction GIF & Meme Picker (Discord / Chat Style) */}
+          <div className="p-4 rounded-2xl bg-slate-950 border border-indigo-500/40 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <ImageIcon className="w-4 h-4 text-indigo-400" />
+                <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">
+                  Context-Aware Reaction GIF &amp; Image Responses
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCustomInput(!showCustomInput)}
+                className="text-[11px] text-amber-400 hover:text-amber-300 font-mono underline"
+              >
+                {showCustomInput ? 'Hide URL Input' : '+ Custom URL'}
+              </button>
+            </div>
+
+            {/* Custom URL Input if toggled */}
+            {showCustomInput && (
+              <div className="flex items-center space-x-2 pt-1 animate-fadeIn">
+                <input
+                  type="url"
+                  value={customImageUrl}
+                  onChange={(e) => {
+                    setCustomImageUrl(e.target.value);
+                    if (e.target.value) setSelectedGif(null);
+                  }}
+                  placeholder="Paste direct GIF/Image link (Tenor, Giphy, Imgur, Discord CDN)..."
+                  className="flex-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-indigo-200 focus:outline-none focus:border-indigo-400 font-mono"
+                />
+                {customImageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setCustomImageUrl('')}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Selected Active GIF Preview Pill */}
+            {(selectedGif || customImageUrl) && (
+              <div className="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/60 flex items-center justify-between gap-3 animate-fadeIn">
+                <div className="flex items-center space-x-3 min-w-0">
+                  <img
+                    src={selectedGif?.url || customImageUrl}
+                    alt="Reaction Preview"
+                    className="w-12 h-12 rounded-lg object-cover border border-indigo-400 shadow-md shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-indigo-300 truncate">
+                      {selectedGif ? selectedGif.title : 'Custom Reaction Attachment'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-mono">
+                      {selectedGif ? `Tags: ${selectedGif.tags.slice(0, 3).join(', ')}` : 'External Image URL'}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedGif(null);
+                    setCustomImageUrl('');
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-[10px] font-bold"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+
+            {/* Context-Aware GIF Suggestions Tray */}
+            <div>
+              <p className="text-[10px] text-slate-400 mb-2 font-mono">
+                ✨ Context Suggestions based on reading emotion:
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {suggestedGifs.slice(0, 6).map((gif) => {
+                  const isAttached = selectedGif?.id === gif.id;
+                  return (
+                    <button
+                      key={gif.id}
+                      type="button"
+                      onClick={() => {
+                        if (isAttached) {
+                          setSelectedGif(null);
+                        } else {
+                          setSelectedGif(gif);
+                          setCustomImageUrl('');
+                        }
+                      }}
+                      className={`relative group rounded-xl overflow-hidden border transition-all transform hover:scale-105 aspect-square flex flex-col justify-end p-1.5 ${
+                        isAttached
+                          ? 'border-indigo-400 ring-2 ring-indigo-400/60 shadow-lg shadow-indigo-500/20'
+                          : 'border-slate-800 hover:border-slate-600'
+                      }`}
+                    >
+                      <img
+                        src={gif.url}
+                        alt={gif.title}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+                      
+                      <div className="relative z-10 flex items-center justify-between w-full">
+                        <span className="text-xs">{gif.emoji}</span>
+                        {isAttached && (
+                          <span className="p-0.5 rounded-full bg-indigo-500 text-white">
+                            <Check className="w-2.5 h-2.5" />
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Discord-Style Quick Emoji Reaction Responses */}
+          <div className="p-3.5 rounded-2xl bg-slate-950 border border-amber-500/30 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider font-mono flex items-center space-x-1.5">
+                <span>💬</span>
+                <span>Emoji Quick Reaction Bursts ({selectedEmojis.length})</span>
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono">Tap to toggle emoji reactions</span>
+            </div>
+
+            <div className="flex items-center flex-wrap gap-1.5 pt-1">
+              {[
+                '🔥', '💀', '😭', '🤣', '🍿', '🤯', '💯', '👑', 
+                '💔', '🛋️', '🚀', '🐱', '🐕', '💩', '💖', '⚡', 
+                '👗', '💎', '☕', '🤦', '⚔️', '🌸', '🛡️', '🎨'
+              ].map((emoji) => {
+                const isSelected = selectedEmojis.includes(emoji);
+                return (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => toggleEmojiReaction(emoji)}
+                    className={`px-2.5 py-1 rounded-xl text-base transition-all transform hover:scale-125 active:scale-95 ${
+                      isSelected
+                        ? 'bg-amber-500/20 border-2 border-amber-400 shadow-md shadow-amber-500/20 scale-110'
+                        : 'bg-slate-900 border border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'
+                    }`}
+                    title={`Toggle ${emoji} reaction`}
+                  >
+                    {emoji}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Category Badge & Intensity Level */}

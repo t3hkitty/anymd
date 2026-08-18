@@ -12,6 +12,7 @@ interface ReaderViewProps {
   onChapterChange: (index: number) => void;
   onParagraphSelect: (paragraphIndex: number, snippet: string) => void;
   onOpenQuickCapture: (positionOverride?: ReadingPosition) => void;
+  onOpenAcquisitionModal?: () => void;
   onThemeChange: (theme: 'dark' | 'sepia' | 'light') => void;
   onFontSizeChange: (delta: number) => void;
 }
@@ -26,6 +27,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   onChapterChange,
   onParagraphSelect,
   onOpenQuickCapture,
+  onOpenAcquisitionModal,
   onThemeChange,
   onFontSizeChange,
 }) => {
@@ -126,6 +128,18 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
               A+
             </button>
           </div>
+
+          {/* Acquisition Sourcing Provider Button */}
+          {onOpenAcquisitionModal && (
+            <button
+              onClick={onOpenAcquisitionModal}
+              className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center space-x-1.5 transition-all shadow-sm"
+              title="Open Acquisition & Sourcing Provider Modal (Kindle Unlimited, Open Library, Public Library, Dreamlist Sourcing)"
+            >
+              <span>🛒</span>
+              <span className="hidden sm:inline">Acquisition</span>
+            </button>
+          )}
 
           {/* Theme Selector */}
           <div className="flex items-center bg-black/10 dark:bg-white/10 rounded-xl p-1 border border-white/10 text-xs space-x-1">

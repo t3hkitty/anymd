@@ -67,7 +67,7 @@ export const AcquisitionProviderModal: React.FC<AcquisitionProviderModalProps> =
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">Content Acquisition & Deep-Link Sourcing</h3>
-              <p className="text-xs text-slate-400">Kindle Unlimited &bull; Libby Library &bull; Gutenberg &bull; Audible &bull; WebDAV</p>
+              <p className="text-xs text-slate-400">eBay &bull; Newegg &bull; Facebook Marketplace &bull; Nextdoor &bull; Kindle &bull; Libby &bull; Gutenberg</p>
             </div>
           </div>
           <button

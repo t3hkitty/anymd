@@ -28,6 +28,7 @@ export interface ImportedBookItem {
   readingStatus: 'to-read' | 'reading' | 'completed' | 'DNF';
   confidenceScore: number; // 0 - 100
   selected: boolean;
+  isWebPresenceOnly?: boolean; // Flag if item is online webnovel / web presence only without local EPUB
   acquisitionLinks?: AcquisitionLink[];
 }
 

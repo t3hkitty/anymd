@@ -1,0 +1,219 @@
+import type { CloudAccount } from '../types/cloudAccounts';
+import { normalizeCloudServerUrl } from './cloudAccountManager';
+import { parseWebDAVDirectoryXml } from './webdavIndexerPlugin';
+
+export interface RemoteNodeItem {
+  id: string;
+  name: string;
+  path: string;
+  isDir: boolean;
+  size: number;
+  lastModified: string;
+  mimeType?: string;
+}
+
+export interface RemoteFolderBrowseResult {
+  currentPath: string;
+  items: RemoteNodeItem[];
+  parentPath?: string;
+  error?: string;
+}
+
+export async function fetchRemoteFolderContents(
+  account: CloudAccount,
+  folderPath: string = '/'
+): Promise<RemoteFolderBrowseResult> {
+  // Sanitize path: if a non-Google Drive account received an id:... token, reset to root /
+  let cleanPath = folderPath.trim() === '' ? '/' : folderPath;
+  if (cleanPath.startsWith('id:') && account.presetId !== 'google-drive') {
+    cleanPath = '/';
+  }
+
+  const targetUrl = normalizeCloudServerUrl(account.serverUrl, account.presetId);
+  const token = (account.apiKey || account.tokenOrPassword || '').trim();
+
+  // 1. GOOGLE DRIVE REST API BROWSER
+  if (account.presetId === 'google-drive' && targetUrl.includes('googleapis.com')) {
+    if (!token) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: 'Google Drive Auth Error: Please enter your Google OAuth Access Token (ya29.a0...) in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      let query = "trashed = false";
+      if (cleanPath === '/' || cleanPath === 'root') {
+        query += " and 'root' in parents";
+      } else if (cleanPath.startsWith('id:')) {
+        const folderId = cleanPath.replace(/^id:/, '');
+        query += ` and '${folderId}' in parents`;
+      }
+
+      const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&pageSize=100&fields=files(id,name,mimeType,size,modifiedTime,parents)&orderBy=folder,name`;
+      
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        return {
+          currentPath: cleanPath,
+          items: [],
+          error: `Google Drive API returned HTTP ${res.status}: ${res.statusText}`
+        };
+      }
+
+      const data = await res.json();
+      const items: RemoteNodeItem[] = (data.files || []).map((f: any) => {
+        const isDir = f.mimeType === 'application/vnd.google-apps.folder';
+        return {
+          id: f.id,
+          name: f.name,
+          path: isDir ? `id:${f.id}` : f.name,
+          isDir,
+          size: parseInt(f.size || '0', 10),
+          lastModified: f.modifiedTime ? f.modifiedTime.split('T')[0] : new Date().toISOString().split('T')[0],
+          mimeType: f.mimeType
+        };
+      });
+
+      return {
+        currentPath: cleanPath,
+        items,
+        parentPath: cleanPath === '/' ? undefined : '/'
+      };
+    } catch (err: any) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: `Google Drive Error: ${err.message || 'Failed to list Google Drive files.'}`
+      };
+    }
+  }
+
+  // 2. DROPBOX REST API BROWSER
+  if (account.presetId === 'dropbox' && targetUrl.includes('dropboxapi.com')) {
+    if (!token) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: 'Dropbox Auth Error: Please enter your Dropbox Access Token in Cloud Storage Account Manager.'
+      };
+    }
+
+    try {
+      const pathParam = cleanPath === '/' ? '' : cleanPath;
+      const res = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: pathParam })
+      });
+
+      if (!res.ok) {
+        return {
+          currentPath: cleanPath,
+          items: [],
+          error: `Dropbox API returned HTTP ${res.status}: ${res.statusText}`
+        };
+      }
+
+      const data = await res.json();
+      const items: RemoteNodeItem[] = (data.entries || []).map((e: any) => {
+        const isDir = e['.tag'] === 'folder';
+        return {
+          id: e.id || e.path_lower,
+          name: e.name,
+          path: e.path_display || e.path_lower,
+          isDir,
+          size: e.size || 0,
+          lastModified: e.server_modified ? e.server_modified.split('T')[0] : new Date().toISOString().split('T')[0]
+        };
+      });
+
+      const pathParts = cleanPath.split('/').filter(Boolean);
+      pathParts.pop();
+      const parent = pathParts.length > 0 ? `/${pathParts.join('/')}` : '/';
+
+      return {
+        currentPath: cleanPath,
+        items,
+        parentPath: cleanPath === '/' ? undefined : parent
+      };
+    } catch (err: any) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: `Dropbox Error: ${err.message || 'Failed to list Dropbox folder.'}`
+      };
+    }
+  }
+
+  // 3. WEBDAV DIRECTORY PROPFIND BROWSER (Filejump, Koofr, Nextcloud, rclone)
+  try {
+    const cleanServer = targetUrl.replace(/\/$/, '');
+    const cleanDir = cleanPath.replace(/^\//, '');
+    const fullUrl = cleanDir ? `${cleanServer}/${cleanDir}` : cleanServer;
+
+    const headers: Record<string, string> = {
+      'Depth': '1',
+      'Content-Type': 'application/xml',
+      'X-Target-Url': fullUrl
+    };
+
+    if (account.apiKey) {
+      headers['Authorization'] = `Bearer ${account.apiKey}`;
+    } else if (account.username || account.tokenOrPassword) {
+      const creds = `${account.username}:${account.tokenOrPassword}`;
+      headers['Authorization'] = `Basic ${btoa(creds)}`;
+    }
+
+    const proxyRes = await fetch('/api/webdav-proxy', {
+      method: 'PROPFIND',
+      headers
+    });
+
+    if (!proxyRes.ok && proxyRes.status !== 207 && proxyRes.status !== 200) {
+      return {
+        currentPath: cleanPath,
+        items: [],
+        error: `WebDAV server returned HTTP ${proxyRes.status}: ${proxyRes.statusText} for directory '${fullUrl}'. (Tip: Check your WebDAV App Password in Cloud Accounts or use Local Synced Directory picker below.)`
+      };
+    }
+
+    const xmlText = await proxyRes.text();
+    const parsedWebDAVItems = parseWebDAVDirectoryXml(xmlText);
+
+    const items: RemoteNodeItem[] = parsedWebDAVItems
+      .filter(item => item.filename !== cleanDir.split('/').pop() && item.filename !== '' && item.filename !== '.')
+      .map(item => ({
+        id: `${cleanPath}/${item.filename}`,
+        name: item.filename,
+        path: cleanPath === '/' ? `/${item.filename}` : `${cleanPath}/${item.filename}`,
+        isDir: item.isDir,
+        size: item.size,
+        lastModified: item.lastModified
+      }));
+
+    const pathParts = cleanPath.split('/').filter(Boolean);
+    pathParts.pop();
+    const parent = pathParts.length > 0 ? `/${pathParts.join('/')}` : '/';
+
+    return {
+      currentPath: cleanPath,
+      items,
+      parentPath: cleanPath === '/' ? undefined : parent
+    };
+  } catch (err: any) {
+    return {
+      currentPath: cleanPath,
+      items: [],
+      error: `WebDAV Connection Failed: ${err.message || 'Check network / CORS proxy.'}`
+    };
+  }
+}

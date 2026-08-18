@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // WebDAV CORS Proxy Middleware Plugin for Filejump, TorBox, Koofr & Remote Cloud Storage
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     {

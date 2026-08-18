@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Deployment Scripts & Local Credentials
+deploy_meow.sh
+deploy_*.sh
+*.env
+*.env.local
