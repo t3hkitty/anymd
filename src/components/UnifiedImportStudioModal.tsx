@@ -4,6 +4,7 @@ import type { CloudAccount } from '../types/cloudAccounts';
 import { searchAnnasArchiveIsbnDb, type AnnasArchiveIsbnRecord } from '../plugins/annasArchiveIsbnPlugin';
 import { parseTextDirectoryListing } from '../plugins/webdavIndexerPlugin';
 import { scanMultipleIndividualPhotos, convertScannedCardsToVaultItems } from '../plugins/cardScannerPlugin';
+import { importVaultZipArchive } from '../plugins/vaultZipImportPlugin';
 import {
   X,
   Upload,
@@ -13,7 +14,8 @@ import {
   Globe,
   Search,
   Sparkles,
-  FolderPlus
+  FolderPlus,
+  Archive
 } from 'lucide-react';
 
 interface UnifiedImportStudioModalProps {
@@ -38,7 +40,8 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
   onImportBooks,
   onProceedToVerification
 }) => {
-  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan'>('insurance');
+  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'vault_zip_restore'>('insurance');
+  const zipBackupInputRef = useRef<HTMLInputElement | null>(null);
 
   // Processing & Progress Bar State
   const [isProcessing, setIsProcessing] = useState(false);
@@ -427,6 +430,34 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     }, 1000);
   };
 
+  // 7. Vault Backup ZIP Import Handler
+  const handleZipBackupUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsProcessing(true);
+    setImportProgress(20);
+    setProcessingStatusText('Unpacking Vault ZIP Archive & Extracting /media/...');
+
+    try {
+      setImportProgress(50);
+      const res = await importVaultZipArchive(file);
+      setImportProgress(90);
+      setProcessingStatusText(`Restoring ${res.importedCount} items and ${res.mediaRestoredCount} media assets...`);
+
+      setTimeout(() => {
+        setIsProcessing(false);
+        setImportProgress(100);
+        onImportBooks(res.books);
+        alert(`✓ Successfully restored ${res.importedCount} items and ${res.mediaRestoredCount} media covers from ZIP archive!`);
+        onClose();
+      }, 600);
+    } catch (err: any) {
+      setIsProcessing(false);
+      alert(`ZIP restore error: ${err.message}`);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
       <div className="bg-slate-900 border border-slate-700/80 text-slate-100 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -551,6 +582,18 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
           >
             <FolderPlus className="w-3.5 h-3.5 text-sky-400" />
             <span>📁 Local Folder Sync</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('vault_zip_restore')}
+            className={`px-4 py-2 font-bold rounded-t-xl transition-all border-b-2 flex items-center space-x-1.5 ${
+              activeTab === 'vault_zip_restore'
+                ? 'border-amber-400 text-amber-300 bg-slate-900'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Archive className="w-3.5 h-3.5 text-amber-400" />
+            <span>📦 Vault ZIP Backup Import</span>
           </button>
 
         </div>
@@ -966,6 +1009,43 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                   className="px-6 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-lg shadow-sky-600/20"
                 >
                   📁 Select Folder on Hard Drive
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: VAULT ZIP BACKUP IMPORT */}
+          {activeTab === 'vault_zip_restore' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 space-y-2 font-sans">
+                <span className="font-bold text-amber-300 flex items-center space-x-1.5 text-xs font-mono">
+                  <Archive className="w-4 h-4 text-amber-400" />
+                  <span>Sovereign Vault ZIP Archive Full Restore</span>
+                </span>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Extracts full library archives containing <code>/Sidecars/*.companion.md</code> markdown files, <code>/media/</code> cropped card covers, and reaction streams.
+                </p>
+              </div>
+
+              <input
+                type="file"
+                ref={zipBackupInputRef}
+                accept=".zip,application/zip"
+                onChange={handleZipBackupUpload}
+                className="hidden"
+              />
+
+              <div className="p-8 border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-3xl text-center space-y-3 bg-slate-950/60 transition-all">
+                <Archive className="w-12 h-12 text-amber-400 mx-auto" />
+                <div>
+                  <h4 className="font-bold text-sm text-slate-100">Select Sovereign Vault Backup ZIP</h4>
+                  <p className="text-xs text-slate-400 mt-1">Unpacks sidecars and automatically matches media folder images.</p>
+                </div>
+                <button
+                  onClick={() => zipBackupInputRef.current?.click()}
+                  className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20"
+                >
+                  📦 Select Vault ZIP File
                 </button>
               </div>
             </div>

@@ -72,6 +72,7 @@ import { SpatialRoutineDirectorModal } from './components/SpatialRoutineDirector
 import { StoryMakerAuthorBibleModal } from './components/StoryMakerAuthorBibleModal';
 import { RunningLitanyWatchdogModal } from './components/RunningLitanyWatchdogModal';
 import { PersonaCollectorHubModal } from './components/PersonaCollectorHubModal';
+import { VaultBackupRestoreModal } from './components/VaultBackupRestoreModal';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -338,6 +339,7 @@ export function App() {
   const [isStoryMakerBibleOpen, setIsStoryMakerBibleOpen] = useState(false);
   const [isRunningLitanyOpen, setIsRunningLitanyOpen] = useState(false);
   const [isPersonaCollectorOpen, setIsPersonaCollectorOpen] = useState(false);
+  const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -1036,6 +1038,16 @@ format: "dcmd/goodreads"
           >
             <span>💖</span>
             <span className="hidden xl:inline">Persona &amp; Plush</span>
+          </button>
+
+          {/* 13. 📦 VAULT RESTORE (ZIP / PIN LOCK) */}
+          <button
+            onClick={() => setIsVaultRestoreOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-950/90 hover:bg-amber-900 border border-amber-500/50 text-amber-300 text-xs font-bold transition-all"
+            title="Vault Backup Import (ZIP & /media/) & Local Folder PIN Session Restore (.vault-session.lock)"
+          >
+            <span>📦</span>
+            <span className="hidden xl:inline">Restore Vault</span>
           </button>
 
           {/* 6. ⚙️ CLOUD & PLUGINS */}
@@ -1975,6 +1987,29 @@ format: "dcmd/goodreads"
       <PersonaCollectorHubModal
         isOpen={isPersonaCollectorOpen}
         onClose={() => setIsPersonaCollectorOpen(false)}
+      />
+
+      {/* 13. Vault Backup Import & PIN Session Restore Modal */}
+      <VaultBackupRestoreModal
+        isOpen={isVaultRestoreOpen}
+        onClose={() => setIsVaultRestoreOpen(false)}
+        activeBookId={activeBookId}
+        allBooks={books}
+        onRestoreBooks={(newBooks, overwrite) => {
+          if (overwrite) {
+            handleUpdateBooks(() => newBooks);
+          } else {
+            handleUpdateBooks(prev => {
+              const existingIds = new Set(prev.map(b => b.id));
+              const deduplicated = newBooks.filter(b => !existingIds.has(b.id));
+              return [...deduplicated, ...prev];
+            });
+          }
+          if (newBooks.length > 0) {
+            setActiveBookId(newBooks[0].id);
+            setActiveView('library');
+          }
+        }}
       />
 
       {/* ⚡ Idle Background Auto-Worker Toast Notice */}
