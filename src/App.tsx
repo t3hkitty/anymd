@@ -887,6 +887,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenBookmarklets={() => setIsBookmarkletModalOpen(true)}
             onOpenCalibreImport={() => setIsCalibreImportOpen(true)}
             onUploadEpubClick={() => fileInputRef.current?.click()}
+            onOpenSuggestedLinks={() => setIsSuggestedLinksOpen(true)}
 
             onOpenVaultRestore={() => setIsVaultRestoreOpen(true)}
             onOpenExportShare={() => setIsUnifiedExportOpen(true)}
@@ -895,6 +896,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenBulkEdit={() => setIsBulkEditOpen(true)}
             onOpenOPDSCatalog={() => setIsOPDSCatalogOpen(true)}
             onOpenPwaInstall={() => setIsPwaInstallOpen(true)}
+            onOpenBookshelf={() => setActiveView('library')}
 
             onOpenCloudAccounts={() => setIsCloudAccountsOpen(true)}
             onOpenWebDAVIndexer={() => setIsWebDAVIndexerOpen(true)}
@@ -905,6 +907,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenGoogleAuthDeploy={() => setIsGoogleAuthDeployOpen(true)}
             onOpenRsyncSync={() => setIsRsyncModalOpen(true)}
 
+            onOpenRunningLitany={() => setIsRunningLitanyOpen(true)}
             onOpenArtistAiStudio={() => setIsArtistAiStudioOpen(true)}
             onOpenStoryMakerBible={() => setIsStoryMakerBibleOpen(true)}
             onOpenSpatialRoutine={() => setIsSpatialRoutineOpen(true)}

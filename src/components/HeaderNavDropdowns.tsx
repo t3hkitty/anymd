@@ -20,7 +20,8 @@ import {
   Server,
   Share2,
   Camera,
-  Import
+  Import,
+  Zap
 } from 'lucide-react';
 
 interface HeaderNavDropdownsProps {
@@ -34,6 +35,7 @@ interface HeaderNavDropdownsProps {
   onOpenBookmarklets: () => void;
   onOpenCalibreImport: () => void;
   onUploadEpubClick: () => void;
+  onOpenSuggestedLinks?: () => void;
 
   onOpenVaultRestore: () => void;
   onOpenExportShare: () => void;
@@ -42,6 +44,7 @@ interface HeaderNavDropdownsProps {
   onOpenBulkEdit: () => void;
   onOpenOPDSCatalog: () => void;
   onOpenPwaInstall: () => void;
+  onOpenBookshelf?: () => void;
 
   onOpenCloudAccounts: () => void;
   onOpenWebDAVIndexer: () => void;
@@ -52,6 +55,7 @@ interface HeaderNavDropdownsProps {
   onOpenGoogleAuthDeploy: () => void;
   onOpenRsyncSync: () => void;
 
+  onOpenRunningLitany: () => void;
   onOpenArtistAiStudio: () => void;
   onOpenStoryMakerBible: () => void;
   onOpenSpatialRoutine: () => void;
@@ -90,7 +94,8 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
     setOpenMenu(prev => prev === menu ? null : menu);
   };
 
-  const runAction = (fn: () => void) => {
+  const runAction = (fn?: () => void) => {
+    if (!fn) return;
     setOpenMenu(null);
     fn();
   };
@@ -119,14 +124,40 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'ingest' && (
-          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+          <div className="absolute left-0 mt-2 w-76 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+            <button
+              onClick={() => runAction(props.onOpenSuggestedLinks || props.onOpenUnifiedImport)}
+              className="w-full px-2.5 py-1.5 text-[10px] font-mono text-slate-300 uppercase font-bold border-b border-slate-800 flex items-center justify-between hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer text-left"
+              title="Click to view and approve matching drive files"
+            >
               <span>Media Ingest &amp; Scrapers</span>
-              {pendingMatches > 0 && (
-                <span className="text-amber-400 font-bold">{pendingMatches} new file match</span>
+              {pendingMatches > 0 ? (
+                <span className="text-amber-400 font-extrabold flex items-center space-x-1 group-hover:underline">
+                  <span>💡 {pendingMatches} new match</span>
+                  <span>➜</span>
+                </span>
+              ) : (
+                <span className="text-slate-500 text-[9px]">All synced</span>
               )}
-            </div>
+            </button>
             
+            {/* 💡 Auto-Discovered Real-File Match Suggestions if any */}
+            {pendingMatches > 0 && props.onOpenSuggestedLinks && (
+              <button
+                onClick={() => runAction(props.onOpenSuggestedLinks)}
+                className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-bold transition-all shadow-sm animate-pulse"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <div className="flex-1">
+                  <div className="text-amber-300 font-extrabold flex items-center justify-between">
+                    <span>💡 Auto-Discovered Matches</span>
+                    <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-black">{pendingMatches} PENDING</span>
+                  </div>
+                  <div className="text-[10px] text-slate-300">Files found in cloud &amp; downloads ready to link</div>
+                </div>
+              </button>
+            )}
+
             {/* Prominent Unified Import Studio (Image / Photos / Scrapers) */}
             <button
               onClick={() => runAction(props.onOpenUnifiedImport)}
@@ -267,11 +298,18 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'vault' && (
-          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+          <div className="absolute left-0 mt-2 w-76 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+            <button
+              onClick={() => runAction(props.onOpenBookshelf)}
+              className="w-full px-2.5 py-1.5 text-[10px] font-mono text-slate-300 uppercase font-bold border-b border-slate-800 flex items-center justify-between hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer text-left"
+              title="Click to view Grand Bookshelf"
+            >
               <span>Vault Tools &amp; Data</span>
-              <span className="text-amber-400 font-bold">{totalBooks} volumes</span>
-            </div>
+              <span className="text-amber-400 font-bold flex items-center space-x-1 group-hover:underline">
+                <span>{totalBooks} volumes</span>
+                <span>➜</span>
+              </span>
+            </button>
 
             {/* Prominent Export & Share Studio inside Menu */}
             <button
@@ -293,8 +331,11 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
               className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
             >
               <Layers className="w-4 h-4 text-amber-400" />
-              <div>
-                <div className="text-slate-100 font-bold">Physical Media &amp; Locations</div>
+              <div className="flex-1">
+                <div className="text-slate-100 font-bold flex items-center justify-between">
+                  <span>Physical Media &amp; Locations</span>
+                  <span className="text-[10px] text-amber-400 font-mono">{totalBooks} items</span>
+                </div>
                 <div className="text-[10px] text-slate-400">Books, Vinyls, Paintings &amp; Rooms</div>
               </div>
             </button>
@@ -378,11 +419,18 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'cloud' && (
-          <div className="absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+          <div className="absolute left-0 mt-2 w-76 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+            <button
+              onClick={() => runAction(props.onOpenCloudAccounts)}
+              className="w-full px-2.5 py-1.5 text-[10px] font-mono text-slate-300 uppercase font-bold border-b border-slate-800 flex items-center justify-between hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer text-left"
+              title="Click to open Cloud Account Manager"
+            >
               <span>Cloud &amp; Auth Config</span>
-              <span className="text-sky-400 font-bold">{cloudCount} accounts</span>
-            </div>
+              <span className="text-sky-400 font-bold flex items-center space-x-1 group-hover:underline">
+                <span>{cloudCount} accounts</span>
+                <span>➜</span>
+              </span>
+            </button>
 
             <button
               onClick={() => runAction(props.onOpenCloudAccounts)}
@@ -474,11 +522,35 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
         </button>
 
         {openMenu === 'studio' && (
-          <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
-            <div className="px-2.5 py-1 text-[10px] font-mono text-slate-400 uppercase font-bold border-b border-slate-800 flex items-center justify-between">
+          <div className="absolute right-0 mt-2 w-76 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl p-1.5 z-50 flex flex-col gap-1 backdrop-blur-xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+            
+            {/* Clickable Header that directly opens the Running Litany & Pulses */}
+            <button
+              onClick={() => runAction(props.onOpenRunningLitany)}
+              className="w-full px-2.5 py-1.5 text-[10px] font-mono text-slate-300 uppercase font-bold border-b border-slate-800 flex items-center justify-between hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer text-left"
+              title="Click to open Running Litany pulse stream & watchdog"
+            >
               <span>Creative Engines</span>
-              <span className="text-rose-400 font-bold">{pulsesCount} pulses</span>
-            </div>
+              <span className="text-rose-400 font-extrabold flex items-center space-x-1 group-hover:underline">
+                <span>⚡ {pulsesCount} Today's Pulses</span>
+                <span>➜</span>
+              </span>
+            </button>
+
+            {/* ⚡ Dedicated Running Litany & WYD Pulses Action */}
+            <button
+              onClick={() => runAction(props.onOpenRunningLitany)}
+              className="flex items-center space-x-2.5 px-2.5 py-2.5 rounded-xl text-left bg-gradient-to-r from-amber-500/20 to-rose-500/20 hover:from-amber-500/30 hover:to-rose-500/30 border border-amber-500/40 text-amber-200 font-bold transition-all shadow-sm"
+            >
+              <Zap className="w-4 h-4 text-amber-400 animate-pulse" />
+              <div className="flex-1">
+                <div className="text-amber-300 font-extrabold flex items-center justify-between">
+                  <span>⚡ Running Litany Stream</span>
+                  <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-black">{pulsesCount} PULSES</span>
+                </div>
+                <div className="text-[10px] text-slate-300">Live WYD microlog, watchdog &amp; traffic pulse</div>
+              </div>
+            </button>
 
             <button
               onClick={() => runAction(props.onOpenArtistAiStudio)}
