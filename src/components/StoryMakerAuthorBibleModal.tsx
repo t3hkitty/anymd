@@ -5,8 +5,10 @@ import {
   loadCharacterSlugs,
   compileProseSlugs,
   STRUCTURAL_DRAFTING_PROMPTS,
+  DEFAULT_CYA_FORKS,
   type InspoEntry,
-  type CharacterSlugDefinition
+  type CharacterSlugDefinition,
+  type CYABranchingFork
 } from '../plugins/storyMakerAuthorBiblePlugin';
 import {
   X,
@@ -17,7 +19,9 @@ import {
   Plus,
   Check,
   Compass,
-  ArrowRight
+  ArrowRight,
+  GitBranch,
+  Eye
 } from 'lucide-react';
 
 interface StoryMakerAuthorBibleModalProps {
@@ -29,30 +33,35 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
   isOpen,
   onClose
 }) => {
-  const [activeTab, setActiveTab] = useState<'inspo-ledger' | 'character-slugs' | 'structural-drafting'>('character-slugs');
+  const [activeTab, setActiveTab] = useState<'character-slugs' | 'inspo-ledger' | 'lore-bridge' | 'structural-drafting'>('character-slugs');
   
   // 1. Inspo Ledger State
   const [inspoEntries, setInspoEntries] = useState<InspoEntry[]>([]);
   const [newInspoTitle, setNewInspoTitle] = useState('');
   const [newInspoThought, setNewInspoThought] = useState('');
-  const [newInspoCategory, setNewInspoCategory] = useState<'trope' | 'worldbuilding' | 'dialogue-spark' | 'aesthetic' | 'scene-beat'>('scene-beat');
-  const [newInspoTags, setNewInspoTags] = useState('angst, fan, midnight');
+  const [newInspoCategory, setNewInspoCategory] = useState<'anomaly' | 'sensory-fragment' | 'world-rule' | 'dialogue-spark' | 'scene-beat'>('anomaly');
+  const [newInspoTags, setNewInspoTags] = useState('friction, sensory, world-rule');
 
   // 2. Character Slugs State
   const [characterSlugs, setCharacterSlugs] = useState<CharacterSlugDefinition[]>([]);
   const [rawDraftSnippet, setRawDraftSnippet] = useState<string>(
     'The cold rain poured outside the pavilion. [MC] stood rigid, fighting his [MC:flaw], while [ML] looked up with [ML:eyes]. Knowing [ML:secret], [MC] took out [MC:weapon] and hesitated.'
   );
+  const [detailPassActive, setDetailPassActive] = useState<boolean>(true);
   const [compiledProse, setCompiledProse] = useState<string>('');
+
+  // 3. Lore Bridge & CYA Forks
+  const [cyaForks] = useState<CYABranchingFork[]>(DEFAULT_CYA_FORKS);
+  const [selectedThematicOption, setSelectedThematicOption] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setInspoEntries(loadInspoLedger());
       const loadedSlugs = loadCharacterSlugs();
       setCharacterSlugs(loadedSlugs);
-      setCompiledProse(compileProseSlugs(rawDraftSnippet, loadedSlugs));
+      setCompiledProse(compileProseSlugs(rawDraftSnippet, loadedSlugs, detailPassActive));
     }
-  }, [isOpen]);
+  }, [isOpen, detailPassActive]);
 
   if (!isOpen) return null;
 
@@ -60,14 +69,17 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
     if (!newInspoTitle.trim() || !newInspoThought.trim()) return;
     const d = new Date();
     const dateStr = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
-    const hex = Math.floor(1000 + Math.random() * 9000).toString(16).toUpperCase();
+    const timeStr = `${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
+    const zettelSerial = `${dateStr}-${timeStr}`;
+
     const newEntry: InspoEntry = {
       id: `insp-${Date.now()}`,
-      zettelSerial: `ZK-${dateStr}-INSP-${hex}`,
+      zettelSerial,
       title: newInspoTitle,
       rawThought: newInspoThought,
       tags: newInspoTags.split(',').map(t => t.trim()).filter(Boolean),
       category: newInspoCategory,
+      conflictHook: 'Ingested raw anomaly ready to be absorbed by World Bible.',
       createdAt: d.toISOString().split('T')[0]
     };
     const updated = [newEntry, ...inspoEntries];
@@ -77,9 +89,9 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
     setNewInspoThought('');
   };
 
-  const handleUpdateDraft = (text: string) => {
+  const handleUpdateDraft = (text: string, detailPass = detailPassActive) => {
     setRawDraftSnippet(text);
-    setCompiledProse(compileProseSlugs(text, characterSlugs));
+    setCompiledProse(compileProseSlugs(text, characterSlugs, detailPass));
   };
 
   return (
@@ -100,7 +112,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                 </span>
               </h2>
               <p className="text-xs text-slate-400 font-mono">
-                Inspo Ledger &bull; Character Role Slugs ([MC], [ML]) &bull; AI Structural Drafting
+                Inspo Ledger (YYYYMMDD-HHMM) &bull; Dynamic Slugs ([MC], [ML:eyes]) &bull; Lore Bridge &amp; 3-Fork CYA
               </p>
             </div>
           </div>
@@ -124,7 +136,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
             }`}
           >
             <Users className="w-3.5 h-3.5 text-purple-400" />
-            <span>🎭 Character Role Slugs ([MC], [ML])</span>
+            <span>🎭 Character Slugs ([MC], [ML])</span>
           </button>
 
           <button
@@ -136,7 +148,19 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>💡 Inspo Ledger (Zettel Brain-Dumps)</span>
+            <span>💡 Inspo Ledger (Brain-Dumps)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('lore-bridge')}
+            className={`px-4 py-2 font-bold rounded-t-xl transition-all border-b-2 flex items-center space-x-1.5 ${
+              activeTab === 'lore-bridge'
+                ? 'border-rose-400 text-rose-300 bg-slate-900'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <GitBranch className="w-3.5 h-3.5 text-rose-400" />
+            <span>🌉 Lore Bridge &amp; 3 CYA Forks</span>
           </button>
 
           <button
@@ -148,7 +172,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
             }`}
           >
             <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-            <span>🧭 AI Structural Drafting Director</span>
+            <span>🧭 Non-Prose Interrogative Director</span>
           </button>
         </div>
 
@@ -159,7 +183,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
           {activeTab === 'character-slugs' && (
             <div className="space-y-6 animate-fadeIn">
               
-              {/* Character Slugs Cards */}
+              {/* Slugs Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {characterSlugs.map((char) => (
                   <div
@@ -186,7 +210,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                       {Object.entries(char.characteristics).map(([key, val]) => (
                         <div key={key} className="flex items-center justify-between text-slate-300">
                           <code className="text-amber-300">[{char.roleSlug.replace(/[[\]]/g, '')}:{key}]</code>
-                          <span className="text-slate-400 truncate max-w-[140px]">{val}</span>
+                          <span className="text-slate-400 truncate max-w-[140px]" title={val}>{val}</span>
                         </div>
                       ))}
                     </div>
@@ -196,27 +220,48 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
 
               {/* Dynamic Slug Prose Compiler Studio */}
               <div className="p-4 rounded-3xl bg-slate-950 border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <span className="font-bold text-xs text-purple-300 flex items-center space-x-1.5">
                     <Feather className="w-4 h-4 text-purple-400" />
-                    <span>Dynamic Slug Prose Compiler (Type Slugs &rarr; Live Refined Prose)</span>
+                    <span>Dynamic Slug Compiler &bull; Momentum Preservation</span>
                   </span>
-                  <div className="flex items-center space-x-1">
-                    {['[MC]', '[ML]', '[MC:eyes]', '[ML:secret]', '[MC:weapon]'].map((slug) => (
-                      <button
-                        key={slug}
-                        onClick={() => handleUpdateDraft(rawDraftSnippet + ` ${slug}`)}
-                        className="px-2 py-0.5 rounded-lg bg-purple-950 text-purple-300 border border-purple-500/40 text-[10px] hover:bg-purple-900"
-                      >
-                        +{slug}
-                      </button>
-                    ))}
+
+                  {/* Momentum Preservation Toggle */}
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => {
+                        const next = !detailPassActive;
+                        setDetailPassActive(next);
+                        handleUpdateDraft(rawDraftSnippet, next);
+                      }}
+                      className={`px-3 py-1 rounded-xl border text-[11px] font-bold transition-all flex items-center space-x-1.5 ${
+                        detailPassActive
+                          ? 'bg-purple-950 text-purple-300 border-purple-500/50 shadow-md shadow-purple-500/10'
+                          : 'bg-slate-900 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>{detailPassActive ? 'Detail Pass: Compiled' : 'Momentum Mode: Slugs Active'}</span>
+                    </button>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[11px] text-slate-400 font-bold block mb-1">Author Slug Draft:</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] text-slate-400 font-bold">Author Slug Draft:</label>
+                      <div className="flex items-center space-x-1">
+                        {['[MC]', '[ML]', '[MC:eyes]', '[ML:secret]', '[MC:weapon]'].map((slug) => (
+                          <button
+                            key={slug}
+                            onClick={() => handleUpdateDraft(rawDraftSnippet + ` ${slug}`)}
+                            className="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-500/40 text-[9px] hover:bg-purple-900"
+                          >
+                            +{slug}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <textarea
                       rows={5}
                       value={rawDraftSnippet}
@@ -226,7 +271,9 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-emerald-400 font-bold block mb-1">Compiled Polished Prose:</label>
+                    <label className="text-[11px] text-emerald-400 font-bold block mb-1">
+                      {detailPassActive ? 'Compiled Lore-Refined Prose:' : 'Momentum View (Slugs Preserved):'}
+                    </label>
                     <div className="w-full p-3 rounded-2xl bg-slate-900/60 border border-emerald-500/40 text-emerald-100 text-xs font-serif leading-relaxed h-[115px] overflow-y-auto">
                       {compiledProse}
                     </div>
@@ -237,21 +284,19 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
             </div>
           )}
 
-          {/* TAB 2: INSPO LEDGER (ZETTEL BRAIN-DUMPS) */}
+          {/* TAB 2: INSPO LEDGER */}
           {activeTab === 'inspo-ledger' && (
             <div className="space-y-6 animate-fadeIn">
-              
-              {/* Quick Brain Dump Creator */}
               <div className="p-4 rounded-3xl bg-amber-950/20 border border-amber-500/30 space-y-3">
                 <span className="font-bold text-amber-300 text-xs flex items-center space-x-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>Uncurated Inspo Dump &bull; Instant Zettelkasten Serial Tagging</span>
+                  <span>Author Bible (Inspo Ledger) &bull; Instant YYYYMMDD-HHMM Ingestion</span>
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <input
                     type="text"
-                    placeholder="Idea / Trope Title..."
+                    placeholder="Friction Point / Sensory Spark Title..."
                     value={newInspoTitle}
                     onChange={(e) => setNewInspoTitle(e.target.value)}
                     className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs"
@@ -261,11 +306,11 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                     onChange={(e) => setNewInspoCategory(e.target.value as any)}
                     className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-amber-300 text-xs"
                   >
-                    <option value="scene-beat">Scene Beat</option>
-                    <option value="trope">Trope Inversion</option>
-                    <option value="worldbuilding">Worldbuilding Spark</option>
+                    <option value="anomaly">Real-World Anomaly</option>
+                    <option value="sensory-fragment">Sensory Fragment</option>
+                    <option value="world-rule">Hard World Rule</option>
                     <option value="dialogue-spark">Dialogue Spark</option>
-                    <option value="aesthetic">Aesthetic Mood</option>
+                    <option value="scene-beat">Scene Beat</option>
                   </select>
                   <input
                     type="text"
@@ -278,7 +323,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
 
                 <textarea
                   rows={3}
-                  placeholder="Pour raw thoughts here without curation or self-editing. Dynamic slugs like [MC] or [ML:eyes] are auto-indexed..."
+                  placeholder="Pour raw voice or text friction points without self-censorship. Slugs like [MC] are auto-indexed..."
                   value={newInspoThought}
                   onChange={(e) => setNewInspoThought(e.target.value)}
                   className="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono"
@@ -289,37 +334,81 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                   className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-md flex items-center space-x-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Deposit Idea to Inspo Ledger</span>
+                  <span>Ingest Anomaly into Inspo Ledger</span>
                 </button>
               </div>
 
-              {/* Inspo Ledger Entries List */}
+              {/* Inspo Entries */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {inspoEntries.map((item) => (
                   <div key={item.id} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-amber-400 font-bold">{item.zettelSerial}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-[9px] text-slate-400 uppercase">
+                      <span className="text-[10px] font-mono text-amber-400 font-bold">ZK Tag: {item.zettelSerial}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-[9px] text-slate-400 uppercase font-bold">
                         {item.category}
                       </span>
                     </div>
                     <h4 className="font-bold text-slate-100 text-xs">{item.title}</h4>
                     <p className="text-slate-300 text-[11px] font-sans leading-relaxed">{item.rawThought}</p>
-                    <div className="flex items-center space-x-1 flex-wrap gap-y-1 pt-1">
-                      {item.tags.map(t => (
-                        <span key={t} className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 text-[9px]">
-                          #{t}
-                        </span>
-                      ))}
-                    </div>
+                    {item.conflictHook && (
+                      <div className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px] text-purple-300 font-mono">
+                        ⚡ <strong>Conflict Hook:</strong> {item.conflictHook}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
-
             </div>
           )}
 
-          {/* TAB 3: STRUCTURAL DRAFTING DIRECTOR */}
+          {/* TAB 3: LORE BRIDGE & 3 CYA THEMATIC FORKS */}
+          {activeTab === 'lore-bridge' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="p-4 rounded-3xl bg-rose-950/30 border border-rose-500/30 space-y-2 font-sans">
+                <span className="font-bold text-rose-300 text-xs font-mono flex items-center space-x-1.5">
+                  <GitBranch className="w-4 h-4 text-rose-400" />
+                  <span>LORE BRIDGE &amp; 3 THEMATIC CYA NARRATIVE FORKS</span>
+                </span>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Cross-reference raw Inspo anomalies with active World Bible logic. Narrative decision points branch into exactly three distinct thematic vectors.
+                </p>
+              </div>
+
+              {cyaForks.map((fork) => (
+                <div key={fork.id} className="p-5 rounded-3xl bg-slate-950 border border-slate-800 space-y-4">
+                  <div>
+                    <h3 className="font-extrabold text-sm text-slate-100">{fork.sceneTitle}</h3>
+                    <p className="text-slate-400 text-xs mt-1 font-sans">{fork.dilemmaPrompt}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {fork.thematicOptions.map((opt, i) => (
+                      <div
+                        key={i}
+                        onClick={() => setSelectedThematicOption(opt.label)}
+                        className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 flex flex-col justify-between ${
+                          selectedThematicOption === opt.label
+                            ? 'bg-rose-950/40 border-rose-400 ring-1 ring-rose-400'
+                            : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-bold text-rose-300 block">{opt.label}</span>
+                          <p className="text-slate-300 text-xs font-sans leading-relaxed">{opt.description}</p>
+                        </div>
+
+                        <div className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-[10px] text-amber-300 font-mono">
+                          <strong>Impact:</strong> {opt.impact}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* TAB 4: NON-PROSE INTERROGATIVE DIRECTOR */}
           {activeTab === 'structural-drafting' && (
             <div className="space-y-5 animate-fadeIn">
               <div className="p-4 rounded-3xl bg-emerald-950/30 border border-emerald-500/30 space-y-2 font-sans">
@@ -328,7 +417,7 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                   <span>NON-PROSE STRUCTURAL INTERROGATIVE DIRECTOR</span>
                 </span>
                 <p className="text-slate-300 text-xs leading-relaxed">
-                  Break writer's block by interrogating the scene structure rather than staring at blank prose. Atomic checklists guide paragraph-by-paragraph tension.
+                  Prohibits generic AI prose paragraphs. Guides you with structural questions and atomic paragraph checklists (Goblin Tools style).
                 </p>
               </div>
 
@@ -341,12 +430,12 @@ export const StoryMakerAuthorBibleModal: React.FC<StoryMakerAuthorBibleModalProp
                       </span>
                       <button
                         onClick={() => {
-                          handleUpdateDraft(rawDraftSnippet + `\n\n/* Prompt: ${prompt.question} */\n`);
+                          handleUpdateDraft(rawDraftSnippet + `\n\n/* Structural Question: ${prompt.question} */\n`);
                           setActiveTab('character-slugs');
                         }}
                         className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700 text-[10px] font-bold flex items-center space-x-1"
                       >
-                        <span>Insert Question into Draft</span>
+                        <span>Insert into Draft</span>
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     </div>

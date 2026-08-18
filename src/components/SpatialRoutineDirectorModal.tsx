@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
   loadSpatialRoutines,
   saveSpatialRoutines,
-  generateNoBadDaysMarkdown,
+  generateIndividualTaskMarkdownPlans,
   TtsDirectorAudio,
   type SpatialRoutine,
-  type RoutineStep
+  type RoutineStep,
+  type TaskMicroActionPlan
 } from '../plugins/routineDirectorPlugin';
 import {
   X,
@@ -16,7 +17,10 @@ import {
   Sparkles,
   Copy,
   Compass,
-  Zap
+  Zap,
+  Download,
+  Droplet,
+  FileText
 } from 'lucide-react';
 
 interface SpatialRoutineDirectorModalProps {
@@ -37,10 +41,10 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
 
   // "No Bad Days" State
   const [rawUnfinishedTasks, setRawUnfinishedTasks] = useState<string>(
-    'Organize desktop files\nSchedule dental checkup\nEmpty recycling bin\nReview chapter draft notes'
+    'Organize desktop files and clear staging cache\nReview tomorrow morning calendar & prep buffer\nComplete chapter beat notes\nWater plants and check pet fountain'
   );
-  const [generatedMarkdown, setGeneratedMarkdown] = useState<string>('');
-  const [copiedNotice, setCopiedNotice] = useState<boolean>(false);
+  const [generatedPlans, setGeneratedPlans] = useState<TaskMicroActionPlan[]>([]);
+  const [copiedTaskSerial, setCopiedTaskSerial] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -116,15 +120,28 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
 
   const handleGenerateNoBadDays = () => {
     const lines = rawUnfinishedTasks.split('\n');
-    const md = generateNoBadDaysMarkdown(lines);
-    setGeneratedMarkdown(md);
+    const plans = generateIndividualTaskMarkdownPlans(lines);
+    setGeneratedPlans(plans);
   };
 
-  const handleCopyMarkdown = () => {
-    if (!generatedMarkdown) return;
-    navigator.clipboard.writeText(generatedMarkdown);
-    setCopiedNotice(true);
-    setTimeout(() => setCopiedNotice(false), 3000);
+  const handleCopySinglePlan = (plan: TaskMicroActionPlan) => {
+    navigator.clipboard.writeText(plan.markdownContent);
+    setCopiedTaskSerial(plan.zettelSerial);
+    setTimeout(() => setCopiedTaskSerial(null), 3000);
+  };
+
+  const handleDownloadSinglePlan = (plan: TaskMicroActionPlan) => {
+    const blob = new Blob([plan.markdownContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${plan.zettelSerial}_${plan.taskTitle.slice(0, 20).replace(/\s+/g, '_')}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleTriggerQuickHydrationBreak = () => {
+    TtsDirectorAudio.speakCue('Hydration break active. Drink 300ml of cold water, un-clench your jaw, and take two deep breaths.', undefined, 0.95);
   };
 
   return (
@@ -145,17 +162,28 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
                 </span>
               </h2>
               <p className="text-xs text-slate-400 font-mono">
-                Visual Cards &bull; Podcast-Style Audio Cadence &bull; "No Bad Days" Goblin Deconstructor
+                Visual Cards &bull; Podcast-Style Audio Cadence &bull; "No Bad Days" Day-Closing Deconstructor
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleTriggerQuickHydrationBreak}
+              className="px-3 py-1.5 rounded-xl bg-sky-950 hover:bg-sky-900 border border-sky-500/40 text-sky-300 font-bold text-xs flex items-center space-x-1.5 transition-all"
+              title="1-Click Bio / Hydration Break"
+            >
+              <Droplet className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+              <span>Hydration Break</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab Selector */}
@@ -175,7 +203,7 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
           <button
             onClick={() => {
               setActiveTab('no-bad-days');
-              if (!generatedMarkdown) handleGenerateNoBadDays();
+              if (generatedPlans.length === 0) handleGenerateNoBadDays();
             }}
             className={`px-4 py-2 font-bold rounded-t-xl transition-all border-b-2 flex items-center space-x-1.5 ${
               activeTab === 'no-bad-days'
@@ -184,7 +212,7 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>🛡️ "No Bad Days" Deconstructor</span>
+            <span>🛡️ "No Bad Days" Day-Closing Generator</span>
           </button>
 
           <button
@@ -196,7 +224,7 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
             }`}
           >
             <Volume2 className="w-3.5 h-3.5 text-indigo-400" />
-            <span>🎙️ TTS Podcast Broadcast Cadence</span>
+            <span>🎙️ Podcast Broadcast Cadence</span>
           </button>
         </div>
 
@@ -276,7 +304,7 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
                       key={step.id}
                       className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
                         isActive
-                          ? 'bg-blue-950/40 border-blue-400 shadow-lg shadow-blue-500/20 ring-1 ring-blue-400'
+                          ? 'bg-blue-950/40 border-blue-400 shadow-lg shadow-blue-500/20 ring-1 ring-blue-400 animate-pulse'
                           : step.completed
                           ? 'bg-slate-950/50 border-slate-800/80 opacity-70'
                           : 'bg-slate-950 border-slate-800 hover:border-slate-700'
@@ -323,52 +351,79 @@ export const SpatialRoutineDirectorModal: React.FC<SpatialRoutineDirectorModalPr
             </div>
           )}
 
-          {/* TAB 2: "NO BAD DAYS" SCRIPT DECONSTRUCTOR */}
+          {/* TAB 2: "NO BAD DAYS" DAY-CLOSING SCRIPT */}
           {activeTab === 'no-bad-days' && (
             <div className="space-y-5 animate-fadeIn">
               <div className="p-4 rounded-3xl bg-amber-950/30 border border-amber-500/30 space-y-2 font-sans">
                 <div className="flex items-center space-x-2 text-amber-300 font-mono font-bold text-xs">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>🛡️ "NO BAD DAYS" GOBILN-STYLE ATOMIC DECONSTRUCTOR</span>
+                  <span>🛡️ "NO BAD DAYS" DAY-CLOSING PROTOCOL (INDIVIDUAL .MD PLANS)</span>
                 </div>
                 <p className="text-slate-300 text-xs leading-relaxed">
-                  Turn unfinished tasks into shame-free, zero-pressure 2-minute micro-actions. Every uncompleted task is decomposed into touchpoints, tactile triggers, and zero-tax exits.
+                  Pull uncompleted "Round Toits", review tomorrow's buffer, and generate individual Markdown (.md) files detailing step-by-step micro-actions (Goblin Tools style), alignment criteria, and success metrics.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs text-slate-400 font-bold">Paste Unfinished Tasks (1 per line):</label>
-                  <textarea
-                    rows={8}
-                    value={rawUnfinishedTasks}
-                    onChange={(e) => setRawUnfinishedTasks(e.target.value)}
-                    className="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono focus:outline-none focus:border-amber-500"
-                    placeholder="Enter tasks that felt overwhelming today..."
-                  />
-                  <button
-                    onClick={handleGenerateNoBadDays}
-                    className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs shadow-md flex items-center justify-center space-x-1.5"
-                  >
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>⚡ Deconstruct into Micro-Actions</span>
-                  </button>
-                </div>
+              <div className="space-y-3">
+                <label className="text-xs text-slate-400 font-bold block">Uncompleted Tasks / Round-Toits (1 per line):</label>
+                <textarea
+                  rows={4}
+                  value={rawUnfinishedTasks}
+                  onChange={(e) => setRawUnfinishedTasks(e.target.value)}
+                  className="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono focus:outline-none focus:border-amber-500"
+                  placeholder="Paste uncompleted items here..."
+                />
+                <button
+                  onClick={handleGenerateNoBadDays}
+                  className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs shadow-md flex items-center space-x-1.5"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>⚡ Generate Individual .MD Micro-Action Files ({rawUnfinishedTasks.split('\n').filter(t => t.trim()).length} Plans)</span>
+                </button>
+              </div>
 
-                <div className="space-y-2 flex flex-col">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs text-amber-300 font-bold">Clean-Slate Markdown Output:</label>
-                    <button
-                      onClick={handleCopyMarkdown}
-                      className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 text-[11px] font-bold flex items-center space-x-1"
-                    >
-                      <Copy className="w-3 h-3" />
-                      <span>{copiedNotice ? '✓ Copied!' : 'Copy Markdown'}</span>
-                    </button>
-                  </div>
-                  <pre className="flex-1 p-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-300 text-[11px] font-mono overflow-auto max-h-[220px]">
-                    {generatedMarkdown}
-                  </pre>
+              {/* Individual Task Plans Grid */}
+              <div className="space-y-4 pt-2">
+                <span className="text-xs font-bold text-amber-300 block">Decomposed Task Action Plans:</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {generatedPlans.map((plan) => (
+                    <div key={plan.zettelSerial} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 shadow-md flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono text-amber-400 font-bold">{plan.zettelSerial}</span>
+                          <span className="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-[9px] text-emerald-400 font-bold">
+                            ~{plan.estimatedMinutes}m micro-action
+                          </span>
+                        </div>
+                        <h4 className="font-extrabold text-xs text-slate-100 flex items-center space-x-1.5">
+                          <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>{plan.taskTitle}</span>
+                        </h4>
+                        <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-[10px] text-slate-400 space-y-1">
+                          <p><strong>🎯 Success Metric:</strong> {plan.successMetrics}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2 pt-2 border-t border-slate-800">
+                        <button
+                          onClick={() => handleCopySinglePlan(plan)}
+                          className="flex-1 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 text-[11px] font-bold flex items-center justify-center space-x-1"
+                        >
+                          <Copy className="w-3 h-3" />
+                          <span>{copiedTaskSerial === plan.zettelSerial ? '✓ Copied!' : 'Copy .MD'}</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDownloadSinglePlan(plan)}
+                          className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 text-[11px] font-extrabold flex items-center space-x-1"
+                          title="Download Markdown file"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>Download</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

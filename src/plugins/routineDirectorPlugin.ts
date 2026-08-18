@@ -36,89 +36,119 @@ export const DEFAULT_SPATIAL_ROUTINES: SpatialRoutine[] = [
     steps: [
       {
         id: 'lh-1',
-        title: 'Tactile Pocket Tap (Keys, Wallet, Badge)',
-        description: 'Physical touch check: Left pocket phone, right pocket keys & badge, back pocket wallet.',
-        spatialZone: 'Entryway Console / Valet Tray',
-        durationSeconds: 30,
-        ttsCue: 'Commencing exit sequence. Tap your pockets for keys, wallet, and transit badge.',
+        title: '🚪+🔑 (Keys)',
+        description: 'Physical touch check: Verify primary key ring and transit fobs in pocket/hand.',
+        spatialZone: 'Entryway Valet Tray',
+        durationSeconds: 15,
+        ttsCue: 'Door plus Keys. Confirming physical key ring in hand or pocket.',
         icon: '🔑',
         completed: false
       },
       {
         id: 'lh-2',
-        title: 'Thermal & Appliance Sweep (Stove, Oven, Irons)',
-        description: 'Visual check of kitchen burners, curling iron, and heaters.',
-        spatialZone: 'Kitchen & Bathroom',
-        durationSeconds: 45,
-        ttsCue: 'Visual appliance check. Stoves off, irons unplugged, space heaters dark.',
-        icon: '🍳',
+        title: '🚪+💳 (Wallet)',
+        description: 'Tactile check: Identity cards, payment cards, transit pass.',
+        spatialZone: 'Entryway Console',
+        durationSeconds: 15,
+        ttsCue: 'Door plus Wallet. Confirming identification and payment cards.',
+        icon: '💳',
         completed: false
       },
       {
         id: 'lh-3',
-        title: 'Feline & Pet Comfort Check',
-        description: 'Ensure water fountains are flowing, fresh crunchies topped off, and chin scritch given.',
-        spatialZone: 'Pet Feeding Station',
-        durationSeconds: 60,
-        ttsCue: 'Pet welfare check. Water fountain flowing, treats safe, and farewell petting protocol fulfilled.',
-        icon: '🐾',
+        title: '🚪+🧠 (Brain check)',
+        description: 'Mental alignment: Where am I heading, what is the primary mission, and is the mindset grounded?',
+        spatialZone: 'Threshold Mirror',
+        durationSeconds: 30,
+        ttsCue: 'Door plus Brain check. Ground your focus. State your immediate destination.',
+        icon: '🧠',
         completed: false
       },
       {
         id: 'lh-4',
-        title: 'Perimeter Windows & Sovereign Door Lock',
-        description: 'Latch ground floor windows and engage sovereign deadbolt.',
-        spatialZone: 'Main Threshold',
+        title: '🚪+🎁 (Gift check)',
+        description: 'Host gift, return item, package drop-off, or planned relational offering.',
+        spatialZone: 'Staging Table',
+        durationSeconds: 20,
+        ttsCue: 'Door plus Gift check. Do you have the intended items for others today?',
+        icon: '🎁',
+        completed: false
+      },
+      {
+        id: 'lh-5',
+        title: '🚪+🎒 (Bags/Books/Carry)',
+        description: 'Backpack, notebook/e-reader companion, charging cables, weather layer.',
+        spatialZone: 'Coat Hook & Bench',
         durationSeconds: 30,
-        ttsCue: 'Locking deadbolt. Perimeter secured. You are clear for takeoff.',
-        icon: '🔒',
+        ttsCue: 'Door plus Bags and Books. Confirm daily carry and reading companion.',
+        icon: '🎒',
+        completed: false
+      },
+      {
+        id: 'lh-6',
+        title: '🚪+🎧 (Audio gear)',
+        description: 'Noise-canceling headphones, earbuds, or audio adapters for sensory shielding.',
+        spatialZone: 'Doorway Audio Dock',
+        durationSeconds: 20,
+        ttsCue: 'Door plus Audio gear. Sensory shields equipped. You are cleared for departure.',
+        icon: '🎧',
         completed: false
       }
     ]
   },
   {
     id: 'routine-morning-wake-prep',
-    name: 'Morning Wake & Light Alignment',
+    name: 'Morning Wake & Prep Protocol',
     icon: '☀️',
-    badge: 'Circadian Reset',
+    badge: 'Circadian Grounding',
     targetTime: '07:30 AM',
     color: '#f59e0b',
     steps: [
       {
         id: 'mw-1',
-        title: 'Photobiological Light Exposure & Curtains Open',
-        description: 'Flood retina with natural daylight or 10,000 lux lamp for dopamine baseline.',
-        spatialZone: 'Bedroom Window',
-        durationSeconds: 120,
-        ttsCue: 'Good morning. Open curtains or trigger sunrise lamp to establish circadian dopamine rhythm.',
-        icon: '🌅',
-        completed: false
-      },
-      {
-        id: 'mw-2',
-        title: '500ml Electrolyte & Hydration Ingestion',
-        description: 'Drink a full glass of water with a pinch of mineral salt or lemon.',
-        spatialZone: 'Nightstand / Kitchen',
+        title: '☀️+💧 (Hydration sips)',
+        description: '500ml pure water with mineral salt or lemon to rehydrate neural pathways.',
+        spatialZone: 'Bedside Nightstand',
         durationSeconds: 45,
-        ttsCue: 'Drink 500 milliliters of cold water to rehydrate neural pathways.',
+        ttsCue: 'Sun plus Hydration sips. Drink 500 milliliters of cold water.',
         icon: '💧',
         completed: false
       },
       {
+        id: 'mw-2',
+        title: '☀️+🚻 (Biological reset)',
+        description: 'Full bio break, splash cold water on face, sensory waking.',
+        spatialZone: 'Washroom Sanctuary',
+        durationSeconds: 120,
+        ttsCue: 'Sun plus Biological reset. Reset posture and wash face.',
+        icon: '🚻',
+        completed: false
+      },
+      {
         id: 'mw-3',
-        title: 'Micro Stretch & Posture Unfurl',
-        description: 'Gentle spinal twists, neck releases, and shoulder rolls.',
-        spatialZone: 'Floor Mat',
-        durationSeconds: 180,
-        ttsCue: 'Three deep breaths. Unfurl your spine and roll shoulders back.',
-        icon: '🧘',
+        title: '☀️+💊 (Medication/Grounding)',
+        description: 'Daily supplements, prescriptions, and 3 slow parasympathetic grounding breaths.',
+        spatialZone: 'Morning Dispensary',
+        durationSeconds: 60,
+        ttsCue: 'Sun plus Medication and Grounding. Ingest morning regimen. Three centering breaths.',
+        icon: '💊',
+        completed: false
+      },
+      {
+        id: 'mw-4',
+        title: '☀️+💻 (Terminal authentication, battery 60-80%)',
+        description: 'Unlock workstation with sovereign passkey, confirm hardware battery charged between 60-80% for longevity.',
+        spatialZone: 'Primary Workstation',
+        durationSeconds: 60,
+        ttsCue: 'Sun plus Terminal authentication. Workstation active, battery conditioned between sixty and eighty percent.',
+        icon: '💻',
         completed: false
       }
     ]
   },
   {
     id: 'routine-morning-sustenance',
-    name: 'Morning Sustenance (Low-Demand Nutrition)',
+    name: 'Morning Sustenance Protocol',
     icon: '🌙🍌',
     badge: 'Metabolic Support',
     targetTime: '08:15 AM',
@@ -126,22 +156,32 @@ export const DEFAULT_SPATIAL_ROUTINES: SpatialRoutine[] = [
     steps: [
       {
         id: 'ms-1',
-        title: 'Frictionless Banana & Rapid Fuel',
-        description: 'Peel and consume a fresh banana or simple nut butter snack for rapid glucose stability.',
-        spatialZone: 'Kitchen Counter',
-        durationSeconds: 120,
-        ttsCue: 'Zero friction nutrition: Grab a banana or rapid protein fuel to stabilize blood sugar.',
-        icon: '🍌',
+        title: '🌙+🍳 (Kitchen heat source check)',
+        description: 'Visual check of stove burners, kettle base, and induction plates.',
+        spatialZone: 'Kitchen Cooktop',
+        durationSeconds: 30,
+        ttsCue: 'Moon plus Kitchen heat source check. Verify burner surfaces and safe clearance.',
+        icon: '🍳',
         completed: false
       },
       {
         id: 'ms-2',
-        title: 'Warm Herbal or Matcha Infusion',
-        description: 'Prepare warm tea or l-theanine brew for calm focus without jitter.',
-        spatialZone: 'Tea Kettle Corner',
-        durationSeconds: 240,
-        ttsCue: 'Steeping tea. Savor the warm steam while focus settles.',
-        icon: '🍵',
+        title: '🌙+🍽️ (Plating/fuel)',
+        description: 'Low-demand nourishment: Banana, protein fuel, or nourishing meal plated cleanly.',
+        spatialZone: 'Preparation Island',
+        durationSeconds: 120,
+        ttsCue: 'Moon plus Plating and Fuel. Fuel body with clean protein and simple carbohydrates.',
+        icon: '🍽️',
+        completed: false
+      },
+      {
+        id: 'ms-3',
+        title: '🌙+☕ (Caffeinated beverage prep)',
+        description: 'Brew single-origin pour-over, espresso, or ceremonial matcha with l-theanine.',
+        spatialZone: 'Beverage Bar',
+        durationSeconds: 180,
+        ttsCue: 'Moon plus Caffeinated beverage prep. Steeping brew for calm, sustained alertness.',
+        icon: '☕',
         completed: false
       }
     ]
@@ -156,32 +196,32 @@ export const DEFAULT_SPATIAL_ROUTINES: SpatialRoutine[] = [
     steps: [
       {
         id: 'bc-1',
-        title: 'Screen Spectrum Shift & Dim Lighting',
-        description: 'Switch all monitors and bulbs to warm amber or 1800K glow.',
-        spatialZone: 'Living Space',
-        durationSeconds: 60,
-        ttsCue: 'Commencing evening closure. Dimming lumens to amber warm spectrum.',
-        icon: '🕯️',
+        title: '🌙+📱 (Device charge 60-80%)',
+        description: 'Plug handheld devices into smart cutoff plugs targeting 60-80% battery conservation.',
+        spatialZone: 'Charging Cradle',
+        durationSeconds: 45,
+        ttsCue: 'Moon plus Device charge. Plug devices into smart conditioning docks.',
+        icon: '📱',
         completed: false
       },
       {
         id: 'bc-2',
-        title: 'Tomorrow Anchor Note & Clean Slate',
-        description: 'Write down the single #1 priority task for tomorrow morning so the brain can let go.',
-        spatialZone: 'Desk Companion Pad',
+        title: '🌙+📓 (Final ledger review)',
+        description: 'Deposit the top priority anchor note for tomorrow morning and close daily micrologs.',
+        spatialZone: 'Bedside Journal',
         durationSeconds: 120,
-        ttsCue: 'Deposit your top tomorrow task into the ledger. Release mental loops.',
-        icon: '📝',
+        ttsCue: 'Moon plus Final ledger review. Scribing tomorrow anchor note. Brain loops released.',
+        icon: '📓',
         completed: false
       },
       {
         id: 'bc-3',
-        title: 'Audio Soundscape & Pillow Unwind',
-        description: 'Trigger rain sounds or white noise ambient track and settle in.',
-        spatialZone: 'Bedside Sanctuary',
-        durationSeconds: 300,
-        ttsCue: 'Soundscape engaged. Rest well, sovereign operator. You did enough today.',
-        icon: '🛏️',
+        title: '🌙+🛑 (Environmental shutdown)',
+        description: 'Dim all lumens, lock doors, activate ambient soundscape, and power down work machines.',
+        spatialZone: 'Master Threshold',
+        durationSeconds: 60,
+        ttsCue: 'Moon plus Environmental shutdown. Lumens dark. Ambient soundscape online. Rest deeply.',
+        icon: '🛑',
         completed: false
       }
     ]
@@ -211,32 +251,80 @@ export function saveSpatialRoutines(routines: SpatialRoutine[]): void {
   }
 }
 
+export interface TaskMicroActionPlan {
+  taskTitle: string;
+  zettelSerial: string;
+  alignmentCriteria: string;
+  successMetrics: string;
+  estimatedMinutes: number;
+  markdownContent: string;
+}
+
 /**
- * "No Bad Days" Markdown Micro-Actions Generator (Goblin Tools style)
- * Deconstructs overwhelming tasks into shame-free, 2-minute actionable steps.
+ * "No Bad Days" Day-Closing Script Generator
+ * Generates an individual Markdown file for each uncompleted task detailing step-by-step
+ * micro-actions (Goblin Tools style), alignment criteria, and success metrics.
  */
-export function generateNoBadDaysMarkdown(rawTasks: string[]): string {
+export function generateIndividualTaskMarkdownPlans(rawTasks: string[]): TaskMicroActionPlan[] {
   const dateStr = new Date().toISOString().split('T')[0];
   const items = rawTasks.filter(t => t.trim().length > 0);
 
-  let md = `# 🛡️ "No Bad Days" Clean-Slate Micro-Action Protocol\n\n`;
-  md += `> [!abstract] Date: \`${dateStr}\` &bull; **Philosophy:** Zero shame, zero guilt. Every unfinished task is simply an atomic step waiting to be gently decomposed.\n\n`;
-  md += `## 🌟 Goblin-Tools Style Decomposed Micro-Actions\n\n`;
-
   if (items.length === 0) {
-    items.push('Sort mail and clear desk surface', 'Review tomorrow appointment schedule', 'Drink a glass of water and rest');
+    items.push('Clear desktop staging cache and sort active notes');
   }
 
-  items.forEach((task, idx) => {
-    md += `### ${idx + 1}. Task: **${task}**\n`;
-    md += `- [ ] **Step A (15 sec):** Stand near the location where *"${task}"* lives.\n`;
-    md += `- [ ] **Step B (1 min):** Touch the primary tool/item required (open the app, pick up the pen, or touch the folder).\n`;
-    md += `- [ ] **Step C (2 min):** Perform the first microscopic increment (e.g. read 1 line, type 1 sentence, or file 1 piece).\n`;
-    md += `- [ ] **Step D (Zero-Tax Exit):** Stop immediately if energy is depleted, or continue if momentum takes over.\n\n`;
-  });
+  return items.map((task) => {
+    const hex = Math.floor(1000 + Math.random() * 9000).toString(16).toUpperCase();
+    const zettelSerial = `ZK-${dateStr.replace(/-/g, '')}-NBD-${hex}`;
 
-  md += `---\n*Generated by Sovereign Routine Director & Goblin Engine.*\n`;
-  return md;
+    const alignmentCriteria = `Aligns with sovereign cognitive sovereignty: Zero-tax ramp-up, no judgment for past delays, and maximum tactile momentum.`;
+    const successMetrics = `Completion of Micro-Action Unit 1 (120 seconds of direct physical engagement) counts as 100% full victory for this round.`;
+
+    const markdownContent = `---
+title: "${task}"
+zettel_serial: "${zettelSerial}"
+date: "${dateStr}"
+type: "no-bad-days/micro-action-plan"
+framework: "goblin-tools-atomic"
+alignment_criteria: "${alignmentCriteria}"
+success_metrics: "${successMetrics}"
+---
+
+# 🛡️ ${task}
+
+> [!abstract] **ZK Serial:** \`${zettelSerial}\` &bull; **Day-Closing Reflection:** Uncompleted Round-Toit decomposed with zero guilt.
+
+## 🎯 Alignment & Victory Criteria
+- **Alignment Criteria:** ${alignmentCriteria}
+- **Success Metrics:** ${successMetrics}
+
+---
+
+## ⚡ Goblin-Style Atomic Action Steps (2-Min Max Each)
+
+- [ ] **Step 1 (Tactile Arrival - 15s):** Stand physically in front of where *"${task}"* lives.
+- [ ] **Step 2 (Tool Engagement - 45s):** Touch the single application, notebook, or tool required to touch this task.
+- [ ] **Step 3 (Atomic Micro-Unit - 90s):** Execute 1 microscopic sub-unit without evaluating quality (write 1 sentence, delete 1 junk file, or dial 1 number).
+- [ ] **Step 4 (Zero-Tax Exit):** Stop immediately if mental energy is spent, or continue if hyperfocus flow takes over.
+
+---
+
+## 🌙 Day-Closing Reflection
+- *How should this item proceed tomorrow?* ➔ Scheduled into morning buffer slot.
+- *Any external blocker?* ➔ None that cannot be solved in micro-steps.
+
+*Generated by Sovereign "No Bad Days" Day-Closing Director.*
+`;
+
+    return {
+      taskTitle: task,
+      zettelSerial,
+      alignmentCriteria,
+      successMetrics,
+      estimatedMinutes: 2,
+      markdownContent
+    };
+  });
 }
 
 /**
@@ -252,9 +340,9 @@ export class TtsDirectorAudio {
       return;
     }
 
-    this.stop();
+    this.synth.cancel();
 
-    // Play gentle chime tone using Web Audio API
+    // Play subtle podcast chime tone before speaking
     this.playPodcastChime();
 
     setTimeout(() => {
@@ -262,11 +350,11 @@ export class TtsDirectorAudio {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = rate; // calm broadcast cadence
       utterance.pitch = pitch;
-      
-      // Attempt to find pleasant calm voices
+
+      // Select gentle natural voice if available
       const voices = this.synth.getVoices();
       const preferredVoice = voices.find(v => 
-        (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Siri') || v.name.includes('Daniel') || v.name.includes('Samantha')) && v.lang.startsWith('en')
+        (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.lang.startsWith('en')) && !v.name.includes('Zira')
       );
       if (preferredVoice) {
         utterance.voice = preferredVoice;
@@ -302,16 +390,16 @@ export class TtsDirectorAudio {
       osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
       osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.25); // A5
 
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
 
       osc.start();
-      osc.stop(ctx.currentTime + 0.35);
-    } catch {
-      // ignore audio context failures
+      osc.stop(ctx.currentTime + 0.36);
+    } catch (e) {
+      // Audio context not allowed without interaction
     }
   }
 }
