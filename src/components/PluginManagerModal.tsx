@@ -7,9 +7,9 @@ import { X, Puzzle, Check, Lock, Unlock, HardDrive, Settings, FolderSync, BookOp
 const REPOS_STORAGE_KEY = 'lc_md_plugin_repos_v3';
 
 const DEFAULT_REPOS = [
-  'https://raw.githubusercontent.com/t3hkitty/lc-md-plugins/main/repository.json',
-  'https://raw.githubusercontent.com/lc-md/public-plugins/main/repository.json',
-  'https://plugins.librarycompanion.md/registry.json'
+  'https://raw.githubusercontent.com/t3hkitty/anymd-plugins/main/repository.json',
+  'https://raw.githubusercontent.com/anymd/public-plugins/main/repository.json',
+  'https://plugins.anymd.app/registry.json'
 ];
 
 function loadSavedRepos(): string[] {
