@@ -181,7 +181,7 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-extrabold tracking-tight flex items-center space-x-2 text-white">
-              <span>⬛ Sovereign MyBlackBox Dashboard</span>
+              <span>⬛ Kawaii Neko MyBlackBox Dashboard 🐾🐱</span>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
                 100% ISOLATED
               </span>
@@ -199,7 +199,7 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
               onOpenJournalInReader?.(`journal-${dateStr}`);
             }}
             className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center space-x-1.5"
-            title="Open Today's BlackBox Daily Journal in Sovereign Reader Canvas"
+            title="Open Today's BlackBox Daily Journal in Kawaii Reader Canvas 🐾"
           >
             <span>📓</span>
             <span>Open in Reader Canvas</span>

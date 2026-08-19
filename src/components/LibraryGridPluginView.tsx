@@ -65,7 +65,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
     if (book.externalReaderUri) {
       try {
         navigator.clipboard.writeText(book.externalReaderUri);
-        setToastNotice(`📖 Opening Sovereign Reader. Local file path copied: ${book.externalReaderUri}`);
+        setToastNotice(`📖 Opening Kawaii Neko Reader 🐾🐱. Local file path copied: ${book.externalReaderUri}`);
         setTimeout(() => setToastNotice(null), 4000);
       } catch {
         // ignore

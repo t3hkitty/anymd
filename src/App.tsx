@@ -12,6 +12,7 @@ import { QuickCaptureModal } from './components/QuickCaptureModal';
 import { ResonanceStreamView } from './components/ResonanceStreamView';
 import { SidecarEditor } from './components/SidecarEditor';
 import { LibraryGridPluginView } from './components/LibraryGridPluginView';
+import { VaultWebhookGeneratorWidget } from './components/VaultWebhookGeneratorWidget';
 import { PluginManagerModal } from './components/PluginManagerModal';
 import { SelectiveMetadataModal } from './components/SelectiveMetadataModal';
 import { MicroTweetFeedModal } from './components/MicroTweetFeedModal';
@@ -86,6 +87,7 @@ import { parseInboundShareTarget, convertSharePayloadToBook } from './plugins/pw
 import { getActiveProfile, type UserProfile } from './plugins/profileManagementPlugin';
 import { SAMPLE_MEDIA_ITEMS } from './data/sampleMediaItems';
 import { BookcaseIcon } from './components/BookcaseIcon';
+import { DynamicAtmosphericBackground, WidgetPanel } from '@lorik/shared-kawaii-ui';
 import { HeaderNavDropdowns } from './components/HeaderNavDropdowns';
 
 // Plugins & Utilities
@@ -109,12 +111,20 @@ import { buildBlackBoxDailyJournalBook, loadRunningLitany } from './plugins/runn
 
 // Icons
 import {
-  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock, Share2, Import
+  BookOpen, Radio, FileText, Sparkles, Layers, Grid, Lock, Share2, Import, Paintbrush
 } from 'lucide-react';
 
 const HAS_SEEN_ONBOARDING_KEY = 'lc_md_has_seen_onboarding_v3';
+const THEME_SET_KEY = 'blackbox_theme_style_set_v1';
 
 export function App() {
+  const [themeStyleSet, setThemeStyleSetState] = useState(() => {
+    return localStorage.getItem(THEME_SET_KEY) || 'classic';
+  });
+  const handleSelectThemeStyleSet = (newTheme: string) => {
+    setThemeStyleSetState(newTheme);
+    localStorage.setItem(THEME_SET_KEY, newTheme);
+  };
   const [vaultMode, setVaultMode] = useState<VaultMode>(getSavedVaultMode);
   const [books, setBooks] = useState<Book[]>(() => {
     const loaded = loadBooksForVault(getSavedVaultMode());
@@ -755,10 +765,11 @@ date_cataloged: "${new Date().toISOString()}"
     : books;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950 relative">
+      <DynamicAtmosphericBackground activeC4Scene="all" themeStyleSet={themeStyleSet} />
       
       {/* Master Top Navigation Bar: Sovereign Library <-> User Account Profile <-> MyBlackBox */}
-      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
+      <div className="w-full bg-slate-950/70 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
         
         {/* Left: 📚 Sovereign Library Tab */}
         <button
@@ -1059,7 +1070,13 @@ date_cataloged: "${new Date().toISOString()}"
       {/* Main Content Workspace Layout */}
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
         {activeView === 'library' && (
-          <div className="h-[calc(100vh-120px)] max-w-6xl mx-auto">
+          <div className="flex flex-col gap-6 h-full">
+            <div className="flex-none max-w-xl mx-auto w-full">
+              <VaultWebhookGeneratorWidget />
+            </div>
+            <div className="flex-1 min-h-0">
+              <WidgetPanel title="Library Collection" icon={<BookcaseIcon className="w-4 h-4"/>}>
+              <div className="h-[calc(100vh-180px)] max-w-6xl mx-auto overflow-y-auto">
             <LibraryGridPluginView
               books={displayedBooks}
               activeBookId={activeBookId}

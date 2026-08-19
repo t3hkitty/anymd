@@ -1,5 +1,12 @@
 # 🐾 Library Companion MD (LC-MD) & Sovereign Black Box
 
+✨ *kawaii aesthetic edition!* ✨
+
+  /\_/\
+ ( >.< )
+  "   "
+  nyaa~
+
 > **A 100% Self-Hostable, Local-First Discovery Library, E-Reader & Companion Vault**  
 > *Natural Expansion of the Black Box Site • Zero-Telemetry • Markdown Sidecars • MIT Licensed*
 
@@ -180,3 +187,10 @@ This project is licensed under the **MIT Open Source License**. You are complete
 
 - **GitHub Repository**: [https://github.com/t3hkitty/library-companion-md](https://github.com/t3hkitty/library-companion-md)
 - **Live Demo & Black Box Hub**: [https://meow.artkitty.net](https://meow.artkitty.net)
+
+ 
+     / \ _ / \     
+   (   o . o   )   
+     >   ^   <     M e o w !   I   a m   t h e   L i b r a r y   C a t ! 
+  
+ 
