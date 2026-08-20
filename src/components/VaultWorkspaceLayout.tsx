@@ -15,11 +15,11 @@ interface VaultFile {
 
 export const VaultWorkspaceLayout: React.FC = () => {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<MainTab>('vaults');
-  const [activeVault, setActiveVault] = useState<VaultId>('lcmd-main');
+  const [activeTab, setActiveTab] = useState<MainTab>(() => (localStorage.getItem('anymd_active_tab') as MainTab) || 'vaults');
+  const [activeVault, setActiveVault] = useState<VaultId>(() => (localStorage.getItem('anymd_active_vault') as VaultId) || 'lcmd-main');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
-  const [themeStyleSet, setThemeStyleSet] = useState('classic');
+  const [themeStyleSet, setThemeStyleSet] = useState(() => localStorage.getItem('anymd_theme_style_set') || 'classic');
 
   // File system and vault state
   const [vaultFolders, setVaultFolders] = useState<Record<VaultId, FileSystemDirectoryHandle | null>>({
@@ -35,7 +35,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [selectedFileContent, setSelectedFileContent] = useState<string>('');
   const [selectedFileMetadata, setSelectedFileMetadata] = useState<string>('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [starredFiles, setStarredFiles] = useState<Record<string, boolean>>({});
+  const [starredFiles, setStarredFiles] = useState<Record<string, boolean>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('anymd_starred_files') || '{}');
+    } catch {
+      return {};
+    }
+  });
 
   const loadVaultFolder = async (vaultId: VaultId) => {
     try {
@@ -110,10 +116,43 @@ export const VaultWorkspaceLayout: React.FC = () => {
   };
 
   // Theming State
-  const [isLightMode, setIsLightMode] = useState(false);
-  const [bgPattern, setBgPattern] = useState('bg-neutral-900');
-  const [frameStyle, setFrameStyle] = useState('rounded-2xl');
-  const [accentColor, setAccentColor] = useState('indigo-500');
+  const [isLightMode, setIsLightMode] = useState(() => localStorage.getItem('anymd_light_mode') === 'true');
+  const [bgPattern, setBgPattern] = useState(() => localStorage.getItem('anymd_bg_pattern') || 'bg-neutral-900');
+  const [frameStyle, setFrameStyle] = useState(() => localStorage.getItem('anymd_frame_style') || 'rounded-2xl');
+  const [accentColor, setAccentColor] = useState(() => localStorage.getItem('anymd_accent_color') || 'indigo-500');
+
+  // Persistence hooks
+  React.useEffect(() => {
+    localStorage.setItem('anymd_active_tab', activeTab);
+  }, [activeTab]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_active_vault', activeVault);
+  }, [activeVault]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_theme_style_set', themeStyleSet);
+  }, [themeStyleSet]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_light_mode', String(isLightMode));
+  }, [isLightMode]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_bg_pattern', bgPattern);
+  }, [bgPattern]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_frame_style', frameStyle);
+  }, [frameStyle]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_accent_color', accentColor);
+  }, [accentColor]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_starred_files', JSON.stringify(starredFiles));
+  }, [starredFiles]);
 
   // Easter Egg
   const kaomojis = ['(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧', '(๑•̀ㅂ•́)و✧', 'ʕ•ᴥ•ʔ', '(づ｡◕‿‿◕｡)づ', '(*^ω^)', '(✯◡✯)', '(=^･ω･^=)'];
