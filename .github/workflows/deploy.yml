@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout anymd
+        uses: actions/checkout@v4
+        with:
+          path: anymd
+
+      - name: Checkout shared-kawaii-ui
+        uses: actions/checkout@v4
+        with:
+          repository: t3hkitty/shared-kawaii-ui
+          path: shared-kawaii-ui
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: anymd/package-lock.json
+
+      - name: Install shared-kawaii-ui dependencies
+        run: |
+          cd shared-kawaii-ui
+          npm install
+
+      - name: Install anymd dependencies
+        run: |
+          cd anymd
+          npm install
+
+      - name: Build anymd
+        run: |
+          cd anymd
+          npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './anymd/dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
