@@ -43,6 +43,35 @@ export const VaultWorkspaceLayout: React.FC = () => {
     }
   });
 
+  // CRM Character states
+  interface CharacterNode {
+    name: string;
+    role: string;
+    rel: string;
+    color: string;
+    mentions: number;
+    slugs: string[];
+    notes: string;
+  }
+  const [characters, setCharacters] = useState<CharacterNode[]>(() => {
+    try {
+      const saved = localStorage.getItem('anymd_characters');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return [
+      { name: "Lorik", role: "Protagonist", rel: "Self", color: "indigo", mentions: 24, slugs: ["[MC]", "[MC:eyes]"], notes: "Main character. Survived the first blackbox test." },
+      { name: "Goblin Merchant", role: "NPC", rel: "Neutral", color: "emerald", mentions: 12, slugs: ["[NPC:merchant]", "[NPC:eyes]"], notes: "Sells cursed mint and other sidecar assets." },
+      { name: "The Algorithm", role: "Antagonist", rel: "Hostile", color: "red", mentions: 45, slugs: ["[BOSS]", "[BOSS:telemetry]"], notes: "Spams requests. Rate limiter watches them." }
+    ];
+  });
+  const [editingCharacter, setEditingCharacter] = useState<CharacterNode | null>(null);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_characters', JSON.stringify(characters));
+  }, [characters]);
+
   const loadVaultFolder = async (vaultId: VaultId) => {
     try {
       const dirHandle = await window.showDirectoryPicker();
@@ -311,6 +340,43 @@ ${selectedFileMetadata}
             {/* --- VAULTS TAB --- */}
             {activeTab === 'vaults' && (
               <div className={`h-full flex flex-col border shadow-inner overflow-hidden transition-all ${panelBg} ${frameStyle}`}>
+                
+                {/* Top Vaults Folder Row */}
+                <div className={`p-4 border-b grid grid-cols-3 gap-4 ${panelInner}`}>
+                  {(['lcmd-main', 'signalstack-discovery', 'storycraft-lore'] as VaultId[]).map(vid => {
+                    const isSelected = activeVault === vid;
+                    const isLoaded = !!vaultFolders[vid];
+                    const folderName = vaultFolders[vid]?.name;
+                    
+                    return (
+                      <div 
+                        key={vid}
+                        onClick={() => setActiveVault(vid)}
+                        className={`p-3 border rounded-xl cursor-pointer transition-all flex flex-col relative overflow-hidden ${
+                          isSelected 
+                            ? `border-${accentColor} bg-${accentColor}/5 shadow-md shadow-${accentColor}/10 scale-[1.02]` 
+                            : `border-neutral-800 bg-neutral-950/40 hover:bg-neutral-900/50`
+                        }`}
+                      >
+                        <div className="absolute top-2 right-2 flex items-center space-x-1">
+                          <span className={`w-2 h-2 rounded-full ${isLoaded ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                          <span className="text-[9px] font-mono text-neutral-500">{isLoaded ? 'Loaded' : 'Not Loaded'}</span>
+                        </div>
+
+                        <div className="font-bold text-xs truncate flex items-center">
+                          {vid === 'lcmd-main' && '🐱 LC-MD Primary'}
+                          {vid === 'signalstack-discovery' && '📡 SignalStack'}
+                          {vid === 'storycraft-lore' && '✍️ StoryCraft Lore'}
+                        </div>
+                        
+                        <div className={`text-[10px] font-mono mt-1.5 truncate ${textMuted}`}>
+                          📁 {isLoaded ? `${folderName}/` : 'Not configured'}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 {!vaultFolders[activeVault] ? (
                   <div className="flex-grow flex flex-col items-center justify-center p-12 text-center">
                     <pre className="text-amber-400 font-mono text-base mb-6 leading-normal select-none whitespace-pre">
@@ -538,14 +604,27 @@ ${selectedFileMetadata}
             {/* --- CRM PROCESSED TAB --- */}
             {activeTab === 'processed' && (
               <div className={`h-full border shadow-inner overflow-hidden flex flex-col p-6 ${panelBg} ${frameStyle}`}>
-                 <h3 className={`text-lg font-bold text-${accentColor} mb-4 flex items-center`}><Users className="mr-2"/> CRM & Node Manager</h3>
+                 <div className="flex items-start justify-between mb-4 border-b border-neutral-800/40 pb-4 shrink-0">
+                   <div>
+                     <h3 className={`text-lg font-bold text-${accentColor} flex items-center`}><Users className="mr-2"/> CRM & Node Manager</h3>
+                     <p className={`text-xs mt-1 ${textMuted}`}>Click any character node to edit their attributes, bio notes, and custom touch slugs.</p>
+                   </div>
+                   <pre className="text-amber-500 font-mono text-[9px] leading-normal select-none pr-4">
+{`   _   _
+  ( \\_/ )
+   ) _ (   ~ tracking character nodes!
+  (  *  )
+   \\___/`}
+                   </pre>
+                 </div>
+
                  <div className="grid grid-cols-3 gap-6 flex-1 overflow-auto pr-2 content-start">
-                   {[
-                     { name: "Lorik", role: "Protagonist", rel: "Self", color: "indigo" },
-                     { name: "Goblin Merchant", role: "NPC", rel: "Neutral", color: "emerald" },
-                     { name: "The Algorithm", role: "Antagonist", rel: "Hostile", color: "red" }
-                   ].map(char => (
-                     <div key={char.name} className={`border border-${char.color}-500/30 rounded-xl p-4 flex flex-col cursor-pointer ${panelInner}`}>
+                   {characters.map(char => (
+                     <div 
+                       key={char.name} 
+                       onClick={() => setEditingCharacter({ ...char })}
+                       className={`border border-${char.color}-500/30 rounded-xl p-4 flex flex-col cursor-pointer transition-all hover:scale-[1.02] hover:border-${char.color}-500 ${panelInner}`}
+                     >
                        <div className="flex items-center space-x-3 mb-4">
                          <div className={`w-10 h-10 rounded-full bg-${char.color}-500/20 text-${char.color}-500 flex items-center justify-center`}>
                            <User size={20} />
@@ -555,9 +634,23 @@ ${selectedFileMetadata}
                            <div className={`text-xs ${textMuted}`}>{char.role}</div>
                          </div>
                        </div>
-                       <div className="mt-auto space-y-2 text-xs">
-                         <div className="flex justify-between"><span className={textMuted}>Relationship</span><span className="font-bold">{char.rel}</span></div>
-                         <div className="flex justify-between"><span className={textMuted}>Mentions</span><span className="font-mono">24</span></div>
+                       
+                       {/* Slugs Row */}
+                       <div className="flex flex-wrap gap-1 mb-4">
+                         {char.slugs.map(s => (
+                           <span key={s} className="bg-neutral-900 border border-neutral-800 text-[10px] px-1.5 py-0.5 rounded font-mono text-amber-300">
+                             {s}
+                           </span>
+                         ))}
+                       </div>
+
+                       <p className={`text-xs line-clamp-2 ${textMuted} italic mb-4 font-serif`}>
+                         {char.notes || "No lore notes logged yet."}
+                       </p>
+
+                       <div className="mt-auto space-y-2 text-xs border-t border-neutral-800/40 pt-2 font-mono">
+                         <div className="flex justify-between"><span className={textMuted}>Relationship</span><span className={`font-bold text-${char.color}-400`}>{char.rel}</span></div>
+                         <div className="flex justify-between"><span className={textMuted}>Mentions</span><span className="font-bold">{char.mentions}</span></div>
                        </div>
                      </div>
                    ))}
@@ -749,6 +842,103 @@ ${selectedFileMetadata}
         isOpen={isGeminiSparkOpen}
         onClose={() => setIsGeminiSparkOpen(false)}
       />
+
+      {/* --- CRM CHARACTER EDIT MODAL --- */}
+      {editingCharacter && (
+        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-12 animate-in fade-in zoom-in-95 duration-200">
+          <div className={`w-full max-w-xl flex flex-col shadow-2xl overflow-hidden border ${isLightMode ? 'bg-white border-neutral-300' : 'bg-slate-900 border-slate-700/80'} ${frameStyle}`}>
+            <header className={`p-4 border-b flex justify-between items-center bg-slate-900/90 border-slate-800`}>
+              <div className="flex items-center">
+                <User className={`text-${accentColor} mr-3`} size={20} />
+                <h3 className="font-bold">Edit Character Node: {editingCharacter.name}</h3>
+              </div>
+              <button onClick={() => setEditingCharacter(null)} className="p-2 hover:bg-neutral-800 rounded-lg transition-colors">
+                <X size={20} />
+              </button>
+            </header>
+            <div className="p-6 space-y-4 text-xs font-mono text-slate-300">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Name</label>
+                  <input 
+                    type="text" 
+                    value={editingCharacter.name}
+                    onChange={(e) => setEditingCharacter({ ...editingCharacter, name: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Role / Archetype</label>
+                  <input 
+                    type="text" 
+                    value={editingCharacter.role}
+                    onChange={(e) => setEditingCharacter({ ...editingCharacter, role: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Relationship</label>
+                  <input 
+                    type="text" 
+                    value={editingCharacter.rel}
+                    onChange={(e) => setEditingCharacter({ ...editingCharacter, rel: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Mentions Count</label>
+                  <input 
+                    type="number" 
+                    value={editingCharacter.mentions}
+                    onChange={(e) => setEditingCharacter({ ...editingCharacter, mentions: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Person Slugs (Comma Separated)</label>
+                <input 
+                  type="text" 
+                  value={editingCharacter.slugs.join(', ')}
+                  onChange={(e) => setEditingCharacter({ ...editingCharacter, slugs: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                  className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-400 uppercase font-bold mb-1">Notes & Lore Biography</label>
+                <textarea 
+                  value={editingCharacter.notes}
+                  onChange={(e) => setEditingCharacter({ ...editingCharacter, notes: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-slate-100 outline-none h-20 resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-2">
+                <button 
+                  onClick={() => setEditingCharacter(null)}
+                  className="px-4 py-2 border border-slate-800 rounded-lg hover:bg-neutral-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    setCharacters(prev => prev.map(c => c.name === editingCharacter.name ? editingCharacter : c));
+                    setEditingCharacter(null);
+                  }}
+                  className={`px-4 py-2 bg-${accentColor} text-white font-bold rounded-lg hover:opacity-90 transition-colors`}
+                >
+                  Save Node
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
