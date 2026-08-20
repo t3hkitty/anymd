@@ -13,6 +13,61 @@ interface VaultFile {
   handle: FileSystemFileHandle;
 }
 
+const getAsciiThumbnail = (filename: string): string => {
+  const name = filename.toLowerCase();
+  if (name.includes('heart') || name.includes('pulse') || name.includes('health') || name.includes('fit')) {
+    return `
+   /\\  /\\
+  /  \\/  \\
+  \\      /   [PULSE]
+   \\    /
+    \\  /
+     \\/
+    `;
+  }
+  if (name.includes('traffic') || name.includes('car') || name.includes('delay') || name.includes('alarm')) {
+    return `
+     ______
+    /|_||_\\\`.__
+   (   _    _ _\\ [RADAR]
+    \`-(_)--(_)-'
+    `;
+  }
+  if (name.includes('spotify') || name.includes('music') || name.includes('song') || name.includes('skip')) {
+    return `
+     |\\  
+     | \\ 
+     |__\\    [MUSIC]
+    (●.●)
+    /|🐾|\\
+    `;
+  }
+  if (name.includes('lore') || name.includes('story') || name.includes('magic') || name.includes('character') || name.includes('book')) {
+    return `
+      ______ ______
+    _/      Y      \\_
+   //  lore  | book  \\\\
+  ((   n    | n     ))
+   \\\\_______|_______//
+    `;
+  }
+  if (name.includes('telemetry') || name.includes('log') || name.includes('webhook') || name.includes('server')) {
+    return `
+     .-----------------.
+    /  .-.   .-.   .-.  \\
+   |  |   | |   | |   |  |
+   |   '-'   '-'   '-'   | [SERVER]
+    \\                   /
+     '-----------------'
+    `;
+  }
+  return `
+     /\\_/\\
+    ( o.o )
+     > ^ <   [NODE]
+    `;
+};
+
 export const VaultWorkspaceLayout: React.FC = () => {
   // Navigation State
   const [activeTab, setActiveTab] = useState<MainTab>(() => (localStorage.getItem('anymd_active_tab') as MainTab) || 'vaults');
@@ -442,7 +497,7 @@ ${selectedFileMetadata}
                           onClick={() => {
                             if (confirm('Disconnect local folder from this vault?')) {
                               setVaultFolders(prev => ({ ...prev, [activeVault]: null }));
-                              setVaultFiles(prev => ({ ...prev, [activeVault]: [] }));
+                          setVaultFiles(prev => ({ ...prev, [activeVault]: [] }));
                             }
                           }}
                           className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/35 hover:bg-rose-500/30 transition-colors"
@@ -452,63 +507,129 @@ ${selectedFileMetadata}
                       </div>
                     </div>
 
-                    {/* Gmail-style rows */}
-                    <div className="flex-1 overflow-auto p-2 divide-y divide-neutral-800/40">
-                      {vaultFiles[activeVault].length === 0 ? (
-                        <div className={`p-8 text-center text-xs ${textMuted}`}>
-                          No `.md`, `.json`, or `.txt` files found in this directory.
-                        </div>
-                      ) : (
-                        vaultFiles[activeVault].map((file, i) => {
-                          const isStarred = starredFiles[file.name] || false;
-                          const ext = file.name.split('.').pop()?.toUpperCase() || 'FILE';
-                          
-                          return (
-                            <div 
-                              key={i} 
-                              onClick={() => handleSelectFile(file)}
-                              className={`flex items-center gap-3 px-3 py-2 text-xs transition-colors cursor-pointer group ${isLightMode ? 'bg-white hover:bg-neutral-50 border-neutral-200' : 'bg-neutral-950/20 hover:bg-neutral-900/50'}`}
-                            >
-                              {/* Checkbox */}
-                              <input 
-                                type="checkbox" 
-                                onClick={(e) => e.stopPropagation()} 
-                                className="rounded border-slate-700 bg-slate-950 text-indigo-500 focus:ring-0" 
-                              />
-                              
-                              {/* Star icon */}
-                              <button 
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  setStarredFiles(prev => ({ ...prev, [file.name]: !isStarred }));
-                                }}
-                                className={`transition-colors hover:text-amber-400 ${isStarred ? 'text-amber-400' : 'text-neutral-500'}`}
+                    {/* Conditionally render List vs Discovery Cards Grid */}
+                    {activeVault === 'signalstack-discovery' ? (
+                      <div className="flex-1 overflow-auto p-4 grid grid-cols-2 gap-4">
+                        {vaultFiles[activeVault].length === 0 ? (
+                          <div className={`col-span-2 p-8 text-center text-xs ${textMuted}`}>
+                            No `.md`, `.json`, or `.txt` files found in this directory.
+                          </div>
+                        ) : (
+                          vaultFiles[activeVault].map((file, i) => {
+                            const isStarred = starredFiles[file.name] || false;
+                            const ext = file.name.split('.').pop()?.toUpperCase() || 'FILE';
+                            const asciiThumb = getAsciiThumbnail(file.name);
+                            
+                            return (
+                              <div 
+                                key={i} 
+                                onClick={() => handleSelectFile(file)}
+                                className={`border border-neutral-800/80 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-all hover:scale-[1.02] hover:border-${accentColor}/50 shadow-md ${panelInner}`}
                               >
-                                <Star size={13} fill={isStarred ? 'currentColor' : 'none'} />
-                              </button>
+                                {/* Card Header Thumbnail */}
+                                <div className="h-28 bg-gradient-to-br from-slate-950 via-neutral-900 to-slate-950 border-b border-neutral-800/40 flex items-center justify-center relative overflow-hidden select-none">
+                                  <pre className="text-amber-300/80 font-mono text-[9px] leading-tight select-none">
+                                    {asciiThumb}
+                                  </pre>
+                                  <span className={`absolute top-2 left-2 px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                    ext === 'MD' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 
+                                    ext === 'JSON' ? 'bg-sky-500/20 text-sky-400 border border-sky-500/30' : 
+                                    'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                                  }`}>
+                                    {ext}
+                                  </span>
+                                  <button 
+                                    onClick={(e) => { 
+                                      e.stopPropagation(); 
+                                      setStarredFiles(prev => ({ ...prev, [file.name]: !isStarred }));
+                                    }}
+                                    className={`absolute top-2 right-2 transition-colors hover:text-amber-400 ${isStarred ? 'text-amber-400' : 'text-neutral-500'}`}
+                                  >
+                                    <Star size={14} fill={isStarred ? 'currentColor' : 'none'} />
+                                  </button>
+                                </div>
 
-                              {/* File type badge */}
-                              <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                                ext === 'MD' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                                ext === 'JSON' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 
-                                'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                              }`}>
-                                {ext}
-                              </span>
-
-                              {/* Filename & Snippet */}
-                              <div className="flex-1 min-w-0 flex items-baseline gap-2">
-                                <span className="font-bold text-slate-100 truncate max-w-[180px]">{file.name}</span>
-                                <span className={`${textMuted} truncate flex-1 font-mono text-[10px]`}>{file.snippet}</span>
+                                {/* Card Body */}
+                                <div className="p-3 flex-1 flex flex-col justify-between">
+                                  <div className="space-y-1">
+                                    <div className="font-bold text-slate-100 truncate text-xs">{file.name}</div>
+                                    <p className={`${textMuted} font-mono text-[9px] line-clamp-2 leading-relaxed`}>
+                                      {file.snippet}
+                                    </p>
+                                  </div>
+                                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-neutral-800/20 text-[9px] font-mono">
+                                    <span className={textMuted}>{file.lastModified}</span>
+                                    <input 
+                                      type="checkbox" 
+                                      onClick={(e) => e.stopPropagation()} 
+                                      className="rounded border-slate-700 bg-slate-950 text-indigo-500 focus:ring-0" 
+                                    />
+                                  </div>
+                                </div>
                               </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    ) : (
+                      /* Gmail-style rows */
+                      <div className="flex-1 overflow-auto p-2 divide-y divide-neutral-800/40">
+                        {vaultFiles[activeVault].length === 0 ? (
+                          <div className={`p-8 text-center text-xs ${textMuted}`}>
+                            No `.md`, `.json`, or `.txt` files found in this directory.
+                          </div>
+                        ) : (
+                          vaultFiles[activeVault].map((file, i) => {
+                            const isStarred = starredFiles[file.name] || false;
+                            const ext = file.name.split('.').pop()?.toUpperCase() || 'FILE';
+                            
+                            return (
+                              <div 
+                                key={i} 
+                                onClick={() => handleSelectFile(file)}
+                                className={`flex items-center gap-3 px-3 py-2 text-xs transition-colors cursor-pointer group ${isLightMode ? 'bg-white hover:bg-neutral-50 border-neutral-200' : 'bg-neutral-950/20 hover:bg-neutral-900/50'}`}
+                              >
+                                {/* Checkbox */}
+                                <input 
+                                  type="checkbox" 
+                                  onClick={(e) => e.stopPropagation()} 
+                                  className="rounded border-slate-700 bg-slate-950 text-indigo-500 focus:ring-0" 
+                                />
+                                
+                                {/* Star icon */}
+                                <button 
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    setStarredFiles(prev => ({ ...prev, [file.name]: !isStarred }));
+                                  }}
+                                  className={`transition-colors hover:text-amber-400 ${isStarred ? 'text-amber-400' : 'text-neutral-500'}`}
+                                >
+                                  <Star size={13} fill={isStarred ? 'currentColor' : 'none'} />
+                                </button>
 
-                              {/* Timestamp / Action */}
-                              <span className={`${textMuted} text-[10px] shrink-0 font-mono`}>{file.lastModified}</span>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
+                                {/* File type badge */}
+                                <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                  ext === 'MD' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                                  ext === 'JSON' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 
+                                  'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                }`}>
+                                  {ext}
+                                </span>
+
+                                {/* Filename & Snippet */}
+                                <div className="flex-1 min-w-0 flex items-baseline gap-2">
+                                  <span className="font-bold text-slate-100 truncate max-w-[180px]">{file.name}</span>
+                                  <span className={`${textMuted} truncate flex-1 font-mono text-[10px]`}>{file.snippet}</span>
+                                </div>
+
+                                {/* Timestamp / Action */}
+                                <span className={`${textMuted} text-[10px] shrink-0 font-mono`}>{file.lastModified}</span>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
