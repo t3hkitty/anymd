@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server, Zap, RefreshCw, Star } from 'lucide-react';
 import { GeminiSparkPluginModal } from './GeminiSparkPluginModal';
+import { DynamicAtmosphericBackground } from '@lorik/shared-kawaii-ui';
 
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
 type VaultId = 'lcmd-main' | 'signalstack-discovery' | 'storycraft-lore';
@@ -18,6 +19,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [activeVault, setActiveVault] = useState<VaultId>('lcmd-main');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
+  const [themeStyleSet, setThemeStyleSet] = useState('classic');
 
   // File system and vault state
   const [vaultFolders, setVaultFolders] = useState<Record<VaultId, FileSystemDirectoryHandle | null>>({
@@ -118,7 +120,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [kaomoji, setKaomoji] = useState(kaomojis[0]);
 
   // Derived theme classes
-  const rootBg = isLightMode ? 'bg-neutral-100 text-neutral-900' : `${bgPattern} text-neutral-100`;
+  const rootBg = isLightMode ? 'bg-neutral-100/40 text-neutral-900' : 'bg-transparent text-neutral-100';
   const sidebarBg = isLightMode ? 'bg-neutral-200 border-neutral-300' : 'bg-neutral-950 border-neutral-800';
   const headerBg = isLightMode ? 'border-neutral-300' : 'border-neutral-800';
   const panelBg = isLightMode ? 'bg-white border-neutral-200' : 'bg-neutral-900 border-neutral-800';
@@ -127,6 +129,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
   return (
     <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-300 ${rootBg}`}>
+      <DynamicAtmosphericBackground themeStyleSet={themeStyleSet} />
       
       {/* --- FILE PREVIEW OVERLAY MODAL --- */}
       {selectedFile && (
@@ -241,7 +244,21 @@ ${selectedFileMetadata}
             {activeTab === 'settings' && <h2 className={`text-lg font-bold text-${accentColor} flex items-center`}><Settings className="mr-2" size={20}/> Unified Settings & Plugin Hub</h2>}
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            {/* Dynamic Theme Picker Dropdown */}
+            <div className={`flex items-center border rounded-xl px-2.5 py-1.5 shadow-inner text-xs ${panelInner}`}>
+              <Palette className={textMuted + " mr-2"} size={14} />
+              <select
+                className="bg-transparent font-semibold outline-none cursor-pointer text-slate-300"
+                value={themeStyleSet}
+                onChange={(e) => setThemeStyleSet(e.target.value)}
+              >
+                <option value="classic" className="bg-slate-950 text-slate-300">Classic Theme</option>
+                <option value="cute" className="bg-slate-950 text-pink-300">🌸 Cute Theme</option>
+                <option value="silly" className="bg-slate-950 text-emerald-300">🤪 Silly Theme</option>
+              </select>
+            </div>
+
             <button onClick={() => alert('Opening context creation modal...')} className={`px-3 py-1.5 bg-${accentColor}/20 text-${accentColor} rounded-lg hover:bg-${accentColor}/40 transition-colors flex items-center text-xs font-bold uppercase tracking-wider`}>
               <Plus size={14} className="mr-1" /> {activeTab === 'settings' ? 'Add Plugin' : 'Quick Add Context'}
             </button>
