@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server, Zap } from 'lucide-react';
+import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server, Zap, RefreshCw, Star } from 'lucide-react';
 import { GeminiSparkPluginModal } from './GeminiSparkPluginModal';
 
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
 type VaultId = 'lcmd-main' | 'signalstack-discovery' | 'storycraft-lore';
+
+interface VaultFile {
+  name: string;
+  snippet: string;
+  lastModified: string;
+  handle: FileSystemFileHandle;
+}
 
 export const VaultWorkspaceLayout: React.FC = () => {
   // Navigation State
@@ -11,6 +18,94 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [activeVault, setActiveVault] = useState<VaultId>('lcmd-main');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
+
+  // File system and vault state
+  const [vaultFolders, setVaultFolders] = useState<Record<VaultId, FileSystemDirectoryHandle | null>>({
+    'lcmd-main': null,
+    'signalstack-discovery': null,
+    'storycraft-lore': null
+  });
+  const [vaultFiles, setVaultFiles] = useState<Record<VaultId, VaultFile[]>>({
+    'lcmd-main': [],
+    'signalstack-discovery': [],
+    'storycraft-lore': []
+  });
+  const [selectedFileContent, setSelectedFileContent] = useState<string>('');
+  const [selectedFileMetadata, setSelectedFileMetadata] = useState<string>('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [starredFiles, setStarredFiles] = useState<Record<string, boolean>>({});
+
+  const loadVaultFolder = async (vaultId: VaultId) => {
+    try {
+      const dirHandle = await window.showDirectoryPicker();
+      const files: VaultFile[] = [];
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file' && (entry.name.endsWith('.md') || entry.name.endsWith('.json') || entry.name.endsWith('.txt'))) {
+          const file = await entry.getFile();
+          const text = await file.text();
+          const snippet = text.slice(0, 100).replace(/[\r\n\t]+/g, ' ') + (text.length > 100 ? '...' : '');
+          const lastModified = new Date(file.lastModified).toLocaleDateString() + ' ' + new Date(file.lastModified).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          files.push({
+            name: entry.name,
+            snippet,
+            lastModified,
+            handle: entry
+          });
+        }
+      }
+      setVaultFolders(prev => ({ ...prev, [vaultId]: dirHandle }));
+      setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
+    } catch (err) {
+      console.warn('Directory picker cancelled or unsupported.', err);
+    }
+  };
+
+  const refreshVault = async (vaultId: VaultId) => {
+    const dirHandle = vaultFolders[vaultId];
+    if (!dirHandle) return;
+    setIsRefreshing(true);
+    try {
+      const files: VaultFile[] = [];
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file' && (entry.name.endsWith('.md') || entry.name.endsWith('.json') || entry.name.endsWith('.txt'))) {
+          const file = await entry.getFile();
+          const text = await file.text();
+          const snippet = text.slice(0, 100).replace(/[\r\n\t]+/g, ' ') + (text.length > 100 ? '...' : '');
+          const lastModified = new Date(file.lastModified).toLocaleDateString() + ' ' + new Date(file.lastModified).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          files.push({
+            name: entry.name,
+            snippet,
+            lastModified,
+            handle: entry
+          });
+        }
+      }
+      setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
+    } catch (err) {
+      console.error('Failed to refresh folder:', err);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 500);
+    }
+  };
+
+  const handleSelectFile = async (file: VaultFile) => {
+    try {
+      const fileData = await file.handle.getFile();
+      const text = await fileData.text();
+      setSelectedFile(file.name);
+      
+      const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (fmMatch) {
+        setSelectedFileMetadata(fmMatch[1].trim());
+        setSelectedFileContent(text.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim());
+      } else {
+        setSelectedFileMetadata(`title: ${file.name}\ntags: [unclassified]`);
+        setSelectedFileContent(text);
+      }
+    } catch (err) {
+      console.error('Failed to read file:', err);
+    }
+  };
 
   // Theming State
   const [isLightMode, setIsLightMode] = useState(false);
@@ -42,20 +137,19 @@ export const VaultWorkspaceLayout: React.FC = () => {
                 <FileText className={`text-${accentColor} mr-3`} size={20} />
                 <h3 className="font-bold font-mono">{selectedFile}</h3>
               </div>
-              <button onClick={() => setSelectedFile(null)} className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors">
+              <button onClick={() => { setSelectedFile(null); setSelectedFileContent(''); }} className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors">
                 <X size={20} />
               </button>
             </header>
             <div className={`flex-1 p-8 overflow-auto font-serif text-lg leading-loose ${isLightMode ? 'text-neutral-800' : 'text-neutral-300'}`}>
               <h1 className="text-3xl font-bold mb-6 border-b border-neutral-500/30 pb-4"># {selectedFile.replace('.md', '').replace(/_/g, ' ')}</h1>
-              <p className="mb-4">This is a functional preview of the <code>.companion.md</code> sidecar data.</p>
-              <p className="mb-4">The air in the market was thick with the scent of ozone and crushed mint. He hesitated at the threshold, scanning the shifting crowds. A goblin merchant with obsidian eyes beckoned him closer.</p>
-              <div className={`mt-8 p-4 rounded-xl font-mono text-sm border-l-4 ${isLightMode ? 'bg-neutral-100 border-neutral-400' : 'bg-neutral-900 border-neutral-600'}`}>
-                {`---
-title: ${selectedFile}
-tags: [lore, goblin]
-status: draft
----`}
+              <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed mb-8">
+                {selectedFileContent}
+              </div>
+              <div className={`mt-8 p-4 rounded-xl font-mono text-xs border-l-4 ${isLightMode ? 'bg-neutral-100 border-neutral-400' : 'bg-neutral-900 border-neutral-600'}`}>
+                <pre>{`---
+${selectedFileMetadata}
+---`}</pre>
               </div>
             </div>
           </div>
@@ -161,32 +255,140 @@ status: draft
             {/* --- VAULTS TAB --- */}
             {activeTab === 'vaults' && (
               <div className={`h-full flex flex-col border shadow-inner overflow-hidden transition-all ${panelBg} ${frameStyle}`}>
-                <div className={`p-3 border-b flex justify-between items-center text-xs ${panelInner}`}>
-                  <div className="flex space-x-2">
-                     <button className={`px-3 py-1 rounded transition-colors ${isLightMode ? 'bg-neutral-200 hover:bg-neutral-300' : 'bg-neutral-800 hover:bg-neutral-700'}`}>Filter</button>
-                     <button className={`px-3 py-1 rounded transition-colors ${isLightMode ? 'bg-neutral-200 hover:bg-neutral-300' : 'bg-neutral-800 hover:bg-neutral-700'}`}>Sort</button>
-                  </div>
-                  <span className={`${textMuted} font-mono`}>Total Nodes: 1,204</span>
-                </div>
-                <div className="flex-1 overflow-auto p-4 space-y-2">
-                  {['lore_goblin_market.md', 'character_hero_arc.md', 'plot_act_1_climax.md', 'telemetry_log_04.json', 'worldbuilding_magic_system.md'].map((file, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => setSelectedFile(file)}
-                      className={`grid grid-cols-12 gap-4 p-3 border rounded-xl items-center text-sm transition-colors cursor-pointer group ${isLightMode ? 'bg-white hover:bg-neutral-50 border-neutral-200' : 'bg-neutral-950/50 hover:bg-neutral-800 border-neutral-800'}`}
+                {!vaultFolders[activeVault] ? (
+                  <div className="flex-grow flex flex-col items-center justify-center p-12 text-center">
+                    <pre className="text-amber-400 font-mono text-base mb-6 leading-normal select-none whitespace-pre">
+                      {activeVault === 'lcmd-main' && `
+   /\\_/\\
+  ( o.o )   ~ nyaa! Load my Primary Vault folder!
+   > ^ <
+                      `}
+                      {activeVault === 'signalstack-discovery' && `
+  |\\__/,|   (~))
+  |_ _  |.--.)   ~ beep boop! Load my Telemetry folder!
+  ( T   )   )
+  (((^_((^___)
+                      `}
+                      {activeVault === 'storycraft-lore' && `
+   /\\_/\\
+  (=^•^=)   ~ load my Story Bible & Lore folder!
+  (")_(")
+                      `}
+                    </pre>
+                    <h3 className="font-bold text-lg mb-2">
+                      {activeVault === 'lcmd-main' && '🐱 LC-MD Primary Vault'}
+                      {activeVault === 'signalstack-discovery' && '📡 SignalStack Auto-Logger'}
+                      {activeVault === 'storycraft-lore' && '✍️ StoryCraft Studio Lore'}
+                    </h3>
+                    <p className={`text-xs max-w-sm mb-6 ${textMuted}`}>
+                      {activeVault === 'lcmd-main' && 'Manage your main Zettelkasten logs, read lists, and book companion markdown sidecars.'}
+                      {activeVault === 'signalstack-discovery' && 'Track automated heart rate logs, spotify skips, and n8n webhook ingestions.'}
+                      {activeVault === 'storycraft-lore' && 'Draft your characters bible profiles, worldbuilding lore, and outline stages.'}
+                    </p>
+                    <button
+                      onClick={() => loadVaultFolder(activeVault)}
+                      className={`px-5 py-2.5 bg-${accentColor} hover:scale-105 transition-all text-white font-bold rounded-xl flex items-center text-sm shadow-lg cursor-pointer`}
                     >
-                      <div className={`col-span-1 font-mono text-xs ${textMuted}`}>00{i+1}</div>
-                      <div className="col-span-3 font-bold truncate">{file}</div>
-                      <div className={`col-span-4 truncate text-xs ${textMuted}`}>Extracted metadata and relational context...</div>
-                      <div className={`col-span-2 text-${accentColor} text-xs truncate`}>#draft #wip</div>
-                      <div className="col-span-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={(e) => { e.stopPropagation(); alert('Quick adding tag...'); }} className={`text-${accentColor} hover:opacity-70 bg-${accentColor}/20 px-2 py-1 rounded flex items-center ml-auto text-xs`}>
-                          <Plus size={12} className="mr-1"/> Add Tag
+                      <FolderOpen size={16} className="mr-2"/> Mount Local Folder
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {/* Gmail-style toolbar */}
+                    <div className={`p-2 border-b flex justify-between items-center text-xs ${panelInner} flex-wrap gap-2`}>
+                      <div className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded border-slate-700 bg-slate-950 text-indigo-500 focus:ring-0" />
+                        
+                        <button 
+                          onClick={() => refreshVault(activeVault)}
+                          className={`p-2 rounded hover:bg-neutral-800 transition-colors flex items-center justify-center ${isRefreshing ? 'animate-spin text-amber-300' : ''}`}
+                          title="Refresh folder content"
+                        >
+                          <RefreshCw size={14} />
+                        </button>
+                        
+                        <div className={`h-4 w-px ${isLightMode ? 'bg-neutral-300' : 'bg-neutral-800'}`}></div>
+
+                        <span className={`${textMuted} font-mono text-[10px] bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800`}>
+                          📁 {vaultFolders[activeVault]?.name || 'local'}/
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <span className={`${textMuted} font-mono`}>Nodes: {vaultFiles[activeVault].length}</span>
+                        <button 
+                          onClick={() => {
+                            if (confirm('Disconnect local folder from this vault?')) {
+                              setVaultFolders(prev => ({ ...prev, [activeVault]: null }));
+                              setVaultFiles(prev => ({ ...prev, [activeVault]: [] }));
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/35 hover:bg-rose-500/30 transition-colors"
+                        >
+                          Disconnect
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    {/* Gmail-style rows */}
+                    <div className="flex-1 overflow-auto p-2 divide-y divide-neutral-800/40">
+                      {vaultFiles[activeVault].length === 0 ? (
+                        <div className={`p-8 text-center text-xs ${textMuted}`}>
+                          No `.md`, `.json`, or `.txt` files found in this directory.
+                        </div>
+                      ) : (
+                        vaultFiles[activeVault].map((file, i) => {
+                          const isStarred = starredFiles[file.name] || false;
+                          const ext = file.name.split('.').pop()?.toUpperCase() || 'FILE';
+                          
+                          return (
+                            <div 
+                              key={i} 
+                              onClick={() => handleSelectFile(file)}
+                              className={`flex items-center gap-3 px-3 py-2 text-xs transition-colors cursor-pointer group ${isLightMode ? 'bg-white hover:bg-neutral-50 border-neutral-200' : 'bg-neutral-950/20 hover:bg-neutral-900/50'}`}
+                            >
+                              {/* Checkbox */}
+                              <input 
+                                type="checkbox" 
+                                onClick={(e) => e.stopPropagation()} 
+                                className="rounded border-slate-700 bg-slate-950 text-indigo-500 focus:ring-0" 
+                              />
+                              
+                              {/* Star icon */}
+                              <button 
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  setStarredFiles(prev => ({ ...prev, [file.name]: !isStarred }));
+                                }}
+                                className={`transition-colors hover:text-amber-400 ${isStarred ? 'text-amber-400' : 'text-neutral-500'}`}
+                              >
+                                <Star size={13} fill={isStarred ? 'currentColor' : 'none'} />
+                              </button>
+
+                              {/* File type badge */}
+                              <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                ext === 'MD' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                                ext === 'JSON' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 
+                                'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                              }`}>
+                                {ext}
+                              </span>
+
+                              {/* Filename & Snippet */}
+                              <div className="flex-1 min-w-0 flex items-baseline gap-2">
+                                <span className="font-bold text-slate-100 truncate max-w-[180px]">{file.name}</span>
+                                <span className={`${textMuted} truncate flex-1 font-mono text-[10px]`}>{file.snippet}</span>
+                              </div>
+
+                              {/* Timestamp / Action */}
+                              <span className={`${textMuted} text-[10px] shrink-0 font-mono`}>{file.lastModified}</span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -357,33 +559,35 @@ status: draft
 
                 {/* File Manager */}
                 <section className={`p-6 border shadow-xl ${panelBg} ${frameStyle}`}>
-                  <h3 className={`text-lg font-bold mb-6 flex items-center justify-between text-${accentColor}`}>
-                    <span className="flex items-center"><FolderOpen className="mr-2" size={20}/> File & Provider Manager</span>
-                    <div className="flex space-x-2">
-                       <button 
-                         onClick={async () => {
-                           try {
-                             const dirHandle = await window.showDirectoryPicker();
-                             alert(`Successfully loaded: ${dirHandle.name}\n\n(VaultIOWorker will now index this directory in the real implementation)`);
-                           } catch (err) {
-                             console.warn('Directory picker cancelled or unsupported.', err);
-                           }
-                         }} 
-                         className={`px-3 py-1.5 border rounded-lg text-xs font-bold flex items-center ${panelInner} hover:opacity-80`}
-                       >
-                         <HardDrive size={14} className="mr-2"/> Load Local Folder
-                       </button>
-                    </div>
-                  </h3>
-                  <div className={`p-4 rounded-xl border flex justify-between items-center group relative overflow-hidden ${panelInner}`}>
-                    <div className={`absolute top-0 left-0 w-1 h-full bg-${accentColor}`}></div>
-                    <div className="ml-2">
-                      <div className="font-bold flex items-center"><HardDrive size={14} className={`mr-2 text-${accentColor}`}/> Sovereign Local Disk</div>
-                      <div className={`text-xs font-mono mt-1 ${textMuted}`}>C:/Users/lorik/Documents/vaults/</div>
-                    </div>
-                    <div className={`px-3 py-1 rounded bg-${accentColor}/20 text-${accentColor} text-xs font-bold`}>Active Primary</div>
-                  </div>
-                </section>
+                   <h3 className={`text-lg font-bold mb-6 flex items-center justify-between text-${accentColor}`}>
+                     <span className="flex items-center"><FolderOpen className="mr-2" size={20}/> File & Provider Manager</span>
+                     <div className="flex space-x-2">
+                        <button 
+                          onClick={() => loadVaultFolder(activeVault)} 
+                          className={`px-3 py-1.5 border rounded-lg text-xs font-bold flex items-center ${panelInner} hover:opacity-80 cursor-pointer`}
+                        >
+                          <HardDrive size={14} className="mr-2"/> Load Local Folder
+                        </button>
+                     </div>
+                   </h3>
+                   <div className={`p-4 rounded-xl border flex justify-between items-center group relative overflow-hidden ${panelInner}`}>
+                     <div className={`absolute top-0 left-0 w-1 h-full bg-${accentColor}`}></div>
+                     <div className="ml-2">
+                       <div className="font-bold flex items-center">
+                         <HardDrive size={14} className={`mr-2 text-${accentColor}`}/> 
+                         {activeVault === 'lcmd-main' && '🐱 LC-MD Primary'}
+                         {activeVault === 'signalstack-discovery' && '📡 SignalStack Auto-Logger'}
+                         {activeVault === 'storycraft-lore' && '✍️ StoryCraft Studio'}
+                       </div>
+                       <div className={`text-xs font-mono mt-1 ${textMuted}`}>
+                         {vaultFolders[activeVault] ? `Folder: ${vaultFolders[activeVault]!.name}/` : 'No local directory mounted'}
+                       </div>
+                     </div>
+                     <div className={`px-3 py-1 rounded bg-${accentColor}/20 text-${accentColor} text-xs font-bold`}>
+                       {vaultFolders[activeVault] ? 'Active Primary' : 'Not Configured'}
+                     </div>
+                   </div>
+                 </section>
 
                 {/* Grouped Plugin Manager */}
                 <section className={`p-6 border shadow-xl ${panelBg} ${frameStyle}`}>
