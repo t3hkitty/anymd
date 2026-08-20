@@ -20,7 +20,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "react": ["node_modules/react", "node_modules/@types/react"],
+      "react/jsx-runtime": ["node_modules/react/jsx-runtime"]
+    }
   },
   "include": ["src"]
 }
