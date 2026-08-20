@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server } from 'lucide-react';
+import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server, Zap } from 'lucide-react';
+import { GeminiSparkPluginModal } from './GeminiSparkPluginModal';
 
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
 type VaultId = 'lcmd-main' | 'signalstack-discovery' | 'storycraft-lore';
@@ -9,6 +10,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState<MainTab>('vaults');
   const [activeVault, setActiveVault] = useState<VaultId>('lcmd-main');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
 
   // Theming State
   const [isLightMode, setIsLightMode] = useState(false);
@@ -434,6 +436,21 @@ status: draft
                     </div>
                     <div className={`p-4 rounded-xl border ${panelInner}`}>
                       <div className="flex justify-between items-start mb-2">
+                        <span className="font-bold flex items-center gap-1.5">
+                          <Zap size={14} className="text-amber-500" />
+                          <span>Gemini Spark MCP Bridge</span>
+                        </span>
+                        <button
+                          onClick={() => setIsGeminiSparkOpen(true)}
+                          className={`px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500/35 transition-colors text-[10px] font-bold uppercase`}
+                        >
+                          Configure
+                        </button>
+                      </div>
+                      <p className={`text-xs ${textMuted}`}>Expose local sidecar logs to Gemini's 24/7 background agent.</p>
+                    </div>
+                    <div className={`p-4 rounded-xl border ${panelInner}`}>
+                      <div className="flex justify-between items-start mb-2">
                         <span className="font-bold">Storycraft Telemetry</span>
                         <input type="checkbox" defaultChecked className="toggle" />
                       </div>
@@ -467,6 +484,11 @@ status: draft
           </div>
         </main>
       </div>
+
+      <GeminiSparkPluginModal
+        isOpen={isGeminiSparkOpen}
+        onClose={() => setIsGeminiSparkOpen(false)}
+      />
     </div>
   );
 };
