@@ -44,7 +44,7 @@ function checkRateLimit(ip) {
 }
 
 // A simple local server that receives webhooks and writes them as Markdown files into the Vault!
-app.post('/webhook/:vaultName/:folder?', (req, res) => {
+function handleWebhook(req, res) {
   const ip = req.ip || req.connection.remoteAddress || 'unknown';
   
   // Enforce Rate Limits
@@ -102,7 +102,10 @@ last_received_at: ${new Date().toISOString()}
   }
   
   res.status(200).json({ success: true, file: filePath });
-});
+}
+
+app.post('/webhook/:vaultName', handleWebhook);
+app.post('/webhook/:vaultName/:folder', handleWebhook);
 
 const PORT = 3050;
 app.listen(PORT, () => {

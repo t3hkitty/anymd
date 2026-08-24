@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Library Companion MD - Sovereign Side Panel",
+  "name": "MyBlackBox - Flight Recorder Companion",
   "version": "1.1.0",
-  "description": "Dock your Sovereign Library, Kindle book grabber, TCG Break notes, and sidecar tracker directly in a Chrome Side Panel next to any reading or streaming tab.",
+  "description": "Dock your Sovereign Library, Flight Recorder journal, TCG Break notes, and sidecar tracker directly in a Chrome Side Panel next to any reading or streaming tab.",
   "permissions": [
     "sidePanel",
     "activeTab",
@@ -17,7 +17,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Open Library Companion MD Side Panel"
+    "default_title": "Open MyBlackBox Flight Recorder Side Panel"
   },
   "side_panel": {
     "default_path": "sidepanel.html"

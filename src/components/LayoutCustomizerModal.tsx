@@ -1,5 +1,17 @@
 import React from 'react';
-import { X, Layout, CheckSquare, Shield, RotateCcw, Pin, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, Layout, RotateCcw, ArrowUp, ArrowDown } from 'lucide-react';
+
+interface LayoutCustomizerModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  panelVisibility: Record<string, boolean>;
+  onTogglePanelVisibility: (id: string) => void;
+  pinnedPanels: Record<string, boolean>;
+  onTogglePinPanel: (id: string) => void;
+  panelOrder?: string[];
+  onMovePanelOrder: (id: string, direction: 'up' | 'down') => void;
+  onResetLayout: () => void;
+}
 
 export default function LayoutCustomizerModal({
   isOpen,
@@ -11,7 +23,7 @@ export default function LayoutCustomizerModal({
   panelOrder = [],
   onMovePanelOrder,
   onResetLayout
-}) {
+}: LayoutCustomizerModalProps) {
   if (!isOpen) return null;
 
   const PANELS_LIST = [

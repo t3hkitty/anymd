@@ -84,6 +84,29 @@ docker-compose up -d
 
 ---
 
+### 🤖 Option C: Mobile Android APK (Capacitor, Obtainium & F-Droid)
+
+Build and run MyBlackBox natively on your Android device:
+
+1. **Build & Sync Web Assets:**
+   ```bash
+   npm run build && npx cap sync
+   ```
+
+2. **Compile the APK:**
+   ```bash
+   cd android
+   ./gradlew assembleDebug  # Windows: .\gradlew.bat assembleDebug
+   ```
+   *APK Output Location:* `android/app/build/outputs/apk/debug/app-debug.apk`
+
+3. **Open in Android Studio (for release signed signing):**
+   ```bash
+   npx cap open android
+   ```
+
+---
+
 ## 🔒 Free SSL Through StackCP & 24-Hour Nameserver Propagation Notice
 
 StackCP provides 100% **Free SSL/TLS Certificates (Let's Encrypt / AutoSSL)** for all hosted domains and subdomains (such as `meow.artkitty.net`).

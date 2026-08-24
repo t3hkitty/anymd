@@ -76,6 +76,7 @@ import { RunningLitanyWatchdogModal } from './components/RunningLitanyWatchdogMo
 import { PersonaCollectorHubModal } from './components/PersonaCollectorHubModal';
 import { VaultBackupRestoreModal } from './components/VaultBackupRestoreModal';
 import { VodImporterModal } from './components/VodImporterModal';
+import { GeminiSparkPluginModal } from './components/GeminiSparkPluginModal';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -351,6 +352,7 @@ export function App() {
   const [isPersonaCollectorOpen, setIsPersonaCollectorOpen] = useState(false);
   const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
   const [isVodImporterOpen, setIsVodImporterOpen] = useState(false);
+  const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -924,6 +926,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenStackcpDeploy={() => setIsStackcpDeployOpen(true)}
             onOpenGoogleAuthDeploy={() => setIsGoogleAuthDeployOpen(true)}
             onOpenRsyncSync={() => setIsRsyncModalOpen(true)}
+            onOpenGeminiSpark={() => setIsGeminiSparkOpen(true)}
 
             onOpenRunningLitany={() => setIsRunningLitanyOpen(true)}
             onOpenArtistAiStudio={() => setIsArtistAiStudioOpen(true)}
@@ -1581,6 +1584,12 @@ date_cataloged: "${new Date().toISOString()}"
       <AntigravitySetupModal
         isOpen={isAntigravitySetupOpen}
         onClose={() => setIsAntigravitySetupOpen(false)}
+      />
+
+      {/* Gemini Spark & MCP Bridge Modal */}
+      <GeminiSparkPluginModal
+        isOpen={isGeminiSparkOpen}
+        onClose={() => setIsGeminiSparkOpen(false)}
       />
 
       {/* Root meow.artkitty.net Index Portal Generator Modal */}
