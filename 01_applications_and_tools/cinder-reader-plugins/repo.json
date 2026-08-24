@@ -1,0 +1,47 @@
+{
+  "name": "Kitty's Cinder Plugins",
+  "author": "t3hkitty",
+  "url": "https://github.com/t3hkitty/kitty-cinder-reader-plugins",
+  "website": "https://github.com/t3hkitty/kitty-cinder-reader-plugins",
+  "extensions": [
+    {
+      "id": "novelupdates-cinder-source",
+      "name": "NovelUpdates",
+      "version": "1.4.0",
+      "contentType": "books",
+      "icon": "https://www.novelupdates.com/favicon.ico",
+      "url": "https://www.novelupdates.com",
+      "website": "https://www.novelupdates.com",
+      "scriptUrl": "https://raw.githubusercontent.com/t3hkitty/kitty-cinder-reader-plugins/main/sources/novelupdates.js",
+      "file": "sources/novelupdates.js",
+      "description": "Granular web novel discovery, release index tracking, and Cloudflare cookie authentication.",
+      "capabilities": ["search", "discover", "download", "resolve", "searchDownloads", "bookChapters"]
+    },
+    {
+      "id": "royalroad-cinder-source",
+      "name": "Royal Road",
+      "version": "1.0.0",
+      "contentType": "books",
+      "icon": "https://www.royalroad.com/favicon.ico",
+      "url": "https://www.royalroad.com",
+      "website": "https://www.royalroad.com",
+      "scriptUrl": "https://raw.githubusercontent.com/t3hkitty/kitty-cinder-reader-plugins/main/sources/royalroad.js",
+      "file": "sources/royalroad.js",
+      "description": "LitRPG, Progression Fantasy, and original web serials from Royal Road.",
+      "capabilities": ["search", "discover", "bookChapters"]
+    },
+    {
+      "id": "scribblehub-cinder-source",
+      "name": "ScribbleHub",
+      "version": "1.0.0",
+      "contentType": "books",
+      "icon": "https://www.scribblehub.com/favicon.ico",
+      "url": "https://www.scribblehub.com",
+      "website": "https://www.scribblehub.com",
+      "scriptUrl": "https://raw.githubusercontent.com/t3hkitty/kitty-cinder-reader-plugins/main/sources/scribblehub.js",
+      "file": "sources/scribblehub.js",
+      "description": "Original web novels and serial fiction from ScribbleHub.",
+      "capabilities": ["search", "discover", "bookChapters"]
+    }
+  ]
+}

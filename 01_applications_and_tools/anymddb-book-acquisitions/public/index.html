@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>AnyMDDB Book Curator, Feeds & Acquisition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="brand-titles">
+          <h1>AnyMDDB Curator & Acquisition</h1>
+          <span class="sub-path" id="display-lib-path">Library: /library</span>
+        </div>
+      </div>
+
+      <nav class="header-nav">
+        <button type="button" class="tab-btn active" data-tab="tab-feeds">Curated Feeds</button>
+        <button type="button" class="tab-btn" data-tab="tab-wishlist">Wishlist</button>
+        <button type="button" class="tab-btn" data-tab="tab-authors">Authors</button>
+        <button type="button" class="tab-btn" data-tab="tab-tags">Tags & Moods</button>
+        <button type="button" class="tab-btn" data-tab="tab-search">Acquisition Finder</button>
+      </nav>
+
+      <div class="header-tools">
+        <button type="button" class="btn-icon" id="btn-settings" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button type="button" class="btn-icon" id="btn-faq" title="FAQ" aria-label="FAQ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Views -->
+    <main class="app-main">
+      <!-- TAB 1: Feeds Ingestion -->
+      <section id="tab-feeds" class="tab-view active">
+        <div class="toolbar">
+          <div class="feed-selectors">
+            <button type="button" class="feed-btn active" data-feed="sevenseas">Seven Seas New Releases</button>
+            <button type="button" class="feed-btn" data-feed="nyt">NYT Best Sellers (Fiction)</button>
+            <button type="button" class="feed-btn" data-feed="kindle">Top Kindle / LitRPG</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-primary" id="btn-batch-add-selected">
+            Add Selected to Wishlist
+          </button>
+        </div>
+
+        <div class="feed-grid" id="feed-results-grid">
+          <p class="text-muted">Loading feed items...</p>
+        </div>
+      </section>
+
+      <!-- TAB 2: AnyMDDB Wishlist -->
+      <section id="tab-wishlist" class="tab-view">
+        <div class="toolbar">
+          <div class="status-filters">
+            <label>Filter: 
+              <select id="filter-wishlist-status">
+                <option value="all">All Statuses</option>
+                <option value="wishlist" selected>Wishlist / Missing</option>
+                <option value="acquired">Acquired / Downloaded</option>
+              </select>
+            </label>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-refresh-wishlist">Refresh List</button>
+        </div>
+
+        <div class="wishlist-list" id="wishlist-container">
+          <p class="text-muted">No wishlist items in AnyMDDB yet.</p>
+        </div>
+      </section>
+
+      <!-- TAB 3: Tracked Authors -->
+      <section id="tab-authors" class="tab-view">
+        <div class="toolbar">
+          <div>
+            <h3>Subscribed Authors</h3>
+            <p class="text-muted" style="font-size:12px;">Auto-monitors Open Library & publisher releases for followed authors.</p>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-check-all-authors">Scan All Authors</button>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-refresh-authors">Refresh</button>
+          </div>
+        </div>
+
+        <div class="authors-grid" id="authors-container">
+          <p class="text-muted">No authors tracked yet. Click any author name (👤 Author) in a book card to start tracking.</p>
+        </div>
+      </section>
+
+      <!-- TAB 4: Tags & Moods Subscriptions -->
+      <section id="tab-tags" class="tab-view">
+        <div class="toolbar">
+          <div>
+            <h3>Tag, Genre & Mood Subscriptions</h3>
+            <p class="text-muted" style="font-size:12px;">Continuous discovery across NovelUpdates, Open Library/Hardcover, and Kindle charts.</p>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-scan-all-tags">Scan All Subscriptions</button>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-refresh-tags">Refresh</button>
+          </div>
+        </div>
+
+        <!-- Preset Chips -->
+        <div class="preset-box">
+          <span style="font-size:12px; color:var(--text-secondary); margin-right:6px;">Quick Presets:</span>
+          <button type="button" class="chip-btn" data-name="Progression Fantasy" data-type="genre">+ Progression Fantasy</button>
+          <button type="button" class="chip-btn" data-name="LitRPG" data-type="genre">+ LitRPG</button>
+          <button type="button" class="chip-btn" data-name="Cozy Fantasy" data-type="mood">+ Cozy Fantasy</button>
+          <button type="button" class="chip-btn" data-name="Time Loop" data-type="tag">+ Time Loop</button>
+          <button type="button" class="chip-btn" data-name="Isekai" data-type="genre">+ Isekai</button>
+          <button type="button" class="chip-btn" data-name="Wholesome" data-type="mood">+ Wholesome</button>
+          <button type="button" class="chip-btn" data-name="Dark Fantasy" data-type="mood">+ Dark Fantasy</button>
+          <button type="button" class="chip-btn" data-name="Danmei" data-type="genre">+ Danmei</button>
+          <button type="button" class="chip-btn" data-name="Cyberpunk" data-type="genre">+ Cyberpunk</button>
+        </div>
+
+        <!-- Custom Tag Subscription Creator -->
+        <div class="card tag-create-card">
+          <h4>Subscribe to a Custom Tag, Genre, or Mood</h4>
+          <form id="form-create-subscription" class="tag-form">
+            <div class="form-row">
+              <input type="text" id="sub-input-name" placeholder="e.g. Female Protagonist, Slice of Life, Grimdark" required>
+              <select id="sub-select-type" style="max-width:130px;">
+                <option value="tag">Tag</option>
+                <option value="genre">Genre</option>
+                <option value="mood">Mood</option>
+              </select>
+              <button type="submit" class="btn btn-secondary">+ Add Subscription</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="subscriptions-list" id="subscriptions-container">
+          <p class="text-muted">Loading subscriptions...</p>
+        </div>
+      </section>
+
+      <!-- TAB 5: Instant Acquisition Search -->
+      <section id="tab-search" class="tab-view">
+        <div class="card search-card">
+          <h2>Multi-Source Acquisition Search</h2>
+          <p class="text-muted">Query Gutenberg, Open Library, Anna's Archive, and OverDrive for any title.</p>
+          <form id="form-search-acquisition" class="search-form">
+            <div class="input-row">
+              <input type="text" id="acq-search-title" placeholder="Book Title (e.g. Frankenstein, Fourth Wing)" required>
+              <input type="text" id="acq-search-author" placeholder="Author (optional)">
+              <button type="submit" class="btn btn-primary" id="btn-run-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search Sources
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="search-results-wrapper" style="display:none;"></div>
+      </section>
+    </main>
+
+    <!-- Acquisition Details Modal / Drawer -->
+    <div class="modal-backdrop" id="modal-acquisition" role="dialog" aria-modal="true" aria-labelledby="acq-modal-title" hidden>
+      <div class="modal-card modal-lg">
+        <div class="modal-header">
+          <h3 id="acq-modal-title">Acquisition Channels</h3>
+          <button type="button" class="btn-close close-modal">&times;</button>
+        </div>
+        <div class="modal-body" id="acq-modal-body">
+          <p class="text-muted">Querying repositories...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-backdrop" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="settings-title">Plugin Settings</h3>
+          <button type="button" class="btn-close close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="form-plugin-settings">
+            <div class="form-group">
+              <label for="cfg-library-dir">AnyMDDB Base Directory</label>
+              <input type="text" id="cfg-library-dir" placeholder="/path/to/library">
+              <small>Placeholders stored in <code>wishlist/</code>, authors in <code>authors/</code>, subscriptions in <code>subscriptions/</code>.</small>
+            </div>
+            <div class="modal-actions">
+              <button type="submit" class="btn btn-primary">Save Settings</button>
+              <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div class="modal-backdrop" id="modal-faq" role="dialog" aria-modal="true" aria-labelledby="faq-title" hidden>
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="faq-title">AnyMDDB Acquisition & Feeds FAQ</h3>
+          <button type="button" class="btn-close close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h4>How do Tag & Mood Subscriptions work?</h4>
+          <p>You can follow specific genres (e.g. <em>LitRPG</em>, <em>Danmei</em>), tags (e.g. <em>Time Loop</em>), or moods (e.g. <em>Cozy Fantasy</em>, <em>Wholesome</em>). When you scan subscriptions, AnyMDDB checks NovelUpdates, Open Library subjects, and Kindle charts, automatically filtering out books already in your collection and creating clean wishlist entries.</p>
+
+          <h4>What Repositories Are Searched?</h4>
+          <ul>
+            <li><strong>Project Gutenberg</strong>: Free, legal public domain EPUB downloads with 1-click auto-acquisition.</li>
+            <li><strong>Open Library & Internet Archive</strong>: Public digital lending, read links, and bibliographic catalog search.</li>
+            <li><strong>OverDrive & Libby</strong>: Digital library borrowing deep links.</li>
+            <li><strong>Anna's Archive</strong>: Multi-mirror shadow library query URLs.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary close-modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" aria-live="polite"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
