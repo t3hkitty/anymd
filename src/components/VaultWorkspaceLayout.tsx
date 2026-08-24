@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Database, Edit3, Users, Activity, PieChart, Layers, FileText, X, Plus, Settings, Cloud, Palette, User, Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, HardDrive, Server, Zap, RefreshCw, Star } from 'lucide-react';
 import { GeminiSparkPluginModal } from './GeminiSparkPluginModal';
 import { DynamicAtmosphericBackground } from '@lorik/shared-kawaii-ui';
+import { MotivationHelperWidget } from './MotivationHelperWidget';
 
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
 type VaultId = 'lcmd-main' | 'signalstack-discovery' | 'storycraft-lore';
@@ -719,6 +720,7 @@ ${selectedFileMetadata}
                     </div>
                   </div>
                 </div>
+                <MotivationHelperWidget />
               </div>
             )}
 
