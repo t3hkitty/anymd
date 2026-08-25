@@ -22,4 +22,9 @@ jobs:
 
       - name: Scan and Scrub PII
         run: |
-          find . -type f -not -path '*/.*' -not -path './node_modules/*' -not -path './dist/*' -exec python scripts/scrub_pii_and_spam.py {} \;
+          python scripts/scrub_pii_and_spam.py .
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: Unsanitized credentials, emails, or spam signatures detected! Please run scripts/scrub_pii_and_spam.py locally."
+            git diff
+            exit 1
+          fi
