@@ -91,6 +91,21 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [selectedFileContent, setSelectedFileContent] = useState<string>('');
   const [selectedFileMetadata, setSelectedFileMetadata] = useState<string>('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Vault load source and sync states
+  const [vaultLoadSource, setVaultLoadSource] = useState<Record<VaultId, 'local_picker' | 'n8n_cloud' | 'local_storage'>>(() => {
+    try {
+      const saved = localStorage.getItem('anymd_vault_load_sources');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      'lcmd-main': 'local_picker',
+      'signalstack-discovery': 'local_picker',
+      'storycraft-lore': 'local_picker'
+    };
+  });
+  const [n8nEndpoint, setN8nEndpoint] = useState(() => localStorage.getItem('anymd_n8n_endpoint') || 'http://localhost:5678/webhook/anymd-action');
+  const [mobileLocalhostEnabled, setMobileLocalhostEnabled] = useState(() => localStorage.getItem('anymd_mobile_localhost_enabled') === 'true');
   const [starredFiles, setStarredFiles] = useState<Record<string, boolean>>(() => {
     try {
       return JSON.parse(localStorage.getItem('anymd_starred_files') || '{}');
@@ -128,7 +143,73 @@ export const VaultWorkspaceLayout: React.FC = () => {
     localStorage.setItem('anymd_characters', JSON.stringify(characters));
   }, [characters]);
 
+  const loadVaultFromN8n = async (vaultId: VaultId) => {
+    setIsRefreshing(true);
+    try {
+      const response = await fetch(n8nEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'LIST_FILES', vaultId })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const files: VaultFile[] = (data.files || []).map((f: any) => ({
+          name: f.name,
+          snippet: f.snippet || (f.content ? f.content.slice(0, 100) : ''),
+          lastModified: f.lastModified || new Date().toLocaleString(),
+          n8nContent: f.content || ''
+        }));
+        setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
+      } else {
+        alert('Failed to load from n8n. Please check endpoint and if n8n is running.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Error connecting to n8n: ' + err.message);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const loadVaultFromLocalStorage = (vaultId: VaultId) => {
+    const prefix = `anymd_file_${vaultId}_`;
+    const files: VaultFile[] = [];
+    let hasFiles = false;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix)) {
+        hasFiles = true;
+        const name = key.slice(prefix.length);
+        const text = localStorage.getItem(key) || '';
+        files.push({
+          name,
+          snippet: text.slice(0, 100).replace(/[\r\n\t]+/g, ' '),
+          lastModified: new Date().toLocaleString()
+        });
+      }
+    }
+    if (!hasFiles) {
+      const name = 'Welcome.md';
+      const content = `---\ntitle: Welcome to Anymd Local Sandbox\ntags: [tutorial]\n---\nHello! This file is stored in your Local Storage Sandbox.\nConfigure n8n or use directory picker to link physical folders!`;
+      localStorage.setItem(`${prefix}${name}`, content);
+      files.push({
+        name,
+        snippet: content.slice(0, 100).replace(/[\r\n\t]+/g, ' '),
+        lastModified: new Date().toLocaleString()
+      });
+    }
+    setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
+  };
+
   const loadVaultFolder = async (vaultId: VaultId) => {
+    if (vaultLoadSource[vaultId] === 'n8n_cloud') {
+      await loadVaultFromN8n(vaultId);
+      return;
+    }
+    if (vaultLoadSource[vaultId] === 'local_storage') {
+      loadVaultFromLocalStorage(vaultId);
+      return;
+    }
     try {
       const dirHandle = await window.showDirectoryPicker();
       const files: VaultFile[] = [];
@@ -154,6 +235,14 @@ export const VaultWorkspaceLayout: React.FC = () => {
   };
 
   const refreshVault = async (vaultId: VaultId) => {
+    if (vaultLoadSource[vaultId] === 'n8n_cloud') {
+      await loadVaultFromN8n(vaultId);
+      return;
+    }
+    if (vaultLoadSource[vaultId] === 'local_storage') {
+      loadVaultFromLocalStorage(vaultId);
+      return;
+    }
     const dirHandle = vaultFolders[vaultId];
     if (!dirHandle) return;
     setIsRefreshing(true);
@@ -183,8 +272,27 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
   const handleSelectFile = async (file: VaultFile) => {
     try {
-      const fileData = await file.handle.getFile();
-      const text = await fileData.text();
+      let text = '';
+      if (vaultLoadSource[activeVault] === 'n8n_cloud') {
+        if (file.n8nContent) {
+          text = file.n8nContent;
+        } else {
+          const response = await fetch(n8nEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'GET_FILE', vaultId: activeVault, filename: file.name })
+          });
+          if (response.ok) {
+            const data = await response.json();
+            text = data.content || '';
+          }
+        }
+      } else if (vaultLoadSource[activeVault] === 'local_storage') {
+        text = localStorage.getItem(`anymd_file_${activeVault}_${file.name}`) || '';
+      } else {
+        const fileData = await file.handle.getFile();
+        text = await fileData.text();
+      }
       setSelectedFile(file.name);
       
       const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -207,6 +315,18 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [accentColor, setAccentColor] = useState(() => localStorage.getItem('anymd_accent_color') || 'indigo-500');
 
   // Persistence hooks
+  React.useEffect(() => {
+    localStorage.setItem('anymd_vault_load_sources', JSON.stringify(vaultLoadSource));
+  }, [vaultLoadSource]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_n8n_endpoint', n8nEndpoint);
+  }, [n8nEndpoint]);
+
+  React.useEffect(() => {
+    localStorage.setItem('anymd_mobile_localhost_enabled', mobileLocalhostEnabled ? 'true' : 'false');
+  }, [mobileLocalhostEnabled]);
+
   React.useEffect(() => {
     localStorage.setItem('anymd_active_tab', activeTab);
   }, [activeTab]);
@@ -401,8 +521,8 @@ ${selectedFileMetadata}
                 <div className={`p-4 border-b grid grid-cols-3 gap-4 ${panelInner}`}>
                   {(['lcmd-main', 'signalstack-discovery', 'storycraft-lore'] as VaultId[]).map(vid => {
                     const isSelected = activeVault === vid;
-                    const isLoaded = !!vaultFolders[vid];
-                    const folderName = vaultFolders[vid]?.name;
+                    const isLoaded = !!vaultFolders[vid] || vaultFiles[vid].length > 0;
+                    const folderName = vaultFolders[vid]?.name || (vaultLoadSource[vid] === 'n8n_cloud' ? 'n8n Cloud Folder' : vaultLoadSource[vid] === 'local_storage' ? 'Local Sandbox' : undefined);
                     
                     return (
                       <div 
@@ -433,7 +553,7 @@ ${selectedFileMetadata}
                   })}
                 </div>
 
-                {!vaultFolders[activeVault] ? (
+                {(!vaultFolders[activeVault] && vaultFiles[activeVault].length === 0) ? (
                   <div className="flex-grow flex flex-col items-center justify-center p-12 text-center">
                     <pre className="text-amber-400 font-mono text-base mb-6 leading-normal select-none whitespace-pre">
                       {activeVault === 'lcmd-main' && `
@@ -463,11 +583,39 @@ ${selectedFileMetadata}
                       {activeVault === 'signalstack-discovery' && 'Track automated heart rate logs, spotify skips, and n8n webhook ingestions.'}
                       {activeVault === 'storycraft-lore' && 'Draft your characters bible profiles, worldbuilding lore, and outline stages.'}
                     </p>
+                    <div className="mb-4 flex flex-col items-center">
+                      <label className="text-xs font-mono text-neutral-400 mb-1.5">Vault Connection Wrapper Source:</label>
+                      <select 
+                        value={vaultLoadSource[activeVault]}
+                        onChange={(e) => {
+                          const val = e.target.value as any;
+                          setVaultLoadSource(prev => ({ ...prev, [activeVault]: val }));
+                        }}
+                        className="bg-neutral-900 border border-neutral-700 text-xs font-mono rounded-lg px-3 py-1.5 focus:outline-none focus:border-indigo-500 mb-3 cursor-pointer text-neutral-200"
+                      >
+                        <option value="local_picker">Local File System (Directory Picker)</option>
+                        <option value="n8n_cloud">n8n Local Webhook Sync (Cloud Folders)</option>
+                        <option value="local_storage">Local Storage Sandbox</option>
+                      </select>
+
+                      {vaultLoadSource[activeVault] === 'n8n_cloud' && (
+                        <div className="mb-4 flex flex-col items-center w-full max-w-xs">
+                          <label className="text-[10px] font-mono text-neutral-500 mb-1">n8n Endpoint URL:</label>
+                          <input 
+                            type="text"
+                            value={n8nEndpoint}
+                            onChange={(e) => setN8nEndpoint(e.target.value)}
+                            className="w-full text-center bg-neutral-900 border border-neutral-700 text-xs font-mono rounded-lg px-3 py-1.5 focus:outline-none focus:border-indigo-500 text-neutral-200"
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     <button
                       onClick={() => loadVaultFolder(activeVault)}
                       className={`px-5 py-2.5 bg-${accentColor} hover:scale-105 transition-all text-white font-bold rounded-xl flex items-center text-sm shadow-lg cursor-pointer`}
                     >
-                      <FolderOpen size={16} className="mr-2"/> Mount Local Folder
+                      <FolderOpen size={16} className="mr-2"/> {vaultLoadSource[activeVault] === 'n8n_cloud' ? 'Connect to n8n Cloud' : vaultLoadSource[activeVault] === 'local_storage' ? 'Open Sandbox' : 'Mount Local Folder'}
                     </button>
                   </div>
                 ) : (
@@ -931,6 +1079,25 @@ ${selectedFileMetadata}
                         <input type="checkbox" defaultChecked className="toggle" />
                       </div>
                       <p className={`text-xs ${textMuted}`}>Live word-count and pacing analytics for the Drafting UI.</p>
+                    </div>
+                    <div className={`p-4 rounded-xl border ${panelInner}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-bold flex items-center gap-1.5">
+                          <Server size={14} className="text-emerald-500" />
+                          <span>Localhost Server Web Access</span>
+                        </span>
+                        <input 
+                          type="checkbox" 
+                          checked={mobileLocalhostEnabled}
+                          onChange={(e) => setMobileLocalhostEnabled(e.target.checked)}
+                          className="toggle cursor-pointer" 
+                        />
+                      </div>
+                      <p className={`text-xs ${textMuted}`}>
+                        {mobileLocalhostEnabled 
+                          ? '🟢 Web Interface Active: http://localhost:3050' 
+                          : '🔴 Disabled. Toggle to expose web access.'}
+                      </p>
                     </div>
                   </div>
 
