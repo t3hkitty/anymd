@@ -334,7 +334,7 @@ export const GiftTrackerModal: React.FC<GiftTrackerModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Gift Tracker & Response Gauge
+            Meow Gift Tracker & Response Gauge
           </span>
           <button
             onClick={handleGenerateSidecars}

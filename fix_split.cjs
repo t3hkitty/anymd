@@ -6,7 +6,7 @@ const regex = /\{activeView === 'split' && \([\s\S]*?<\/div>\n\s*\)\}/;
 
 const replacement = `{activeView === 'split' && (
           <DualPaneWorkspace 
-            leftTitle="Sovereign Reader"
+            leftTitle="Meow Reader"
             leftIcon={<BookOpen className="w-4 h-4 text-amber-400" />}
             leftContent={
               <ReaderView

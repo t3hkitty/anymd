@@ -3,8 +3,8 @@ import type { Book } from '../types/resonance';
 import type { CloudAccount } from '../types/cloudAccounts';
 import type { FrontMatterConfig, BackMatterConfig } from '../plugins/bookmatterPlugin';
 import {
-  generateSovereignFrontMatter,
-  generateSovereignBackMatter,
+  generateMeowFrontMatter,
+  generateMeowBackMatter,
   synthesizeBookmatterFromWebDAVItem
 } from '../plugins/bookmatterPlugin';
 import {
@@ -54,16 +54,16 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
 
   // Front Matter State
   const [frontConfig, setFrontConfig] = useState<FrontMatterConfig>({
-    title: activeBook?.title || 'Chronicles of the Sovereign Mind',
-    author: activeBook?.author || 'Sovereign Author',
+    title: activeBook?.title || 'Chronicles of the Meow Mind',
+    author: activeBook?.author || 'Meow Author',
     translator: '',
     originalLanguage: 'English',
-    publisher: 'Sovereign Digital Press',
+    publisher: 'Meow Digital Press',
     isbn: '978-0-999999-00-1',
-    dedication: 'To the digital archivists and seekers of sovereign liberty.',
+    dedication: 'To the digital archivists and seekers of meow liberty.',
     epigraph: 'Knowledge exists only when it is free from surveillance.',
     epigraphAuthor: 'Ancient Library Maxim',
-    license: 'Sovereign Private Custody / CC0',
+    license: 'Meow Private Custody / CC0',
     contentRating: 'General Audience',
     characters: [
       { name: 'Lin Dong', role: 'Protagonist', faction: 'Nine Heavens Sect', notes: 'Master of the Great Desolate Talisman.' },
@@ -77,19 +77,19 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
 
   // Back Matter State
   const [backConfig, setBackConfig] = useState<BackMatterConfig>({
-    authorNotes: 'Written in sovereign isolation. Synchronized directly to local device sidecar.',
+    authorNotes: 'Written in meow isolation. Synchronized directly to local device sidecar.',
     glossary: [
-      { term: 'Sovereign Vault', category: 'Architecture', definition: 'Zero-telemetry local-first client storage.' },
+      { term: 'Meow Vault', category: 'Architecture', definition: 'Zero-telemetry local-first client storage.' },
       { term: 'Resonance CFI', category: 'Reader', definition: 'Canonical Fragment Identifier anchored paragraph markers.' }
     ],
     readingResonanceSummary: true,
     provenanceStamp: {
-      vaultId: activeBook?.id || 'sovereign-vault-001',
+      vaultId: activeBook?.id || 'meow-vault-001',
       tradeValueUsd: activeBook?.tradeValueUsd || 19.99,
       physicalLocation: 'Shelf 3, Main Study',
       sha256Checksum: '8f4e2b9c71a93e8201bfa8294e09f7a8192847c920194857b291039485729104'
     },
-    colophon: 'Typeset and structured using Library Companion MD Sovereign Bookmatter Studio.'
+    colophon: 'Typeset and structured using Library Companion MD Meow Bookmatter Studio.'
   });
 
   // WebDAV / Directory Batch Ingest State
@@ -127,8 +127,8 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
 
   const currentBook = books.find(b => b.id === selectedBookId) || activeBook;
 
-  const generatedFrontMatter = generateSovereignFrontMatter(frontConfig);
-  const generatedBackMatter = generateSovereignBackMatter(backConfig, currentBook || undefined);
+  const generatedFrontMatter = generateMeowFrontMatter(frontConfig);
+  const generatedBackMatter = generateMeowBackMatter(backConfig, currentBook || undefined);
   const fullGeneratedMarkdown = `${generatedFrontMatter}\n\n# Chapter Body Content\n\n*The text of the volume follows here.*\n\n${generatedBackMatter}`;
 
   const handleApplyToActiveSidecar = () => {
@@ -213,7 +213,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
 
     if (res.error || res.items.length === 0) {
       setScanNotice(res.error || 'No remote XML items found. You can pick a local folder below.');
-      const fallback = parseTextDirectoryListing('Sovereign_Novel_1.epub\nCultivation_Chronicles.epub');
+      const fallback = parseTextDirectoryListing('Meow_Novel_1.epub\nCultivation_Chronicles.epub');
       setDiscoveredFiles(fallback);
     } else {
       setDiscoveredFiles(res.items);
@@ -250,7 +250,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight flex items-center space-x-2">
-                <span>Sovereign Bookmatter &amp; Directory Studio</span>
+                <span>Meow Bookmatter &amp; Directory Studio</span>
                 <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold">
                   FRONT &amp; BACK MATTER
                 </span>
@@ -373,7 +373,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
                     type="text"
                     value={frontConfig.translator || ''}
                     onChange={(e) => setFrontConfig({ ...frontConfig, translator: e.target.value })}
-                    placeholder="e.g. Sovereign Translation Guild"
+                    placeholder="e.g. Meow Translation Guild"
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100"
                   />
                 </div>
@@ -614,7 +614,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
 
               {/* Provenance & Trade Stamp */}
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                <span className="font-bold text-emerald-300 block">🏛️ Sovereign Vault Provenance &amp; Trade Certificate</span>
+                <span className="font-bold text-emerald-300 block">🏛️ Meow Vault Provenance &amp; Trade Certificate</span>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
@@ -685,7 +685,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
                   <span>Automated WebDAV / Local Directory Bookmatter Synthesis:</span>
                 </span>
                 <p className="text-slate-300 text-xs font-sans leading-relaxed">
-                  Scan any WebDAV cloud server (Filejump, Koofr, Nextcloud) or pick a local synced directory. Every discovered ebook will be automatically synthesized into a complete sovereign book record with generated Front Matter, Back Matter, and Sidecar metadata!
+                  Scan any WebDAV cloud server (Filejump, Koofr, Nextcloud) or pick a local synced directory. Every discovered ebook will be automatically synthesized into a complete meow book record with generated Front Matter, Back Matter, and Sidecar metadata!
                 </p>
               </div>
 
@@ -882,7 +882,7 @@ export const BookmatterGeneratorModal: React.FC<BookmatterGeneratorModalProps> =
         {/* Footer */}
         <div className="px-6 py-3 border-t border-slate-800 bg-slate-950/90 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Zero Telemetry &bull; Client-Side Sovereign Bookmatter Generation
+            Zero Telemetry &bull; Client-Side Meow Bookmatter Generation
           </span>
           <button
             onClick={onClose}

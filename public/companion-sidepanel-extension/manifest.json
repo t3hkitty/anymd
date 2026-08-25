@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "MyBlackBox - Flight Recorder Companion",
   "version": "1.1.0",
-  "description": "Dock your Sovereign Library, Flight Recorder journal, TCG Break notes, and sidecar tracker directly in a Chrome Side Panel next to any reading or streaming tab.",
+  "description": "Dock your Meow Library, Flight Recorder journal, TCG Break notes, and sidecar tracker directly in a Chrome Side Panel next to any reading or streaming tab.",
   "permissions": [
     "sidePanel",
     "activeTab",

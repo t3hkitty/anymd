@@ -26,7 +26,7 @@ export const GoogleAuthDeployModal: React.FC<GoogleAuthDeployModalProps> = ({
     setTimeout(() => setSavedSuccess(false), 2000);
   };
 
-  const sampleHtaccess = `# Midphase cPanel Apache .htaccess for Sovereign Library Companion MD
+  const sampleHtaccess = `# Midphase cPanel Apache .htaccess for Meow Library Companion MD
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -56,7 +56,7 @@ Header set Access-Control-Allow-Origin "*"
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">Midphase Server Hosting & Google Auth Setup</h3>
-              <p className="text-xs text-slate-400">Deploy LC-MD to Midphase Server for Family Access & Store Accounts via Google Auth</p>
+              <p className="text-xs text-slate-400">Deploy Anymd to Midphase Server for Family Access & Store Accounts via Google Auth</p>
             </div>
           </div>
           <button

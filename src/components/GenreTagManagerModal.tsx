@@ -99,7 +99,7 @@ export const GenreTagManagerModal: React.FC<GenreTagManagerModalProps> = ({
         if (matches && matches[1]) {
           return matches[1].split(',').map(t => t.trim().replace(/["']/g, '').toLowerCase());
         }
-        return ['sovereign', 'webdav'];
+        return ['meow', 'webdav'];
       })
     )
   );

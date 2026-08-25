@@ -180,7 +180,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       content: (
         <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
           <p className="font-medium text-slate-200">
-            What types of items do you plan to track in your sovereign vault? (Select all that apply)
+            What types of items do you plan to track in your meow vault? (Select all that apply)
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">

@@ -31,13 +31,13 @@ export interface BackMatterConfig {
   colophon?: string;
 }
 
-export function generateSovereignFrontMatter(config: FrontMatterConfig): string {
+export function generateMeowFrontMatter(config: FrontMatterConfig): string {
   const yaml = `---
 title: "${config.title}"
 author: "${config.author}"
-${config.originalLanguage ? `original_language: "${config.originalLanguage}"\n` : ''}${config.translator ? `translator: "${config.translator}"\n` : ''}${config.publisher ? `publisher: "${config.publisher}"\n` : ''}${config.isbn ? `isbn: "${config.isbn}"\n` : ''}license: "${config.license || 'Sovereign Private Custody / CC0'}"
+${config.originalLanguage ? `original_language: "${config.originalLanguage}"\n` : ''}${config.translator ? `translator: "${config.translator}"\n` : ''}${config.publisher ? `publisher: "${config.publisher}"\n` : ''}${config.isbn ? `isbn: "${config.isbn}"\n` : ''}license: "${config.license || 'Meow Private Custody / CC0'}"
 content_rating: "${config.contentRating || 'General Audience'}"
-format: "dcmd/sovereign-bookmatter"
+format: "dcmd/meow-bookmatter"
 generated_at: "${new Date().toISOString()}"
 ---`;
 
@@ -45,7 +45,7 @@ generated_at: "${new Date().toISOString()}"
   md += `**By ${config.author}**  \n`;
   if (config.translator) md += `*Translated by ${config.translator}*  \n`;
   if (config.publisher) md += `*Published by ${config.publisher}*  \n`;
-  md += `*Sovereign Vault Edition &bull; Local Markdown Custody*\n\n`;
+  md += `*Meow Vault Edition &bull; Local Markdown Custody*\n\n`;
 
   if (config.dedication) {
     md += `## 📜 Dedication\n\n> *${config.dedication}*\n\n`;
@@ -79,7 +79,7 @@ generated_at: "${new Date().toISOString()}"
   return md;
 }
 
-export function generateSovereignBackMatter(config: BackMatterConfig, book?: Book): string {
+export function generateMeowBackMatter(config: BackMatterConfig, book?: Book): string {
   let md = `\n---\n\n# 📑 Back Matter & Appendices\n\n`;
 
   if (config.authorNotes) {
@@ -105,7 +105,7 @@ export function generateSovereignBackMatter(config: BackMatterConfig, book?: Boo
   }
 
   if (config.provenanceStamp) {
-    md += `## 🏛️ Sovereign Vault Provenance & Trade Stamp\n\n`;
+    md += `## 🏛️ Meow Vault Provenance & Trade Stamp\n\n`;
     md += `- **Vault Entry ID:** \`${config.provenanceStamp.vaultId}\`\n`;
     md += `- **Fair Trade Valuation:** \`$${config.provenanceStamp.tradeValueUsd.toFixed(2)} USD\`\n`;
     if (config.provenanceStamp.physicalLocation) {
@@ -114,11 +114,11 @@ export function generateSovereignBackMatter(config: BackMatterConfig, book?: Boo
     if (config.provenanceStamp.sha256Checksum) {
       md += `- **SHA-256 Checksum:** \`${config.provenanceStamp.sha256Checksum}\`\n`;
     }
-    md += `- **Sovereign Custody Mode:** 100% Local Storage & Zero-Telemetry Markdown Sidecar\n\n`;
+    md += `- **Meow Custody Mode:** 100% Local Storage & Zero-Telemetry Markdown Sidecar\n\n`;
   }
 
   md += `## 🖨️ Colophon\n\n`;
-  md += `${config.colophon || 'Typeset and structured using Library Companion MD (LC-MD) Sovereign Bookmatter Studio. Distributed under private custody digital rights.'}\n`;
+  md += `${config.colophon || 'Typeset and structured using Library Companion MD (Anymd) Meow Bookmatter Studio. Distributed under private custody digital rights.'}\n`;
 
   return md;
 }
@@ -131,10 +131,10 @@ export function synthesizeBookmatterFromBook(book: Book): {
   const frontConfig: FrontMatterConfig = {
     title: book.title,
     author: book.author,
-    publisher: 'Sovereign Digital Editions',
-    license: 'Sovereign Private Custody / CC0',
+    publisher: 'Meow Digital Editions',
+    license: 'Meow Private Custody / CC0',
     contentRating: 'General Audience',
-    dedication: 'To the sovereign readers and digital archivists.',
+    dedication: 'To the meow readers and digital archivists.',
     epigraph: 'A room without books is like a body without a soul.',
     epigraphAuthor: 'Marcus Tullius Cicero',
     characters: [
@@ -147,7 +147,7 @@ export function synthesizeBookmatterFromBook(book: Book): {
   };
 
   const backConfig: BackMatterConfig = {
-    authorNotes: `This volume is preserved in the sovereign grand bookcase vault. Sidecar companion records synchronized.`,
+    authorNotes: `This volume is preserved in the meow grand bookcase vault. Sidecar companion records synchronized.`,
     glossary: [
       { term: 'Qi / Mana', category: 'Energy System', definition: 'The ambient spiritual energy used for cultivation or casting.' },
       { term: 'Resonance', category: 'Reader Companion', definition: 'Synchronized micro-reactions and emotional marks anchored to paragraphs.' }
@@ -159,11 +159,11 @@ export function synthesizeBookmatterFromBook(book: Book): {
       physicalLocation: 'Shelf A-4, Master Library',
       sha256Checksum: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
     },
-    colophon: 'Preserved with Library Companion MD Sovereign Bookmatter Engine.'
+    colophon: 'Preserved with Library Companion MD Meow Bookmatter Engine.'
   };
 
-  const frontMatter = generateSovereignFrontMatter(frontConfig);
-  const backMatter = generateSovereignBackMatter(backConfig, book);
+  const frontMatter = generateMeowFrontMatter(frontConfig);
+  const backMatter = generateMeowBackMatter(backConfig, book);
   const fullMarkdown = `${frontMatter}\n\n# Chapter Body Content\n\n*The full text of the volume follows here.*\n\n${backMatter}`;
 
   return { frontMatter, backMatter, fullMarkdown };
@@ -187,11 +187,11 @@ export function synthesizeBookmatterFromWebDAVItem(
   const frontConfig: FrontMatterConfig = {
     title: cleanTitle,
     author: 'Discovered Author',
-    publisher: 'WebDAV Sovereign Ingest',
-    license: 'Sovereign Private Custody / CC0',
+    publisher: 'WebDAV Meow Ingest',
+    license: 'Meow Private Custody / CC0',
     dedication: `Archived from WebDAV repository ${serverUrl}`,
     epigraph: 'Knowledge preserved is freedom multiplied.',
-    epigraphAuthor: 'Sovereign Archive Principle'
+    epigraphAuthor: 'Meow Archive Principle'
   };
 
   const backConfig: BackMatterConfig = {
@@ -207,8 +207,8 @@ export function synthesizeBookmatterFromWebDAVItem(
     }
   };
 
-  const frontMatter = generateSovereignFrontMatter(frontConfig);
-  const backMatter = generateSovereignBackMatter(backConfig);
+  const frontMatter = generateMeowFrontMatter(frontConfig);
+  const backMatter = generateMeowBackMatter(backConfig);
 
   const sidecarMarkdown = `${frontMatter}
 

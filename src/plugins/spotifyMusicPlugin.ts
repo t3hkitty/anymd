@@ -204,7 +204,7 @@ tags: [music, blackbox-link, spotify, vinyl, zettelkasten, ${item.genres.map(g =
 | **Last Played** | \`${stats.lastPlayedAt}\` |
 | **Peak Resonance Track** | \`${stats.peakResonanceTrack || item.title}\` |
 | **Audio Bitrate / Medium** | \`${stats.audioBitrate || item.physicalFormat}\` |
-| **Scrobble Engine** | \`${stats.scrobbleSource || 'Sovereign Scrobble'}\` |
+| **Scrobble Engine** | \`${stats.scrobbleSource || 'Meow Scrobble'}\` |
 | **Skip Rate** | \`${stats.skipRatePercent || 0}%\` |
 
 ---
@@ -215,7 +215,7 @@ tags: [music, blackbox-link, spotify, vinyl, zettelkasten, ${item.genres.map(g =
 - **Spotify URI:** \`${item.spotifyUri}\`
 - **ISRC Registry:** \`${item.isrc || 'N/A'}\`
 - **Tempo / Rhythm:** \`${item.bpm || 'N/A'} BPM\`
-- **Acoustic Mood:** *${item.acousticMood || 'Eclectic Sovereign Audio'}*
+- **Acoustic Mood:** *${item.acousticMood || 'Eclectic Meow Audio'}*
 - **Primary Genres:** ${item.genres.map(g => `\`#${g}\``).join(' ')}
 
 ---
@@ -229,7 +229,7 @@ tags: [music, blackbox-link, spotify, vinyl, zettelkasten, ${item.genres.map(g =
     md += `> *${res.note}*\n\n`;
   });
 
-  md += `\n---\n*Linked into Sovereign Black Box & Library Companion MD Music Vault with Playback Statistics.*\n`;
+  md += `\n---\n*Linked into Meow Black Box & Library Companion MD Music Vault with Playback Statistics.*\n`;
   return md;
 }
 

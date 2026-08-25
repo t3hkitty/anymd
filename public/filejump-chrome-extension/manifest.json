@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Filejump Ebook Extractor for LC-MD",
+  "name": "Filejump Ebook Extractor for Anymd",
   "version": "1.0.0",
   "description": "1-Click scraper to extract ebook filenames from Filejump dashboard into clipboard for Library Companion MD.",
   "permissions": ["activeTab", "scripting"],

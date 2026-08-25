@@ -3,7 +3,7 @@ version: '3.8'
 services:
   library-companion-md:
     build: .
-    container_name: sovereign-blackbox-lcmd
+    container_name: meow-blackbox-anymd
     restart: unless-stopped
     ports:
       - "8080:80"

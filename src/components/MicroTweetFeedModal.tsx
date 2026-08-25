@@ -29,7 +29,7 @@ export const MicroTweetFeedModal: React.FC<MicroTweetFeedModalProps> = ({
   onSaveReviewToSidecar
 }) => {
   const [tweetText, setTweetText] = useState('');
-  const [hashtags, setHashtags] = useState('reviewDraft, hotTake, sovereignVault');
+  const [hashtags, setHashtags] = useState('reviewDraft, hotTake, meowVault');
   const [reactionRating, setReactionRating] = useState<number>(5);
   const [reviewMode, setReviewMode] = useState<'casual_take' | 'spoiler_rant' | 'formal_review'>('casual_take');
   const [generatedReview, setGeneratedReview] = useState<string | null>(null);
@@ -97,7 +97,7 @@ export const MicroTweetFeedModal: React.FC<MicroTweetFeedModalProps> = ({
     const combinedNotes = feedItems.map(item => `> "${item.text}"\n> *(Captured at ${item.chapterTitle || 'Reading Progress'})*`).join('\n\n');
     const allTags = Array.from(new Set(feedItems.flatMap(i => i.hashtags))).map(t => `#${t}`).join(' ');
 
-    const markdownReview = `## 📖 Sovereign Synthesis Review
+    const markdownReview = `## 📖 Meow Synthesis Review
 **Reviewer:** @${activeProfile.username} (${activeProfile.displayName}) ${activeProfile.avatarEmoji || '🐱'}  
 **Date:** ${new Date().toISOString().split('T')[0]}  
 **Overall Rating:** ${'★'.repeat(reactionRating)}${'☆'.repeat(5 - reactionRating)} (${reactionRating}/5)  
@@ -110,7 +110,7 @@ ${combinedNotes}
 ${allTags}
 
 ---
-*Generated via LC-MD Sovereign Micro-Reaction Stream • Kept 100% Private to Local Vault.*`;
+*Generated via Anymd Meow Micro-Reaction Stream • Kept 100% Private to Local Vault.*`;
 
     setGeneratedReview(markdownReview);
   };

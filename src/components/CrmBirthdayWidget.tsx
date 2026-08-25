@@ -20,7 +20,7 @@ export const CrmBirthdayWidget: React.FC = () => {
       name: "Henry",
       slug: "[NPC:henry_t]",
       birthday: todayMMDD, // Matches today for instant testing!
-      likes: ["Retro Synths", "Dark Roast Coffee", "Sovereign Tech"],
+      likes: ["Retro Synths", "Dark Roast Coffee", "Meow Tech"],
       dislikes: ["Slick Corporate Ads", "Bloated Electron Apps"]
     },
     {

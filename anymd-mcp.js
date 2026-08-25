@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * ⚡ anymd-mcp.js: Sovereign Model Context Protocol (MCP) Server
+ * ⚡ anymd-mcp.js: Meow Model Context Protocol (MCP) Server
  * Built with @modelcontextprotocol/sdk to expose local markdown vaults
  * securely to external AI interfaces (like Google Gemini) over JSON-RPC.
  */
@@ -20,7 +20,7 @@ const MAPPED_VAULT_DIR = process.env.ANYMD_VAULT_PATH || "G:\\My Drive\\anymd\\S
 
 const server = new Server(
   {
-    name: "anymd-sovereign-vault-mcp",
+    name: "anymd-meow-vault-mcp",
     version: "1.0.0"
   },
   {
@@ -122,7 +122,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("⚡ Sovereign anymd MCP Server active and listening over standard I/O!");
+  console.error("⚡ Meow anymd MCP Server active and listening over standard I/O!");
 }
 
 main().catch(console.error);

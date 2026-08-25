@@ -69,7 +69,7 @@ export function generateCroppedCardCover(
   ctx.font = 'bold 20px sans-serif';
   ctx.fillText(title.slice(0, 24), 200, 480);
 
-  // Sovereign stamp
+  // Meow stamp
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px monospace';
   ctx.fillText('SOVEREIGN VAULT CROPPED COVER', 200, 515);
@@ -249,7 +249,7 @@ export function scanPageOfCardsImage(fileName: string): ScannedCardOrComicItem[]
 }
 
 /**
- * Converts scanned individual comic book or card records into sovereign Book / Sidecar objects
+ * Converts scanned individual comic book or card records into meow Book / Sidecar objects
  */
 export function convertScannedCardsToVaultItems(scanned: ScannedCardOrComicItem[]): Book[] {
   return scanned.map(item => {
@@ -296,7 +296,7 @@ tags: [${item.suggestedTags.map(t => `"${t}"`).join(', ')}, ${cleanSlug}, zettel
 
 - **Item Classification:** \`${isComic ? 'Comic Book (Slab / Raw)' : 'Trading Card Game Grail'}\`
 - **Key Significance / Heritage:** *${item.keyFeatures || 'Individually Photographed by Collector'}*
-- **Computer Vision OCR Confidence:** \`${item.confidenceScore.toFixed(1)}%\` (100% Local Sovereign OCR)
+- **Computer Vision OCR Confidence:** \`${item.confidenceScore.toFixed(1)}%\` (100% Local Meow OCR)
 - **Direct External Reader Link:** \`file://./media/cover_${cleanSlug}.png\`
 
 ---
@@ -304,10 +304,10 @@ tags: [${item.suggestedTags.map(t => `"${t}"`).join(', ')}, ${cleanSlug}, zettel
 ## 🏛️ Custody Notes &amp; Resonance Stream
 
 > [!quote] **[Physical Custody Scan &bull; ${item.conditionGrade}]**
-> *Photographed individually. Serialized into sovereign collection vault with immutable Zettelkasten UID [[${serial}-${cleanSlug}]].*
+> *Photographed individually. Serialized into meow collection vault with immutable Zettelkasten UID [[${serial}-${cleanSlug}]].*
 
 ---
-*Cataloged in Sovereign Black Box & Library Companion MD.*
+*Cataloged in Meow Black Box & Library Companion MD.*
 `;
 
     return {

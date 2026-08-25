@@ -1,6 +1,6 @@
 ﻿anymd GUI Standards Blueprint: A Design System for High-Density Kawaii Brutalism
 1. Architectural Foundation: The Core Shell & Navigation
-The application shell of  anymd  is architected as a "sovereign local workspace," a strategic fortress for private data in a cloud-saturated landscape. It is designed to maximize information density for high-stakes telemetry and deep work while maintaining a "low-friction" UX that removes the cognitive tax of manual logging. The shell provides a mathematically stable container for expressive visual layers, ensuring that aesthetic "Kawaii" elements never compromise "Brutalist" functional efficiency.
+The application shell of  anymd  is architected as a "meow local workspace," a strategic fortress for private data in a cloud-saturated landscape. It is designed to maximize information density for high-stakes telemetry and deep work while maintaining a "low-friction" UX that removes the cognitive tax of manual logging. The shell provides a mathematically stable container for expressive visual layers, ensuring that aesthetic "Kawaii" elements never compromise "Brutalist" functional efficiency.
 Master Top Bar & Hub Consolidation
 The navigation shall be anchored by a Master Top Bar featuring 4 Categorized Dropdown Hubs.
 * Cloud & Auth Hub:  This hub is the primary controller for the  Gemini Spark MCP Bridge . It manages localized sidecar paths (e.g., G:\My Drive\anymd\Sidecars) and cloud storage presets.
@@ -11,8 +11,8 @@ Workspace Management & State
 * Sidebars:  The left-hand vertical sidebar shall contain: Settings (⚙️), Database/Vaults (🗄️), and CRM (◴).
 * Persistence:  Active tabs (Inbox, Drafting, Telemetry, CRM, Settings) and theme preferences must persist via localStorage to ensure state survival through refreshes and builds.
 The "Cheesy Cat" Vault Protocol
-The system enforces strict directory isolation via the "Cheesy Cat" protocol. Directory handles are managed through the Native File System Access API (mountSovereignLocalFolder()).
-* Vault Designations:  The system must recognize three distinct vaults:  LC-MD Primary ,  SignalStack , and  StoryCraft Lore .
+The system enforces strict directory isolation via the "Cheesy Cat" protocol. Directory handles are managed through the Native File System Access API (mountMeowLocalFolder()).
+* Vault Designations:  The system must recognize three distinct vaults:  Anymd Primary ,  SignalStack , and  StoryCraft Lore .
 * Placeholder State:  Until a directory handle is mounted, the vault view must display the exact ASCII string: (=^.^=).
 * Interaction:  Users mount vaults via a "Mount Local Folder" prompt, creating a persistent, isolated link to local directories.
 2. Visual Identity: High-Density Kawaii Brutalism & Atmospheric Theming

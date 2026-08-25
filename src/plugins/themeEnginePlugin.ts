@@ -28,7 +28,7 @@ export const THEME_PRESETS: Record<ThemeId, ThemeConfig> = {
   },
   midnight: {
     id: 'midnight',
-    name: 'Midnight Sovereign (Dark)',
+    name: 'Midnight Meow (Dark)',
     bg: 'bg-[#0f172a]',
     text: 'text-slate-100',
     cardBg: 'bg-slate-900',
@@ -86,10 +86,10 @@ export const THEME_PRESETS: Record<ThemeId, ThemeConfig> = {
 export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
   {
     id: 'library-view',
-    name: 'Sovereign Grand Library Bookshelf & YAML Processor',
+    name: 'Meow Grand Library Bookshelf & YAML Processor',
     version: '1.0.0',
     description: 'Renders the Grand Library Bookshelf View and processes custom YAML frontmatter metadata in sidecars.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -98,7 +98,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Library Tabular List View Plugin',
     version: '1.0.0',
     description: 'Detailed list rows view with cover thumbnails, series badges, chapter metrics, and quick action buttons.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -107,7 +107,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: '3D Interactive Cover Showcase Carousel Plugin',
     version: '1.0.0',
     description: '3D sliding cover flow carousel with active hero card showcase and smooth navigation.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -116,7 +116,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Realistic Physical Bookshelf & Spines View Plugin',
     version: '1.0.0',
     description: 'Realistic wood-textured mahogany bookshelf with vertical embossed book spines, gold foil titles, and pull-out animations.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -125,7 +125,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Wardrobe Closet & Dress Hangers View Plugin',
     version: '1.0.0',
     description: 'Hang your books and media items on wooden dress coat hangers inside a cedar closet rack.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -134,7 +134,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Single-Entry Selective Metadata Scraper',
     version: '1.2.0',
     description: 'Scrapes Open Library metadata and presents field-by-field merge pickers.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'metadata'
   },
@@ -142,8 +142,8 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     id: 'micro-tweets',
     name: 'Live Reaction Micro-Tweet Stream',
     version: '2.0.1',
-    description: 'Formats live reader reactions into sovereign #hashtags and CFI Markdown sidecars.',
-    author: 'LC-MD Core',
+    description: 'Formats live reader reactions into meow #hashtags and CFI Markdown sidecars.',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'social'
   },
@@ -152,7 +152,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Moon+ Reader Path Configurator',
     version: '3.0.0',
     description: 'Configures ebook sourcing paths and companion .md (dcmd) sidecar save locations (OPDS works built-in).',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: false,
     category: 'storage'
   },
@@ -161,7 +161,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'In-Browser EPUB Metadata & TOC Engine',
     version: '1.0.5',
     description: 'JSZip EPUB parser extracting OPF metadata, TOCs, covers, and HTML chapters.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -170,7 +170,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Calibre Library JSON Importer',
     version: '1.1.0',
     description: 'Imports Calibre metadata.json and sanitizes folder paths.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'storage'
   },
@@ -179,7 +179,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'Obsidian & Notion Sidecar Exporter',
     version: '2.1.0',
     description: 'Converts sidecars to Obsidian [[wikilinks]] & Notion markdown callouts.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'export'
   },
@@ -188,7 +188,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: 'WebDAV Cloud Directory Indexer',
     version: '1.4.0',
     description: 'Scans WebDAV cloud directories and generates Markdown index files.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'storage'
   },
@@ -197,7 +197,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     name: '5-Preset Theme & Visual Engine',
     version: '1.0.0',
     description: 'Provides Midnight, Sepia, Nord, Dracula, and E-Ink reading themes.',
-    author: 'LC-MD Core',
+    author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
   },
@@ -205,7 +205,7 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     id: 'custom-monetizer-plugin',
     name: 'Custom Affiliate & Monetization Tag Manager',
     version: '1.0.0',
-    description: 'Sovereign opt-in plugin template: LC-MD uses ZERO monetary or affiliate links by default, but developers can enable this plugin to attach custom referral codes.',
+    description: 'Meow opt-in plugin template: Anymd uses ZERO monetary or affiliate links by default, but developers can enable this plugin to attach custom referral codes.',
     author: 'Community / Custom Plugin',
     enabledByDefault: false,
     category: 'export'

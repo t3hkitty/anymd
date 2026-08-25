@@ -50,7 +50,7 @@ interface HeaderNavDropdownsProps {
   onOpenCloudAccounts: () => void;
   onOpenWebDAVIndexer: () => void;
   onOpenLocalSshAuth: () => void;
-  onOpenSovereignSmtp: () => void;
+  onOpenMeowSmtp: () => void;
   onOpenOpenSso: () => void;
   onOpenStackcpDeploy: () => void;
   onOpenGoogleAuthDeploy: () => void;
@@ -476,12 +476,12 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
             </button>
 
             <button
-              onClick={() => runAction(props.onOpenSovereignSmtp)}
+              onClick={() => runAction(props.onOpenMeowSmtp)}
               className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-amber-300 font-semibold transition-colors"
             >
               <Mail className="w-4 h-4 text-amber-400" />
               <div>
-                <div className="text-slate-100 font-bold">Sovereign SMTP Auth</div>
+                <div className="text-slate-100 font-bold">Meow SMTP Auth</div>
                 <div className="text-[10px] text-slate-400">Self-hosted mail.artkitty.net</div>
               </div>
             </button>

@@ -103,5 +103,5 @@ export function generateMonetizedShareLink(rigTitle: string, _partsListText?: st
   const neweggTag = config.neweggAffiliateId ? `&newegg_tag=${config.neweggAffiliateId}` : '';
   const amazonTag = config.amazonAssociateTag ? `&amazon_tag=${config.amazonAssociateTag}` : '';
 
-  return `https://meow.artkitty.net/lcmd/?share_rig=${encodedTitle}${neweggTag}${amazonTag}`;
+  return `https://meow.artkitty.net/anymd/?share_rig=${encodedTitle}${neweggTag}${amazonTag}`;
 }

@@ -5,7 +5,7 @@ export interface PrivacyAuditReport {
   thirdPartyAnalyticsDetected: boolean;
   cloudLockinRisk: 'ZERO' | 'LOW' | 'HIGH';
   encryptionStandard: string;
-  sovereignPledge: string;
+  meowPledge: string;
 }
 
 export const SOVEREIGN_PRIVACY_AUDIT: PrivacyAuditReport = {
@@ -15,12 +15,12 @@ export const SOVEREIGN_PRIVACY_AUDIT: PrivacyAuditReport = {
   thirdPartyAnalyticsDetected: false,
   cloudLockinRisk: 'ZERO',
   encryptionStandard: 'HTTPS SSL / mTLS / Local RSA 4096-bit ED25519',
-  sovereignPledge: `Your personal taste, book collections, PC builds, home insurance inventories, gift histories, and reading habits belong EXCLUSIVELY to you. LC-MD is built to be self-hostable with zero trackers, zero ad-tech pixels, and zero corporate telemetry.`
+  meowPledge: `Your personal taste, book collections, PC builds, home insurance inventories, gift histories, and reading habits belong EXCLUSIVELY to you. Anymd is built to be self-hostable with zero trackers, zero ad-tech pixels, and zero corporate telemetry.`
 };
 
 export function generateAntiScraperHtaccess(): string {
-  return `# Sovereign Anti-Scraper & Telemetry Shield Rules (.htaccess)
-# Path: /public_html/meow/lcmd/.htaccess
+  return `# Meow Anti-Scraper & Telemetry Shield Rules (.htaccess)
+# Path: /public_html/meow/anymd/.htaccess
 
 <IfModule mod_headers.c>
   # Block all ad-tech tracking referrer headers

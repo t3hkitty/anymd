@@ -1,0 +1,6 @@
+# CODEOWNERS for Anymd Suite
+# Maintainers review critical workflow definitions and scripts
+
+.github/ @t3hkitty
+scripts/  @t3hkitty
+*.py      @t3hkitty

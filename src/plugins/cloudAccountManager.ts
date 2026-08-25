@@ -4,7 +4,7 @@ export const CLOUD_PROVIDER_PRESETS: CloudProviderPreset[] = [
   {
     id: 'filejump',
     name: 'Filejump Cloud Storage (WebDAV)',
-    description: 'Official Filejump WebDAV server endpoint for sovereign cloud storage.',
+    description: 'Official Filejump WebDAV server endpoint for meow cloud storage.',
     icon: '🚀',
     defaultServerUrl: 'https://uploads.filejump.com/dav/',
     requiresAppPassword: true,
@@ -87,7 +87,7 @@ export const INITIAL_CLOUD_ACCOUNTS: CloudAccount[] = [
   },
   {
     id: 'acc-torbox-default',
-    name: 'TorBox Sovereign Library',
+    name: 'TorBox Meow Library',
     presetId: 'torbox',
     serverUrl: 'https://webdav.torbox.app/',
     username: 'torbox_user',

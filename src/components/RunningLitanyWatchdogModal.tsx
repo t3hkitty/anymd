@@ -98,7 +98,7 @@ export const RunningLitanyWatchdogModal: React.FC<RunningLitanyWatchdogModalProp
 
   const handleTriggerMorningAlarm = () => {
     TtsDirectorAudio.speakCue(
-      morningSettings.ttsAlarmGreeting || "Wake up sovereign operator! Total prep buffer and traffic delay calculated.",
+      morningSettings.ttsAlarmGreeting || "Wake up meow operator! Total prep buffer and traffic delay calculated.",
       undefined,
       1.0
     );
@@ -201,7 +201,7 @@ export const RunningLitanyWatchdogModal: React.FC<RunningLitanyWatchdogModalProp
                     className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-amber-300 text-xs"
                   >
                     <option value="drafting">✍️ Drafting &amp; Writing</option>
-                    <option value="reading">📖 Sovereign Reading</option>
+                    <option value="reading">📖 Meow Reading</option>
                     <option value="routine">🚪 Spatial Routine</option>
                     <option value="collecting">🃏 TCG / Collectibles</option>
                     <option value="resting">🛌 Resting / Recovery</option>

@@ -47,7 +47,7 @@ export const PLUGGABLE_SHARE_HANDLERS: ShareActionHandler[] = [
   },
   {
     id: 'markdown-copy',
-    name: 'Copy Sovereign Markdown Snippet',
+    name: 'Copy Meow Markdown Snippet',
     description: 'Copy formatted markdown line to clipboard.',
     icon: '📋',
     execute: async (entry: ResonanceEntry) => {

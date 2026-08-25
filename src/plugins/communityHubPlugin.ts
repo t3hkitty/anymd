@@ -97,9 +97,9 @@ tags: ["litrpg", "crafting"]
 export const COMMUNITY_FORUM_THREADS: CommunityForumThread[] = [
   {
     id: 'thread-1',
-    title: '📢 Welcome to the Sovereign LC-MD Community Hub! Self-Hosting & Sidecar Exchange Guide',
+    title: '📢 Welcome to the Meow Anymd Community Hub! Self-Hosting & Sidecar Exchange Guide',
     category: '☁️ Self-Hosting & Midphase',
-    authorName: 'SovereignAdmin',
+    authorName: 'MeowAdmin',
     authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
     repliesCount: 48,
     upvotesCount: 156,

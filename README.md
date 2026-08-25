@@ -1,4 +1,4 @@
-# 🐾 Library Companion MD (LC-MD) & Sovereign Black Box
+# 🐾 Library Companion MD (Anymd) & Meow Black Box
 
 ✨ *kawaii aesthetic edition!* ✨
 
@@ -12,14 +12,14 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Deploy with Docker](https://img.shields.io/badge/Deploy-Docker-blue.svg)](https://www.docker.com/)
-[![Sovereign Storage](https://img.shields.io/badge/Storage-100%25%20Local-emerald.svg)](#zero-telemetry-privacy)
+[![Meow Storage](https://img.shields.io/badge/Storage-100%25%20Local-emerald.svg)](#zero-telemetry-privacy)
 [![Free SSL](https://img.shields.io/badge/SSL-StackCP%20AutoSSL%20%2F%20HTTPS-emerald.svg)](#-free-ssl-through-stackcp--24-hour-nameserver-propagation-notice)
 
 ---
 
 ## 🌟 Overview
 
-**Library Companion MD (LC-MD)** is an open-source, local-first companion system and discovery library designed to keep your personal reading data, custom PC rig builds, trading card grails, home insurance valuations, and gift histories **100% private to your hardware**.
+**Library Companion MD (Anymd)** is an open-source, local-first companion system and discovery library designed to keep your personal reading data, custom PC rig builds, trading card grails, home insurance valuations, and gift histories **100% private to your hardware**.
 
 - **Grand Bookcase & Multi-View Studio**: 3D bookshelf UI, realistic mahogany spines, wardrobe closet hangers, list view, and interactive 3D carousel showcase.
 - **🧪 Dedicated Sandbox Demo Vault**: Isolated non-sensitive sandbox playground to safely test bulk edits, batch tag replacements, bulk deletions, and ZIP exports, with 1-click restore.
@@ -31,7 +31,7 @@
 - **💖 Persona Sanctuary & Plushie Cubbies**: 4-7-8 visual breathing pacer, Preference & Suffering Ledger, Person Slugs (`[Contact:Name]`), Piplup/Dawn Cameo Radar, and digital Plushie Cubbies with Build-A-Bear Wardrobe & scent tracking.
 - **Auto-Card Cropper & Dual Media Linking**: Extracts individual slab-framed card covers from scans with HTML5 canvas while linking to raw full-resolution uncropped master uploads.
 - **Structured ZIP Archive & `/media/` Packaging**: 1-click full vault backup with `.companion.md` sidecars in `/Sidecars/`, all image covers & raw scans in `/media/`, and standard `manifest.json`.
-- **Storage Quota & Local Folder Upgrade**: Native File System Access API integration (`mountSovereignLocalFolder()`) to mount local drives without browser cache limitations.
+- **Storage Quota & Local Folder Upgrade**: Native File System Access API integration (`mountMeowLocalFolder()`) to mount local drives without browser cache limitations.
 - **Discord-Style Reaction Bursts & Pac-Man Retro GIFs**: Quick reaction capture with 24-emoji burst bar and context GIFs (Pac-Man ghost-chasing & fruit chomp, Popcat, Doge).
 - **Natural Black Box Expansion**: Tamper-proof, zero-cloud data processing with controlled outbound egress.
 - **Hardware Passkeys & OpenSSO**: Biometric Touch ID, Face ID, Windows Hello (WebAuthn), GitHub OAuth, or self-hosted SMTP email verification.
@@ -42,7 +42,7 @@
 
 ## 🚀 Dual Deployment Options
 
-Deploy LC-MD to your private infrastructure in minutes using either method below.
+Deploy Anymd to your private infrastructure in minutes using either method below.
 
 ### 🌐 Option A: Static Hosting / StackCP / Midphase / GitHub Pages
 
@@ -65,12 +65,12 @@ npm run build
 
 # 5. Upload files to your web root or subfolder
 # Copy `meow_root_index.html` -> `/public_html/meow/index.html`
-# Copy `./dist/` -> `/public_html/meow/lcmd/`
+# Copy `./dist/` -> `/public_html/meow/anymd/`
 ```
 
 ---
 
-### 🐳 Option B: Sovereign Docker & Homelab (Raspberry Pi / NAS / VPS)
+### 🐳 Option B: Meow Docker & Homelab (Raspberry Pi / NAS / VPS)
 
 Deploy as an isolated container in one command:
 
@@ -79,7 +79,7 @@ Deploy as an isolated container in one command:
 docker-compose up -d
 
 # 2. Access the portal at http://localhost:8080/
-# Subfolder app: http://localhost:8080/lcmd/
+# Subfolder app: http://localhost:8080/anymd/
 ```
 
 ---
@@ -131,7 +131,7 @@ Once the 24-hour nameserver propagation has completed:
 
 ## 🔑 Self-Configurable Invite Code
 
-Registration on your sovereign node is restricted by an invite code to prevent unauthorized registrations.
+Registration on your meow node is restricted by an invite code to prevent unauthorized registrations.
 
 You can configure or rotate your invite code in two ways:
 1. **Via Environment Variable**: Set `VITE_INVITE_CODE=your_secret_code` in your `.env` file before building.
@@ -142,7 +142,7 @@ You can configure or rotate your invite code in two ways:
 - **🃏 HTML5 Canvas Card & Slab Auto-Cropper**: Automatically crops individual trading cards from multi-slot binder pages or single photo uploads, rendering custom PSA/CGC-styled slab frames for cover displays.
 - **📁 Structured Dual Media Linking**: Markdown sidecars retain relative links to both the cropped display cover (`cover_image: "./media/cover_{slug}.png"`) and the uncropped high-resolution master scan (`original_uncropped_image: "./media/uncropped_{slug}.jpg"`).
 - **📦 Complete ZIP Archive with `/media/` Folder**: Exports all vault sidecars into `/Sidecars/`, all image covers & raw scans into `/media/`, and indexes valuation schemas in `manifest.json`.
-- **💾 Sovereign Local Folder Upgrade**: Built-in quota monitor warns when browser cache usage grows and prompts users to mount a local directory via the native **File System Access API** (`window.showDirectoryPicker()`) for unlimited image storage.
+- **💾 Meow Local Folder Upgrade**: Built-in quota monitor warns when browser cache usage grows and prompts users to mount a local directory via the native **File System Access API** (`window.showDirectoryPicker()`) for unlimited image storage.
 
 ---
 
@@ -156,19 +156,19 @@ You can configure or rotate your invite code in two ways:
 
 ## 📲 PWA Installation & Mobile Web Share Target
 
-LC-MD includes a full Progressive Web App (PWA) manifest with **Web Share Target API** integration:
+Anymd includes a full Progressive Web App (PWA) manifest with **Web Share Target API** integration:
 
-- **1-Click Mobile Installation**: Add LC-MD to your iOS Home Screen (Safari) or Android App Drawer (Chrome) for offline standalone access.
+- **1-Click Mobile Installation**: Add Anymd to your iOS Home Screen (Safari) or Android App Drawer (Chrome) for offline standalone access.
 - **Mobile Share Sheet Import**: When bookmarklets are unavailable or cumbersome on mobile browsers, simply tap your phone's native **Share (⎙)** button while browsing Goodreads, NovelUpdates, Amazon, or Reddit &rarr; select **"Library Companion MD"** &rarr; the webnovel or book URL is automatically converted into a structured vault sidecar!
 
 ---
 
-## 📖 Sovereign Bookmatter & Directory Studio
+## 📖 Meow Bookmatter & Directory Studio
 
 Transform raw ebook files or WebDAV/local directories into richly-typeset volumes:
 
-- **📜 Front Matter Studio**: Synthesize Title Pages, Sovereign CC0 / Custody Licenses, Dedications, Epigraphs, **Dramatis Personae (Character & Faction Tables)**, and **Pronunciation / Pinyin Keys**.
-- **📑 Back Matter & Appendices**: Synthesize Author & Translator Afterwords, **Lore Lexicons & Worldbuilding Glossaries**, Reading Resonance Logs, Colophons, and **Sovereign Vault Provenance Certificates** (with SHA-256 and Fair Trade Valuation).
+- **📜 Front Matter Studio**: Synthesize Title Pages, Meow CC0 / Custody Licenses, Dedications, Epigraphs, **Dramatis Personae (Character & Faction Tables)**, and **Pronunciation / Pinyin Keys**.
+- **📑 Back Matter & Appendices**: Synthesize Author & Translator Afterwords, **Lore Lexicons & Worldbuilding Glossaries**, Reading Resonance Logs, Colophons, and **Meow Vault Provenance Certificates** (with SHA-256 and Fair Trade Valuation).
 - **☁️ WebDAV & Local Sync Directory Batcher**: Scan remote cloud servers (Filejump, Nextcloud, Koofr) or local folders and auto-generate structured bookmatter for every discovered book!
 
 ---
@@ -189,24 +189,24 @@ This project complies with standard international digital legal frameworks:
 - **European Union & UK (GDPR / UK GDPR)**: 100% Right to Erasure ("Right to be Forgotten") via one-click vault purge; 0 tracking cookies; local data portability.
 - **Canada (PIPEDA)**: Explicit user consent and local-first data custody.
 - **Australia & New Zealand (ACL / CGA)**: Full preservation of statutory consumer guarantees.
-- **Japan (APPI)**: Direct personal custody and sovereign device storage.
+- **Japan (APPI)**: Direct personal custody and meow device storage.
 
 ---
 
 ## ✍️ Ecosystem Integration: StoryCraft AI Storytelling Platform
 
-The on-device local AI processing pipeline in LC-MD (`window.ai`, Prompt API, zero-server ingress, and ethical provenance disclosures) seamlessly bridges with our sister project:
+The on-device local AI processing pipeline in Anymd (`window.ai`, Prompt API, zero-server ingress, and ethical provenance disclosures) seamlessly bridges with our sister project:
 
-- **[StoryCraft AI (Sovereign Storytelling Studio)](../storycraft-ai/README.md)**:
+- **[StoryCraft AI (Meow Storytelling Studio)](../storycraft-ai/README.md)**:
   - **Diagnostic Story Engines & Socratic Questioners**: AutoCrit pacing, narrative diagnostics, and trope analysis.
   - **Goblin Task Decomposition**: Breaks complex novel chapters and worldbuilding into bite-sized writing quests.
-  - **Shared Sovereign `.companion.md` Format**: Export stories and lore directly into Library Companion MD sidecars.
+  - **Shared Meow `.companion.md` Format**: Export stories and lore directly into Library Companion MD sidecars.
 
 ---
 
 ## 📄 License & Open Source Notice
 
-This project is licensed under the **MIT Open Source License**. You are completely free to host, fork, customize, and run your own sovereign node!
+This project is licensed under the **MIT Open Source License**. You are completely free to host, fork, customize, and run your own meow node!
 
 - **GitHub Repository**: [https://github.com/t3hkitty/library-companion-md](https://github.com/t3hkitty/library-companion-md)
 - **Live Demo & Black Box Hub**: [https://meow.artkitty.net](https://meow.artkitty.net)
@@ -215,7 +215,8 @@ This project is licensed under the **MIT Open Source License**. You are complete
      / \ _ / \     
    (   o . o   )   
      >   ^   <     M e o w !   I   a m   t h e   L i b r a r y   C a t ! 
-  
+ 
+ 
  
 ---
 

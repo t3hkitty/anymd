@@ -161,7 +161,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
             <div className="flex items-center space-x-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span className="font-bold text-emerald-300">
-                100% Free &amp; Sovereign: Individual Photo Batch OCR
+                100% Free &amp; Meow: Individual Photo Batch OCR
               </span>
             </div>
             <span className="text-[10px] text-slate-400">Select multiple photos from phone gallery at once</span>
@@ -362,7 +362,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between font-sans">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Individual Photo Recognition &bull; Comic Books &amp; Cards
+            Meow Individual Photo Recognition &bull; Comic Books &amp; Cards
           </span>
           <button
             onClick={onClose}

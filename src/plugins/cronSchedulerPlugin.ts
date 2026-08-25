@@ -55,7 +55,7 @@ export const DEFAULT_VPS_CRON_JOBS: CronJobTask[] = [
   {
     id: 'cron-sidecar-backup',
     name: 'Two-Way WebDAV & Rsync Mirroring',
-    description: 'Syncs all .companion.md sidecars and staging temp files to remote sovereign WebDAV mirror.',
+    description: 'Syncs all .companion.md sidecars and staging temp files to remote meow WebDAV mirror.',
     pluginId: 'rsync-engine',
     cronExpression: '0 4 * * *',
     humanReadable: 'Daily at 4:00 AM',
@@ -117,7 +117,7 @@ export function saveCronJobs(jobs: CronJobTask[]) {
 export function generateLinuxCrontab(jobs: CronJobTask[]): string {
   const enabledJobs = jobs.filter(j => j.enabled);
   let content = `# ==========================================================\n`;
-  content += `# Sovereign Library Companion MD & Black Box - VPS Crontab\n`;
+  content += `# Meow Library Companion MD & Black Box - VPS Crontab\n`;
   content += `# Generated: ${new Date().toISOString()}\n`;
   content += `# Path: /etc/cron.d/lc-md-scheduler (or crontab -e)\n`;
   content += `# ==========================================================\n\n`;
@@ -137,13 +137,13 @@ export function generateLinuxCrontab(jobs: CronJobTask[]): string {
 export function generateNodeCronRunnerScript(jobs: CronJobTask[]): string {
   const enabledJobs = jobs.filter(j => j.enabled);
   let script = `/**
- * Sovereign Library Companion MD - Headless VPS Cron Runner (Node.js & PM2)
+ * Meow Library Companion MD - Headless VPS Cron Runner (Node.js & PM2)
  * Run: pm2 start cron_runner.js --name lc-md-cron
  */
 const cron = require('node-cron');
 const { exec } = require('child_process');
 
-console.log('[Sovereign Scheduler] Starting VPS headless cron engine...');
+console.log('[Meow Scheduler] Starting VPS headless cron engine...');
 
 `;
 
@@ -158,7 +158,7 @@ console.log('[Sovereign Scheduler] Starting VPS headless cron engine...');
     script += `});\n\n`;
   });
 
-  script += `console.log('[Sovereign Scheduler] ${enabledJobs.length} active cron tasks scheduled.');\n`;
+  script += `console.log('[Meow Scheduler] ${enabledJobs.length} active cron tasks scheduled.');\n`;
   return script;
 }
 
@@ -167,7 +167,7 @@ console.log('[Sovereign Scheduler] Starting VPS headless cron engine...');
  */
 export function generateSystemdUnits(job: CronJobTask): { serviceUnit: string; timerUnit: string } {
   const serviceUnit = `[Unit]
-Description=Sovereign LC-MD Task: ${job.name}
+Description=Meow Anymd Task: ${job.name}
 After=network.target
 
 [Service]
@@ -181,7 +181,7 @@ WantedBy=multi-user.target
 `;
 
   const timerUnit = `[Unit]
-Description=Timer for Sovereign LC-MD Task: ${job.name}
+Description=Timer for Meow Anymd Task: ${job.name}
 
 [Timer]
 OnCalendar=${job.cronExpression === '0 * * * *' ? 'hourly' : job.cronExpression === '0 3 * * *' ? '*-*-* 03:00:00' : '*:0/30'}

@@ -69,10 +69,10 @@ export function generateRsyncBashScript(config: RsyncConfig): string {
   const updatedIso = new Date().toISOString();
 
   let script = `#!/usr/bin/env bash\n`;
-  script += `# Library Companion MD (LC-MD) - Rsync Auto-Sync Script\n`;
+  script += `# Library Companion MD (Anymd) - Rsync Auto-Sync Script\n`;
   script += `# Generated: ${updatedIso}\n`;
   script += `# Mode: ${config.direction.toUpperCase()} | Target: ${config.targetType.toUpperCase()}\n\n`;
-  script += `echo "🚀 Starting LC-MD Rsync ${config.direction === 'export-push' ? 'Export Push' : 'Import Pull'}..."\n`;
+  script += `echo "🚀 Starting Anymd Rsync ${config.direction === 'export-push' ? 'Export Push' : 'Import Pull'}..."\n`;
   script += `${cmd}\n`;
   script += `if [ $? -eq 0 ]; then\n`;
   script += `  echo "✅ Rsync sync completed successfully!"\n`;
@@ -87,9 +87,9 @@ export function generateRsyncPowerShellScript(config: RsyncConfig): string {
   const cmd = generateRsyncCommand(config);
   const updatedIso = new Date().toISOString();
 
-  let script = `# Library Companion MD (LC-MD) - Rsync PowerShell Sync Script\n`;
+  let script = `# Library Companion MD (Anymd) - Rsync PowerShell Sync Script\n`;
   script += `# Generated: ${updatedIso}\n\n`;
-  script += `Write-Host "🚀 Starting LC-MD Rsync Sync..." -ForegroundColor Cyan\n`;
+  script += `Write-Host "🚀 Starting Anymd Rsync Sync..." -ForegroundColor Cyan\n`;
   script += `${cmd}\n`;
   script += `if ($LASTEXITCODE -eq 0) {\n`;
   script += `  Write-Host "✅ Rsync sync completed successfully!" -ForegroundColor Green\n`;

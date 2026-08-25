@@ -14,9 +14,9 @@ export const AntigravitySetupModal: React.FC<AntigravitySetupModalProps> = ({
 
   if (!isOpen) return null;
 
-  const markdownContent = `# 🚀 Replicating the Sovereign Antigravity LC-MD Setup
+  const markdownContent = `# 🚀 Replicating the Meow Antigravity Anymd Setup
 
-This codebase was pair-programmed with **Google Antigravity AI** to build a **100% sovereign, local-first, multi-media library companion and e-reader system**.
+This codebase was pair-programmed with **Google Antigravity AI** to build a **100% meow, local-first, multi-media library companion and e-reader system**.
 
 ## 🛠️ Key Architecture
 - **Frontend Core**: React 18 + Vite + TypeScript + Tailwind CSS
@@ -44,7 +44,7 @@ This codebase was pair-programmed with **Google Antigravity AI** to build a **10
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">Antigravity Setup & Replication Guide</h3>
-              <p className="text-xs text-slate-400">Crafted with Google Antigravity AI &bull; Pair Programming Architecture & Sovereign Blueprints</p>
+              <p className="text-xs text-slate-400">Crafted with Google Antigravity AI &bull; Pair Programming Architecture & Meow Blueprints</p>
             </div>
           </div>
           <button
@@ -66,7 +66,7 @@ This codebase was pair-programmed with **Google Antigravity AI** to build a **10
                 <span className="font-extrabold text-indigo-200 text-sm">Google Antigravity AI Pair Programming</span>
               </div>
               <p className="text-slate-300 text-[11px]">
-                Fully modular React + Vite architecture with 25+ sovereign plugins, WebDAV/Rsync, Google Auth, Piplup & Dawn themes & StackCP deployers.
+                Fully modular React + Vite architecture with 25+ meow plugins, WebDAV/Rsync, Google Auth, Piplup & Dawn themes & StackCP deployers.
               </p>
             </div>
 

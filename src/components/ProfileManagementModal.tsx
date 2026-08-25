@@ -6,8 +6,8 @@ import {
   setActiveProfileId,
   registerNewUser,
   updateExistingProfile,
-  getSovereignInviteCode,
-  setSovereignInviteCode
+  getMeowInviteCode,
+  setMeowInviteCode
 } from '../plugins/profileManagementPlugin';
 import {
   X,
@@ -69,8 +69,8 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
   const [regRole, setRegRole] = useState<UserProfile['role']>('Family Member');
   const [regGenres, setRegGenres] = useState<string[]>(['LitRPG & Cultivation', 'Cozy Fantasy']);
   const [regInviteCode, setRegInviteCode] = useState('');
-  const [masterInviteCode, setMasterInviteCode] = useState(getSovereignInviteCode);
-  const [customInviteInput, setCustomInviteInput] = useState(getSovereignInviteCode);
+  const [masterInviteCode, setMasterInviteCode] = useState(getMeowInviteCode);
+  const [customInviteInput, setCustomInviteInput] = useState(getMeowInviteCode);
   const [inviteUpdatedMsg, setInviteUpdatedMsg] = useState(false);
   const [regError, setRegError] = useState<string | null>(null);
   const [regSuccess, setRegSuccess] = useState<string | null>(null);
@@ -182,7 +182,7 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight flex items-center space-x-2">
-                <span>Profile Management & Sovereign Accounts</span>
+                <span>Profile Management & Meow Accounts</span>
                 <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold">
                   Invite: {masterInviteCode}
                 </span>
@@ -405,9 +405,9 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
                   <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
                     <div className="flex items-center space-x-2 text-emerald-400">
                       <ShieldCheck className="w-4 h-4" />
-                      <span className="font-bold text-[11px]">Sovereign Local Authentication Fingerprint:</span>
+                      <span className="font-bold text-[11px]">Meow Local Authentication Fingerprint:</span>
                     </div>
-                    <code className="text-[10px] text-slate-300 block truncate">{currentProfile.sslFingerprint || 'Generated on Local Sovereign Node'}</code>
+                    <code className="text-[10px] text-slate-300 block truncate">{currentProfile.sslFingerprint || 'Generated on Local Meow Node'}</code>
                   </div>
                 </div>
               )}
@@ -428,7 +428,7 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
                   <Users className="w-4 h-4 text-sky-400" />
-                  <span>Registered Sovereign Accounts ({profiles.length})</span>
+                  <span>Registered Meow Accounts ({profiles.length})</span>
                 </h4>
                 <span className="text-[11px] text-slate-500">Click to switch active account</span>
               </div>
@@ -482,7 +482,7 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-emerald-300 uppercase tracking-wider flex items-center space-x-1.5">
                   <UserPlus className="w-4 h-4 text-emerald-400" />
-                  <span>Register Sovereign Account (Invite Code Required)</span>
+                  <span>Register Meow Account (Invite Code Required)</span>
                 </h4>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
                   Required Code: '{masterInviteCode}'
@@ -490,14 +490,14 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
               </div>
 
               <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 text-[11px] font-sans">
-                Registration on this self-hosted sovereign node is invite-only. Enter the master invite code <strong>'{masterInviteCode}'</strong> to create your local profile.
+                Registration on this self-hosted meow node is invite-only. Enter the master invite code <strong>'{masterInviteCode}'</strong> to create your local profile.
               </div>
 
               {/* Invite Code Input Field */}
               <div className="p-4 rounded-2xl bg-slate-900 border border-amber-500/40 space-y-2">
                 <label className="text-[11px] text-amber-300 font-bold block flex items-center space-x-1.5">
                   <Key className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Secret Sovereign Invite Code:</span>
+                  <span>Secret Meow Invite Code:</span>
                 </label>
                 <div className="flex items-center space-x-2">
                   <input
@@ -649,7 +649,7 @@ export const ProfileManagementModal: React.FC<ProfileManagementModalProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setSovereignInviteCode(customInviteInput);
+                      setMeowInviteCode(customInviteInput);
                       setMasterInviteCode(customInviteInput);
                       setInviteUpdatedMsg(true);
                       setTimeout(() => setInviteUpdatedMsg(false), 2000);

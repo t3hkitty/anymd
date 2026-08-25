@@ -267,7 +267,7 @@ export const MonetizationSettingsModal: React.FC<MonetizationSettingsModalProps>
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between font-sans">
           <span className="text-xs text-slate-400 font-mono">
-            Default Sidecar Valuation: ${(defaultSidecarPrice).toFixed(2)} USD &bull; Sovereign Self-Hosted Monetization
+            Default Sidecar Valuation: ${(defaultSidecarPrice).toFixed(2)} USD &bull; Meow Self-Hosted Monetization
           </span>
           <button
             onClick={onClose}

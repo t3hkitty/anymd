@@ -129,7 +129,7 @@ export function parseCompanionMarkdownToBook(
     resonanceStream,
     chapters: [
       {
-        title: 'Chapter 1: Sovereign Vault Record',
+        title: 'Chapter 1: Meow Vault Record',
         cfiBase: 'epubcfi(/6/2[ch1]!)',
         paragraphs: [body.slice(0, 300) || `Restored from vault archive ${fileName}.`]
       }

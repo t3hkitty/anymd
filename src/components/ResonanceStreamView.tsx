@@ -53,7 +53,7 @@ export const ResonanceStreamView: React.FC<ResonanceStreamViewProps> = ({
                 {entries.length} reactions
               </span>
             </h3>
-            <p className="text-[11px] text-slate-400">Section 3.8 &bull; Sovereign Companion Stream</p>
+            <p className="text-[11px] text-slate-400">Section 3.8 &bull; Meow Companion Stream</p>
           </div>
         </div>
 

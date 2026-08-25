@@ -204,7 +204,7 @@ export const OpenSsoModal: React.FC<OpenSsoModalProps> = ({
               </div>
 
               <p className="text-xs text-slate-300 font-sans">
-                Allow anyone with a GitHub account to log in with 1 click. Create a free OAuth App in your GitHub account (Settings &rarr; Developer settings &rarr; OAuth Apps) with redirect URL <code>https://meow.artkitty.net/lcmd/</code>.
+                Allow anyone with a GitHub account to log in with 1 click. Create a free OAuth App in your GitHub account (Settings &rarr; Developer settings &rarr; OAuth Apps) with redirect URL <code>https://meow.artkitty.net/anymd/</code>.
               </p>
 
               <div className="flex justify-end">

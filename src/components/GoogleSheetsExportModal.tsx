@@ -25,7 +25,7 @@ export const GoogleSheetsExportModal: React.FC<GoogleSheetsExportModalProps> = (
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Sovereign_Vault_GoogleSheets_Export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `Meow_Vault_GoogleSheets_Export_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };

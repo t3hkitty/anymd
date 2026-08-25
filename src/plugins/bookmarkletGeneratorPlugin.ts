@@ -12,7 +12,7 @@ export function getAppTargetEndpoint(): string {
   if (typeof window !== 'undefined') {
     return window.location.href.split('?')[0].split('#')[0];
   }
-  return 'http://artkitty.net/meow/lcmd/';
+  return 'http://artkitty.net/meow/anymd/';
 }
 
 export function createExecutableBookmarkletJs(rawJs: string): string {
@@ -361,7 +361,7 @@ export function getBookmarkletTools(): BookmarkletTool[] {
       name: '🌐 NovelUpdates 1-Click Grabber',
       targetSite: 'NovelUpdates.com',
       icon: '🌐',
-      description: 'Click while browsing any NovelUpdates series page or search results to instantly extract titles, author, webnovel tags, rating, and translation links into LC-MD with non-intrusive popup and clipboard fallback.',
+      description: 'Click while browsing any NovelUpdates series page or search results to instantly extract titles, author, webnovel tags, rating, and translation links into Anymd with non-intrusive popup and clipboard fallback.',
       bookmarkletJs: nu.bookmarkletJs,
       rawJs: nu.rawJs
     },
@@ -370,7 +370,7 @@ export function getBookmarkletTools(): BookmarkletTool[] {
       name: '📖 Goodreads List & Book Grabber',
       targetSite: 'Goodreads.com',
       icon: '📖',
-      description: 'Click while browsing any Goodreads book page, reading list, or custom bookshelf to grab titles and send them directly to your Sovereign Library with instant popup and clipboard fallback.',
+      description: 'Click while browsing any Goodreads book page, reading list, or custom bookshelf to grab titles and send them directly to your Meow Library with instant popup and clipboard fallback.',
       bookmarkletJs: gr.bookmarkletJs,
       rawJs: gr.rawJs
     },
@@ -379,7 +379,7 @@ export function getBookmarkletTools(): BookmarkletTool[] {
       name: '🎬 YouTube & Twitch VOD Grabber',
       targetSite: 'YouTube.com / Twitch.tv / Kick.com',
       icon: '🎬',
-      description: 'Click on any YouTube video, Twitch broadcast VOD, or Kick stream to instantly capture title, streamer name, duration, and timestamp chapters into your Sovereign Vault.',
+      description: 'Click on any YouTube video, Twitch broadcast VOD, or Kick stream to instantly capture title, streamer name, duration, and timestamp chapters into your Meow Vault.',
       bookmarkletJs: vod.bookmarkletJs,
       rawJs: vod.rawJs
     }

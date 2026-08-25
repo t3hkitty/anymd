@@ -447,7 +447,7 @@ export const TradeCalculatorModal: React.FC<TradeCalculatorModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Fair Trade Engine &bull; Decimal Precision ($ USD)
+            Meow Fair Trade Engine &bull; Decimal Precision ($ USD)
           </span>
           <button
             onClick={onClose}

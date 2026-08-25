@@ -45,7 +45,7 @@ import { CardScannerModal } from './components/CardScannerModal';
 import { HomeInsuranceScannerModal } from './components/HomeInsuranceScannerModal';
 import { PcRigBuildModal } from './components/PcRigBuildModal';
 import { GiftTrackerModal } from './components/GiftTrackerModal';
-import { SovereignPrivacyShieldModal } from './components/SovereignPrivacyShieldModal';
+import { MeowPrivacyShieldModal } from './components/MeowPrivacyShieldModal';
 import { BlackBoxModal } from './components/BlackBoxModal';
 import { MyBlackBoxView } from './components/MyBlackBoxView';
 import { CommunityHubView } from './components/CommunityHubView';
@@ -57,7 +57,7 @@ import { MonetizationSettingsModal } from './components/MonetizationSettingsModa
 import { LocalSshAuthModal } from './components/LocalSshAuthModal';
 import { LocalSslAuthModal } from './components/LocalSslAuthModal';
 import { ProfileManagementModal } from './components/ProfileManagementModal';
-import { SovereignSmtpAuthModal } from './components/SovereignSmtpAuthModal';
+import { MeowSmtpAuthModal } from './components/MeowSmtpAuthModal';
 import { OpenSsoModal } from './components/OpenSsoModal';
 import { TradeCalculatorModal } from './components/TradeCalculatorModal';
 import { LegalTermsModal } from './components/LegalTermsModal';
@@ -268,7 +268,7 @@ export function App() {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(false);
   
   // Pluggable E-Reader Engine Selection
-  const [activeReaderEngine, setActiveReaderEngine] = useState<ReaderEngineId>('sovereign-canvas');
+  const [activeReaderEngine, setActiveReaderEngine] = useState<ReaderEngineId>('meow-canvas');
 
   // Customization & Reader Theme
   const [readerTheme, setReaderTheme] = useState<'dark' | 'sepia' | 'light'>('dark');
@@ -326,11 +326,11 @@ export function App() {
   const [isHomeInsuranceOpen, setIsHomeInsuranceOpen] = useState(false);
   const [isPcRigBuildOpen, setIsPcRigBuildOpen] = useState(false);
   const [isGiftTrackerOpen, setIsGiftTrackerOpen] = useState(false);
-  const [isSovereignPrivacyOpen, setIsSovereignPrivacyOpen] = useState(false);
+  const [isMeowPrivacyOpen, setIsMeowPrivacyOpen] = useState(false);
   const [isBlackBoxOpen, setIsBlackBoxOpen] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<UserProfile>(getActiveProfile);
   const [isProfileManagementOpen, setIsProfileManagementOpen] = useState(false);
-  const [isSovereignSmtpOpen, setIsSovereignSmtpOpen] = useState(false);
+  const [isMeowSmtpOpen, setIsMeowSmtpOpen] = useState(false);
   const [isOpenSsoOpen, setIsOpenSsoOpen] = useState(false);
   const [isTradeCalculatorOpen, setIsTradeCalculatorOpen] = useState(false);
   const [isLegalTermsOpen, setIsLegalTermsOpen] = useState(false);
@@ -760,10 +760,10 @@ date_cataloged: "${new Date().toISOString()}"
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
       
-      {/* Master Top Navigation Bar: Sovereign Library <-> User Account Profile <-> MyBlackBox */}
+      {/* Master Top Navigation Bar: Meow Library <-> User Account Profile <-> MyBlackBox */}
       <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
         
-        {/* Left: 📚 Sovereign Library Tab */}
+        {/* Left: 📚 Meow Library Tab */}
         <button
           onClick={() => setActiveView('library')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
@@ -771,10 +771,10 @@ date_cataloged: "${new Date().toISOString()}"
               ? 'bg-amber-500 text-slate-950 shadow-amber-500/20 ring-2 ring-amber-400/40'
               : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
           }`}
-          title="Switch to Sovereign Grand Library & Bookshelf"
+          title="Switch to Meow Grand Library & Bookshelf"
         >
           <BookcaseIcon className="w-4 h-4" />
-          <span>📚 Sovereign Library</span>
+          <span>📚 Meow Library</span>
         </button>
 
         {/* Center: 👤 Account & Profile Manager Button */}
@@ -796,7 +796,7 @@ date_cataloged: "${new Date().toISOString()}"
               ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30 ring-2 ring-emerald-400/50 font-black'
               : 'bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300'
           }`}
-          title="Open Sovereign Black Box Dashboard, Litany Pulse & WYD Timers"
+          title="Open Meow Black Box Dashboard, Litany Pulse & WYD Timers"
         >
           <span className="font-mono text-sm">⬛</span>
           <span>MyBlackBox &amp; WYD</span>
@@ -812,7 +812,7 @@ date_cataloged: "${new Date().toISOString()}"
       {isHeaderCollapsed ? (
         <div className="px-4 py-1 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
           <div className="flex items-center space-x-3">
-            <span className="font-bold text-amber-300">🐾 Sovereign Library</span>
+            <span className="font-bold text-amber-300">🐾 Meow Library</span>
             <button onClick={() => setActiveView('library')} className={`px-2 py-0.5 rounded ${activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400'}`}>📚 Library</button>
             <button onClick={() => setActiveView('blackbox')} className={`px-2 py-0.5 rounded ${activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>⬛ myBlackbox</button>
             <button onClick={() => setActiveView('reader')} className={`px-2 py-0.5 rounded ${activeView === 'reader' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>📖 Reader</button>
@@ -833,7 +833,7 @@ date_cataloged: "${new Date().toISOString()}"
           <div
             onClick={() => setActiveView('library')}
             className="flex items-center space-x-3 cursor-pointer group"
-            title="Click to view Sovereign Grand Library Bookshelf"
+            title="Click to view Meow Grand Library Bookshelf"
           >
             <div className="p-2 rounded-2xl bg-gradient-to-br from-amber-900 via-amber-950 to-slate-950 border border-amber-500/40 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
               <BookcaseIcon className="w-6 h-6" />
@@ -845,7 +845,7 @@ date_cataloged: "${new Date().toISOString()}"
                 </span>
                 <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center space-x-1">
                   {pluginState.localAccessMode === 'read-only' && <Lock className="w-2.5 h-2.5 text-amber-400" />}
-                  <span>v3.8 Sovereign</span>
+                  <span>v3.8 Meow</span>
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-mono font-medium">Beauty & The Beast Grand Bookcase Library</p>
@@ -921,7 +921,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenCloudAccounts={() => setIsCloudAccountsOpen(true)}
             onOpenWebDAVIndexer={() => setIsWebDAVIndexerOpen(true)}
             onOpenLocalSshAuth={() => setIsLocalSshAuthOpen(true)}
-            onOpenSovereignSmtp={() => setIsSovereignSmtpOpen(true)}
+            onOpenMeowSmtp={() => setIsMeowSmtpOpen(true)}
             onOpenOpenSso={() => setIsOpenSsoOpen(true)}
             onOpenStackcpDeploy={() => setIsStackcpDeployOpen(true)}
             onOpenGoogleAuthDeploy={() => setIsGoogleAuthDeployOpen(true)}
@@ -967,13 +967,13 @@ date_cataloged: "${new Date().toISOString()}"
 
           {/* Dedicated Layout & Microlog Panel Customizer Button */}
           <button
-            onClick={() => window.location.href = './lcmd/'}
+            onClick={() => setActiveView('blackbox')}
             className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-extrabold text-xs shadow-md shadow-sky-500/20 transition-all hover:scale-105 active:scale-95"
             title="Open myBlackbox Microlog Dashboard with 23 Customizable Panels & Layout Customizer"
           >
             <Layers className="w-3.5 h-3.5 text-sky-200" />
             <span>🧹 Layout &amp; Panels</span>
-            <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-sky-200 font-mono text-[10px]">LCMD</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-black/40 text-sky-200 font-mono text-[10px]">Anymd</span>
           </button>
 
           {/* Hidden EPUB File Input */}
@@ -1099,7 +1099,7 @@ date_cataloged: "${new Date().toISOString()}"
         {activeView === 'split' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-120px)]">
             
-            {/* Left 7 Columns: Sovereign Reader Canvas */}
+            {/* Left 7 Columns: Meow Reader Canvas */}
             <div className="lg:col-span-7 h-full">
               <ReaderView
                 book={activeBook}
@@ -1217,7 +1217,7 @@ date_cataloged: "${new Date().toISOString()}"
                     {
                       title: 'Community Sidecar Overview',
                       cfiBase: 'epubcfi(/6/2[ch1]!)',
-                      paragraphs: ['Imported template from LC-MD Sovereign Community Hub.']
+                      paragraphs: ['Imported template from Anymd Meow Community Hub.']
                     }
                   ]
                 };
@@ -1229,7 +1229,7 @@ date_cataloged: "${new Date().toISOString()}"
           </div>
         )}
 
-        {/* Sovereign MyBlackBox Full Dashboard View */}
+        {/* Meow MyBlackBox Full Dashboard View */}
         {activeView === 'blackbox' && (
           <div className="w-full min-h-[calc(100vh-140px)]">
             <MyBlackBoxView
@@ -1256,11 +1256,11 @@ date_cataloged: "${new Date().toISOString()}"
         )}
       </main>
 
-      {/* Sovereign Open Source Copyright, Terms of Service & Host Your Own Footer */}
+      {/* Meow Open Source Copyright, Terms of Service & Host Your Own Footer */}
       <footer className="px-6 py-3.5 border-t border-slate-800/80 bg-slate-950/90 text-center font-mono text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2 shrink-0">
         <div className="flex items-center space-x-2">
           <span className="text-amber-400">🐾</span>
-          <span>© 2026 Sovereign Black Box & Library Companion MD • Open Source (MIT License)</span>
+          <span>© 2026 Meow Black Box & Library Companion MD • Open Source (MIT License)</span>
         </div>
         <div className="flex items-center space-x-3 text-[11px]">
           <button
@@ -1354,7 +1354,7 @@ date_cataloged: "${new Date().toISOString()}"
         }}
       />
 
-      {/* Sovereign Bookmatter & Directory Studio Modal */}
+      {/* Meow Bookmatter & Directory Studio Modal */}
       <BookmatterGeneratorModal
         isOpen={isWebDAVIndexerOpen}
         books={books}
@@ -1634,10 +1634,10 @@ date_cataloged: "${new Date().toISOString()}"
         onProfileChanged={(updated) => setActiveUserProfile(updated)}
       />
 
-      {/* Sovereign SMTP Email Verification & Zero-Cloud Accounts Modal */}
-      <SovereignSmtpAuthModal
-        isOpen={isSovereignSmtpOpen}
-        onClose={() => setIsSovereignSmtpOpen(false)}
+      {/* Meow SMTP Email Verification & Zero-Cloud Accounts Modal */}
+      <MeowSmtpAuthModal
+        isOpen={isMeowSmtpOpen}
+        onClose={() => setIsMeowSmtpOpen(false)}
         onVerifiedUser={(updated) => setActiveUserProfile(updated)}
       />
 
@@ -1648,13 +1648,13 @@ date_cataloged: "${new Date().toISOString()}"
         onAuthenticated={(updated) => setActiveUserProfile(updated)}
       />
 
-      {/* Sovereign Privacy Shield & Zero-Telemetry Audit Modal */}
-      <SovereignPrivacyShieldModal
-        isOpen={isSovereignPrivacyOpen}
-        onClose={() => setIsSovereignPrivacyOpen(false)}
+      {/* Meow Privacy Shield & Zero-Telemetry Audit Modal */}
+      <MeowPrivacyShieldModal
+        isOpen={isMeowPrivacyOpen}
+        onClose={() => setIsMeowPrivacyOpen(false)}
       />
 
-      {/* Sovereign Black Box Architecture Manifest Modal */}
+      {/* Meow Black Box Architecture Manifest Modal */}
       <BlackBoxModal
         isOpen={isBlackBoxOpen}
         onClose={() => setIsBlackBoxOpen(false)}

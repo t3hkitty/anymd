@@ -196,7 +196,7 @@ export const VodImporterModal: React.FC<VodImporterModalProps> = ({
                 type="text"
                 value={creator}
                 onChange={(e) => setCreator(e.target.value)}
-                placeholder="e.g. Primeagen, Lex Fridman, Sovereign Creator"
+                placeholder="e.g. Primeagen, Lex Fridman, Meow Creator"
                 className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-red-500"
               />
             </div>
@@ -343,7 +343,7 @@ export const VodImporterModal: React.FC<VodImporterModalProps> = ({
           <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
             <div className="text-[11px] text-slate-400 flex items-center space-x-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Generates sovereign <code>.companion.md</code> with timestamped resonance streams</span>
+              <span>Generates meow <code>.companion.md</code> with timestamped resonance streams</span>
             </div>
 
             <button

@@ -13,4 +13,4 @@ with open("meow_root_index.html", "rb") as f:
     ftp.storbinary("STOR index.html", f)
 
 ftp.quit()
-print("SUCCESS: Root index.html deployed! meow.artkitty.net now auto-redirects directly to /lcmd/")
+print("SUCCESS: Root index.html deployed! meow.artkitty.net now auto-redirects directly to /anymd/")

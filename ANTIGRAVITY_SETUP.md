@@ -1,6 +1,6 @@
-# 🚀 Replicating the Sovereign Antigravity LC-MD Setup
+# 🚀 Replicating the Meow Antigravity Anymd Setup
 
-This codebase was pair-programmed with **Google Antigravity AI** to build a **100% sovereign, local-first, multi-media library companion and e-reader system**.
+This codebase was pair-programmed with **Google Antigravity AI** to build a **100% meow, local-first, multi-media library companion and e-reader system**.
 
 ---
 
@@ -11,7 +11,7 @@ This codebase was pair-programmed with **Google Antigravity AI** to build a **10
    - **Styling**: Tailwind CSS + Custom HSL Theme Engine (`Midnight`, `Sepia`, `Nord`, `Dracula`, `E-Ink Paper`, `Piplup & Dawn Sapphire & Ice Pearl`)
    - **Icons**: Lucide React Icons
 
-2. **Data & Storage Sovereignty**:
+2. **Data & Storage Meowty**:
    - **Sidecar Format**: Standardized `.companion.md` sidecars with YAML frontmatter metadata (`isbn13`, `loc_classification`, `tags`, `card_metadata`).
    - **Cloud Sync Engines**: WebDAV (`Filejump`, `TorBox`, `Koofr`, `Nextcloud`, `pCloud`, `Google Drive`), Rsync compatibility generator, and Google OAuth 2.0 family account storage.
 

@@ -63,7 +63,7 @@ export const FamilySocialModal: React.FC<FamilySocialModalProps> = ({
       themePreference: newFriendPokemon.includes('Piplup') ? 'piplup-dawn' : 'midnight',
       isFollowing: true,
       isFriend: true,
-      currentlyReading: 'Sovereign Companion Vault',
+      currentlyReading: 'Meow Companion Vault',
       lastActive: 'Just now'
     };
 

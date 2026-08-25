@@ -149,7 +149,7 @@ author: "${parsedAuthor}"
 rating: "${parsedRating}"
 tags: [${parsedTags.map(t => `"${t}"`).join(', ')}]
 format: "dcmd/webnovel"
-sovereign_storage: "local"
+meow_storage: "local"
 ---
 
 # ${parsedTitle}
@@ -255,7 +255,7 @@ Imported web presence entry. Local markdown sidecar initialized.
                 <p className="text-slate-300 text-[11px] font-sans leading-relaxed">
                   1. Drag the golden button below directly to your browser's <strong>Bookmarks Bar</strong> (<kbd className="px-1 py-0.5 rounded bg-slate-950 border border-slate-800 text-[10px]">Ctrl + Shift + B</kbd>).<br />
                   2. Open any <strong>NovelUpdates.com</strong> or <strong>Goodreads.com</strong> book or reading list page.<br />
-                  3. Click your bookmarklet. An on-screen floating panel will pop up with <strong>"🚀 Open in LC-MD"</strong> and <strong>"📋 Copy JSON"</strong> buttons!
+                  3. Click your bookmarklet. An on-screen floating panel will pop up with <strong>"🚀 Open in Anymd"</strong> and <strong>"📋 Copy JSON"</strong> buttons!
                 </p>
               </div>
 
@@ -424,7 +424,7 @@ Imported web presence entry. Local markdown sidecar initialized.
               {importSuccess && (
                 <div className="p-3 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold flex items-center space-x-2">
                   <Check className="w-4 h-4 text-emerald-400" />
-                  <span>✓ Successfully added webnovel to your sovereign library vault!</span>
+                  <span>✓ Successfully added webnovel to your meow library vault!</span>
                 </div>
               )}
 
@@ -435,7 +435,7 @@ Imported web presence entry. Local markdown sidecar initialized.
                   className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-all flex items-center space-x-1.5"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Add to Sovereign Library</span>
+                  <span>Add to Meow Library</span>
                 </button>
               </div>
             </div>

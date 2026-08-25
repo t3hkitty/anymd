@@ -480,7 +480,7 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
                       Don't want to use GitHub? Send your FOSS plugin JSON manifest directly to our review maintainers!
                     </p>
                     <a
-                      href="mailto:plugins@librarycompanion.md?subject=LC-MD%20FOSS%20Plugin%20Submission&body=Hi%20LC-MD%20Team,%0A%0AI%20would%20like%20to%20submit%20my%20FOSS%20Open-Source%20Plugin!%0A%0APlugin%20JSON%20Manifest:%0A"
+                      href="mailto:plugins@librarycompanion.md?subject=Anymd%20FOSS%20Plugin%20Submission&body=Hi%20Anymd%20Team,%0A%0AI%20would%20like%20to%20submit%20my%20FOSS%20Open-Source%20Plugin!%0A%0APlugin%20JSON%20Manifest:%0A"
                       className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all mt-1"
                     >
                       <Mail className="w-3.5 h-3.5" />
@@ -534,7 +534,7 @@ import { Plugin, ItemView, WorkspaceLeaf } from 'obsidian';
 
 export default class LibraryCompanionPlugin extends Plugin {
   async onload() {
-    console.log('[LC-MD Bridge] Loaded Sovereign Obsidian Sidecar Viewer.');
+    console.log('[Anymd Bridge] Loaded Meow Obsidian Sidecar Viewer.');
     this.registerView('lc-md-sidecar-view', (leaf) => new CompanionSidecarView(leaf));
   }
 }
@@ -544,7 +544,7 @@ class CompanionSidecarView extends ItemView {
   async onOpen() {
     const container = this.containerEl.children[1];
     container.empty();
-    container.createEl('h4', { text: '📖 Sovereign Resonance Notes' });
+    container.createEl('h4', { text: '📖 Meow Resonance Notes' });
   }
 }`;
                         navigator.clipboard.writeText(obsidianCode);
@@ -567,7 +567,7 @@ class CompanionSidecarView extends ItemView {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <span className="p-1.5 rounded-lg bg-sky-500/20 text-sky-300 font-bold text-xs">📓 Joplin</span>
-                      <h4 className="font-bold text-slate-200 text-xs">Joplin Sovereign WebDAV Sync Extension</h4>
+                      <h4 className="font-bold text-slate-200 text-xs">Joplin Meow WebDAV Sync Extension</h4>
                     </div>
                     <button
                       onClick={() => {
@@ -578,7 +578,7 @@ class CompanionSidecarView extends ItemView {
   "app_min_version": "2.8",
   "name": "Library Companion MD Sync",
   "version": "1.0.0",
-  "description": "Two-way sidecar mirroring between Joplin notebooks and sovereign WebDAV vault.",
+  "description": "Two-way sidecar mirroring between Joplin notebooks and meow WebDAV vault.",
   "author": "Community Maintainer"
 }`;
                         navigator.clipboard.writeText(joplinCode);
@@ -670,7 +670,7 @@ class CompanionSidecarView extends ItemView {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
-          <span className="text-xs text-slate-500 font-mono">LC-MD FOSS Plugin Engine v3.8</span>
+          <span className="text-xs text-slate-500 font-mono">Anymd FOSS Plugin Engine v3.8</span>
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all"

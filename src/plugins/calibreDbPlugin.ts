@@ -1,5 +1,5 @@
 import type { Book } from '../types/resonance';
-import { cleanSovereignFilename, buildCompanionSidecarHeader } from '../utils/pathResolver';
+import { cleanMeowFilename, buildCompanionSidecarHeader } from '../utils/pathResolver';
 
 export interface CalibreBookMetadata {
   title: string;
@@ -16,8 +16,8 @@ export function parseCalibreJsonImport(jsonText: string, relLinkRoot: string = '
     const items: CalibreBookMetadata[] = Array.isArray(rawData) ? rawData : [rawData];
 
     return items.map((item, idx) => {
-      const cleanTitle = cleanSovereignFilename(item.title || `Calibre Import ${idx + 1}`);
-      const cleanAuthor = cleanSovereignFilename(
+      const cleanTitle = cleanMeowFilename(item.title || `Calibre Import ${idx + 1}`);
+      const cleanAuthor = cleanMeowFilename(
         Array.isArray(item.authors) ? item.authors[0] : item.authors || 'Unknown Author'
       );
 
@@ -43,7 +43,7 @@ export function parseCalibreJsonImport(jsonText: string, relLinkRoot: string = '
             cfiBase: `epubcfi(/6/${(idx + 1) * 4}[calibre0${idx + 1}]!`,
             paragraphs: [
               item.comments || `Imported from Calibre library: ${cleanTitle} by ${cleanAuthor}.`,
-              'All parenthetical numbers stripped for sovereign mobile path portability.'
+              'All parenthetical numbers stripped for meow mobile path portability.'
             ]
           }
         ]

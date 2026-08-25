@@ -34,7 +34,7 @@ export interface AuDhdMorningSettings {
   estimatedCommuteMinutes: number; // e.g. 25 min
   trafficIncidentDelayMinutes: number; // e.g. 12 min
   isAlarmArmed: boolean;
-  ttsAlarmGreeting: string; // e.g. "Wake up sovereign operator! Traffic congestion detected on I-90."
+  ttsAlarmGreeting: string; // e.g. "Wake up meow operator! Traffic congestion detected on I-90."
   snoozeCount: number;
 }
 
@@ -72,7 +72,7 @@ export const DEFAULT_LITANY_ENTRIES: LitanyPulseEntry[] = [
     headline: 'Blackbox Watchdog & Sleep Sync Heartbeat Active',
     bodySnippet: 'Local storage quotas verified. Zero external telemetry egress confirmed.',
     zettelSerial: 'ZK-20260818-LITANY-00E9',
-    tags: ['watchdog', 'blackbox', 'sovereign'],
+    tags: ['watchdog', 'blackbox', 'meow'],
     emojiBurst: ['⬛', '🛡️', '🔒']
   }
 ];
@@ -163,7 +163,7 @@ export function saveAuDhdMorningSettings(settings: AuDhdMorningSettings): void {
 }
 
 /**
- * Creates or updates today's Sovereign BlackBox Daily Journal Book for the Grand Bookshelf
+ * Creates or updates today's Meow BlackBox Daily Journal Book for the Grand Bookshelf
  */
 export function buildBlackBoxDailyJournalBook(
   pulses: LitanyPulseEntry[],

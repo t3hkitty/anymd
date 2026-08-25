@@ -69,7 +69,7 @@ author: "${author}"
 source_url: "${sourceUrl}"
 format: "${format}"
 shared_at: "${new Date().toISOString()}"
-sovereign_storage: "local"
+meow_storage: "local"
 ---
 
 # ${title}
@@ -79,7 +79,7 @@ sovereign_storage: "local"
 - **Shared Date:** ${new Date().toLocaleDateString()}
 
 ### 📝 Shared Notes & Snippets
-${payload.text ? `> ${payload.text}` : 'Shared from mobile browser share sheet directly to Sovereign Vault.'}
+${payload.text ? `> ${payload.text}` : 'Shared from mobile browser share sheet directly to Meow Vault.'}
 `;
 
   return {

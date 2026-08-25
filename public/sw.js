@@ -1,5 +1,5 @@
-// Sovereign LC-MD Service Worker for Standalone PWA & Web Share Target
-const CACHE_NAME = 'lcmd-sovereign-v3.8';
+// Meow Anymd Service Worker for Standalone PWA & Web Share Target
+const CACHE_NAME = 'anymd-meow-v3.8';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

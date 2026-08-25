@@ -12,7 +12,7 @@ export interface PcComponentItem {
 export interface PcRigBuildCollection {
   id: string;
   rigTitle: string;
-  buildPurpose: 'AI Workstation & LLM Server' | '4K Ultra Gaming Rig' | 'Sovereign Homelab NAS' | 'Compact SFF Portable Rig';
+  buildPurpose: 'AI Workstation & LLM Server' | '4K Ultra Gaming Rig' | 'Meow Homelab NAS' | 'Compact SFF Portable Rig';
   estimatedWattage: number;
   totalCostUsd: number;
   components: PcComponentItem[];
@@ -23,7 +23,7 @@ export interface PcRigBuildCollection {
 export const SAMPLE_PC_RIG_BUILDS: PcRigBuildCollection[] = [
   {
     id: `rig-ai-workstation-${Date.now()}`,
-    rigTitle: 'Sovereign AI Deep Learning & 4K Workstation 2026',
+    rigTitle: 'Meow AI Deep Learning & 4K Workstation 2026',
     buildPurpose: 'AI Workstation & LLM Server',
     estimatedWattage: 950,
     totalCostUsd: 4850,
@@ -86,7 +86,7 @@ tags: [${rig.tags.map(t => `"${t}"`).join(', ')}]
 
 ${rig.components.map(c => `- **${c.category}**: ${c.partName} — *$${c.priceUsd} USD* (${c.specsSnippet})`).join('\n')}
 
-> Saved as Sovereign Companion sidecar library collection.
+> Saved as Meow Companion sidecar library collection.
 `;
 
     return {

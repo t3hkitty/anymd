@@ -86,7 +86,7 @@ export const AcquisitionProviderModal: React.FC<AcquisitionProviderModalProps> =
             <p className="text-xs text-slate-400 font-mono">Author: {book.author}</p>
           </div>
 
-          {/* Sovereign 100% Non-Monetized Shield Guarantee */}
+          {/* Meow 100% Non-Monetized Shield Guarantee */}
           <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-300 space-y-1">
             <div className="flex items-center space-x-2 font-bold font-mono text-[11px] text-emerald-400 uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />

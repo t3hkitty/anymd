@@ -13,7 +13,7 @@ export const DEFAULT_STACKCP_SMTP_CONFIG: SmtpConfig = {
   smtpUser: 'auth@artkitty.net',
   smtpSecure: 'STARTTLS',
   fromEmail: 'noreply@artkitty.net',
-  fromName: 'Sovereign Black Box Library (meow.artkitty.net)'
+  fromName: 'Meow Black Box Library (meow.artkitty.net)'
 };
 
 export interface EmailVerificationSession {
@@ -26,7 +26,7 @@ export interface EmailVerificationSession {
 export function generateSmtpPhpScript(config: SmtpConfig = DEFAULT_STACKCP_SMTP_CONFIG): string {
   return `<?php
 /**
- * Sovereign Black Box & Library Zero-Cloud OTP Mailer
+ * Meow Black Box & Library Zero-Cloud OTP Mailer
  * Path on StackCP: /public_html/meow/send_otp.php
  * 100% Self-Hosted & Private - Zero Cloud Reliance
  */
@@ -52,10 +52,10 @@ if (!$email || strlen($otp) !== 6) {
 }
 
 $to = $email;
-$subject = "🐾 Your Sovereign Library Verification Code: $otp";
+$subject = "🐾 Your Meow Library Verification Code: $otp";
 $headers = "From: ${config.fromName} <${config.fromEmail}>\r\n";
 $headers .= "Reply-To: ${config.fromEmail}\r\n";
-$headers .= "X-Mailer: Sovereign Black Box Node/1.0\r\n";
+$headers .= "X-Mailer: Meow Black Box Node/1.0\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
@@ -64,7 +64,7 @@ $body = "
 <html>
 <body style='font-family: sans-serif; background-color: #020617; color: #f8fafc; padding: 24px;'>
   <div style='max-width: 500px; margin: 0 auto; background: #0f172a; border: 1px solid #334155; border-radius: 16px; padding: 24px;'>
-    <h2 style='color: #f59e0b; margin-top: 0;'>🐾 Sovereign Black Box & Library Access</h2>
+    <h2 style='color: #f59e0b; margin-top: 0;'>🐾 Meow Black Box & Library Access</h2>
     <p style='font-size: 14px; color: #cbd5e1;'>Here is your one-time verification code to unlock your unified Black Box & Library account on <strong>meow.artkitty.net</strong>:</p>
     <div style='background: #020617; border: 2px dashed #f59e0b; border-radius: 12px; padding: 16px; text-align: center; margin: 20px 0;'>
       <span style='font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #38bdf8; font-family: monospace;'>$otp</span>

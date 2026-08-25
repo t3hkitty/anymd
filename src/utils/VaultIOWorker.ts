@@ -2,7 +2,7 @@
  * Vault IO Worker & Synchronous Pipeline Queue
  * 
  * Prevents concurrent text-based DB file corruption by enforcing a strict FIFO
- * write queue across the LC-MD ecosystem.
+ * write queue across the Anymd ecosystem.
  * 
  * Also implements targeted segment patching (e.g. updating a specific YAML row 
  * or markdown section) to avoid full-file rewrites.

@@ -22,27 +22,27 @@ export const MeowPortalGeneratorModal: React.FC<MeowPortalGeneratorModalProps> =
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>meow.artkitty.net — Sovereign Black Box & Discovery Hub</title>
+  <title>meow.artkitty.net — Meow Black Box & Discovery Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
   <div class="max-w-5xl mx-auto space-y-6">
-    <h1 class="text-3xl font-extrabold text-amber-300">meow.artkitty.net — Sovereign Black Box Ecosystem</h1>
+    <h1 class="text-3xl font-extrabold text-amber-300">meow.artkitty.net — Meow Black Box Ecosystem</h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-amber-500/50 hover:border-amber-400 block">
+      <a href="./anymd/" class="p-6 rounded-2xl bg-slate-900 border border-amber-500/50 hover:border-amber-400 block">
         <span class="text-2xl block mb-2">⚡</span>
-        <h2 class="font-bold text-lg text-slate-100">Sovereign Black Box (myblackbox)</h2>
+        <h2 class="font-bold text-lg text-slate-100">Meow Black Box (myblackbox)</h2>
         <p class="text-xs text-slate-400 mt-1">Running Litany Activity Stream, 2m+ Inactivity Watchdog, and AuDHD Morning Manager.</p>
       </a>
-      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-purple-500/50 hover:border-purple-400 block">
+      <a href="./anymd/" class="p-6 rounded-2xl bg-slate-900 border border-purple-500/50 hover:border-purple-400 block">
         <span class="text-2xl block mb-2">🎭</span>
         <h2 class="font-bold text-lg text-slate-100">AI Story Tool & Author Bible</h2>
         <p class="text-xs text-slate-400 mt-1">Inspo Ledger (YYYYMMDD-HHMM), Character Slugs ([MC], [ML]), and 3-Fork CYA Lore Bridge.</p>
       </a>
-      <a href="./lcmd/" class="p-6 rounded-2xl bg-slate-900 border border-blue-500/50 hover:border-blue-400 block">
+      <a href="./anymd/" class="p-6 rounded-2xl bg-slate-900 border border-blue-500/50 hover:border-blue-400 block">
         <span class="text-2xl block mb-2">🚪</span>
         <h2 class="font-bold text-lg text-slate-100">Spatial Routines & Grand Library</h2>
-        <p class="text-xs text-slate-400 mt-1">Dual-channel TTS/visual daily protocols, No Bad Days deconstructor, and 3D Sovereign Bookshelf.</p>
+        <p class="text-xs text-slate-400 mt-1">Dual-channel TTS/visual daily protocols, No Bad Days deconstructor, and 3D Meow Bookshelf.</p>
       </a>
     </div>
   </div>
@@ -98,7 +98,7 @@ echo "Deployment complete! https://meow.artkitty.net"
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">meow.artkitty.net Root Index Portal Generator</h3>
-              <p className="text-xs text-slate-400">Generate & Deploy Root Landing Page with Live Project Links (/lcmd/)</p>
+              <p className="text-xs text-slate-400">Generate & Deploy Root Landing Page with Live Project Links (/anymd/)</p>
             </div>
           </div>
           <button
@@ -117,7 +117,7 @@ echo "Deployment complete! https://meow.artkitty.net"
             <div className="space-y-1">
               <span className="font-extrabold text-amber-300 text-sm block">Root Domain Hub (https://meow.artkitty.net)</span>
               <p className="text-slate-300 text-[11px]">
-                Links all your subfolder live projects (<code className="text-emerald-400">/lcmd/</code>, etc.) on a sleek portal landing page!
+                Links all your subfolder live projects (<code className="text-emerald-400">/anymd/</code>, etc.) on a sleek portal landing page!
               </p>
             </div>
 
@@ -168,8 +168,8 @@ echo "Deployment complete! https://meow.artkitty.net"
               <div className="flex items-center space-x-3">
                 <span className="text-xl">📚</span>
                 <div>
-                  <h5 className="font-bold text-slate-100">Library Companion MD (LC-MD)</h5>
-                  <span className="text-sky-400 text-[11px]">Subfolder: https://meow.artkitty.net/lcmd/</span>
+                  <h5 className="font-bold text-slate-100">Library Companion MD (Anymd)</h5>
+                  <span className="text-sky-400 text-[11px]">Subfolder: https://meow.artkitty.net/anymd/</span>
                 </div>
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">

@@ -22,10 +22,10 @@ export const SidecarEditor: React.FC<SidecarEditorProps> = ({
   const author = authorMatch ? authorMatch[1].replace(/"/g, '') : 'Unknown Author';
 
   const tagsMatch = markdownContent.match(/tags:\s*\[(.*?)\]/);
-  const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.trim().toLowerCase()) : ['sovereign', 'companion', 'md'];
+  const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.trim().toLowerCase()) : ['meow', 'companion', 'md'];
 
   const genreMatch = markdownContent.match(/genre:\s*"(.*?)"/) || markdownContent.match(/genre:\s*(.*)/);
-  const genre = genreMatch ? genreMatch[1].replace(/"/g, '') : 'Sovereign Speculative Fiction';
+  const genre = genreMatch ? genreMatch[1].replace(/"/g, '') : 'Meow Speculative Fiction';
 
   const asinMatch = markdownContent.match(/asin:\s*"(.*?)"/);
   const asin = asinMatch ? asinMatch[1] : null;

@@ -21,7 +21,7 @@ export const CalibreImportModal: React.FC<CalibreImportModalProps> = ({
     "authors": ["Kaelen Vance"],
     "tags": ["SciFi", "Calibre"],
     "isbn": "978-1234567890",
-    "comments": "Imported from Calibre DB export. Numbers in parentheses stripped for sovereign mobile path portability."
+    "comments": "Imported from Calibre DB export. Numbers in parentheses stripped for meow mobile path portability."
   }
 ]`);
 
@@ -66,7 +66,7 @@ export const CalibreImportModal: React.FC<CalibreImportModalProps> = ({
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
                 Paste Calibre JSON / metadata.db Export
               </label>
-              <span className="text-[11px] text-emerald-400 font-mono">Clean Sovereign Paths Active</span>
+              <span className="text-[11px] text-emerald-400 font-mono">Clean Meow Paths Active</span>
             </div>
             <textarea
               value={jsonText}
@@ -79,11 +79,11 @@ export const CalibreImportModal: React.FC<CalibreImportModalProps> = ({
 
           <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono space-y-1">
             <div className="flex items-center justify-between text-amber-400">
-              <span className="font-bold">Sovereign Mobile Path Conversion Rule:</span>
+              <span className="font-bold">Meow Mobile Path Conversion Rule:</span>
               <span className="text-[10px]">rel_link_root: {relLinkRoot}</span>
             </div>
             <p className="text-[11px] text-slate-300">
-              Calibre folder: <code className="text-rose-400">Title (1042)/Book (1042).epub</code> &rrarr; LC-MD clean sovereign path: <code className="text-emerald-400">Library/Author/Title.companion.md</code>
+              Calibre folder: <code className="text-rose-400">Title (1042)/Book (1042).epub</code> &rrarr; Anymd clean meow path: <code className="text-emerald-400">Library/Author/Title.companion.md</code>
             </p>
           </div>
 

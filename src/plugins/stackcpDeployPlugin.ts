@@ -13,8 +13,8 @@ export const DEFAULT_STACKCP_CONFIG: StackcpDeployConfig = {
   user: 'kitty@artkitty.net',
   pass: 'YOUR_STACKCP_FTP_PASSWORD_HERE',
   localDir: './dist',
-  remoteDir: '/public_html/meow/lcmd/',
-  liveUrl: 'https://meow.artkitty.net/lcmd',
+  remoteDir: '/public_html/meow/anymd/',
+  liveUrl: 'https://meow.artkitty.net/anymd',
   port: 21
 };
 

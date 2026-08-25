@@ -114,7 +114,7 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">Reader Resonance Stream</h3>
-              <p className="text-xs text-slate-400">Expressive Micro-Logging &bull; Private Sovereign Layer</p>
+              <p className="text-xs text-slate-400">Expressive Micro-Logging &bull; Private Meow Layer</p>
             </div>
           </div>
           <button
@@ -353,7 +353,7 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
                 { label: 'Ooh Be Gah! 😡', text: 'OOH BE GAH! 😡 Very offended by this betrayal!' },
                 { label: 'WooHoo! 💕', text: 'WOOHOO! 💕 Absolute peak romance and happiness!' },
                 { label: 'Reticulating Splines... 🟩', text: 'RETICULATING SPLINES... 🟩 Deep simulation thoughts processing!' },
-                { label: 'Motherlode (§50,000) 💰', text: 'MOTHERLODE! §50,000 Simoleons added to sovereign vault!' }
+                { label: 'Motherlode (§50,000) 💰', text: 'MOTHERLODE! §50,000 Simoleons added to meow vault!' }
               ].map(s => (
                 <button
                   key={s.label}

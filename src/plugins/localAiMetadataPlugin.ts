@@ -35,7 +35,7 @@ export interface LocalAiGenerationResult {
   suitableProducts: string[];
   estimatedReadingOrViewingTime: string;
   isProcessedLocally: boolean;
-  engineUsed: string; // e.g. "On-Device Chrome Gemini Nano / Sovereign Neural Rulebase"
+  engineUsed: string; // e.g. "On-Device Chrome Gemini Nano / Meow Neural Rulebase"
 }
 
 export interface ArtMetadataInput {
@@ -70,7 +70,7 @@ export function checkLocalBrowserAiAvailability(): { available: boolean; name: s
   if (typeof window !== 'undefined' && window.ai?.languageModel) {
     return { available: true, name: 'Chrome On-Device Gemini Nano (window.ai)' };
   }
-  return { available: true, name: '100% Local Sovereign In-Memory NLP & Vision Engine' };
+  return { available: true, name: '100% Local Meow In-Memory NLP & Vision Engine' };
 }
 
 /**
@@ -94,7 +94,7 @@ export function generateLocalArtMetadata(input: ArtMetadataInput): LocalAiGenera
     ...rawKeywords,
     'aesthetic', 'wall-art', 'art-print', 'illustrated', 'home-decor',
     'minimalist', 'vibrant', 'poster-design', 'trending-art', 'indie-artist',
-    'sovereign-art', 'digital-illustration', 'gift-idea', 'room-decor',
+    'meow-art', 'digital-illustration', 'gift-idea', 'room-decor',
     'sticker-design', 'tapestry-art', 'phone-case', 'acrylic-block',
     'concept-art', 'visual-novel', 'modern-art', 'fine-art-print',
     'inprnt-curated', 'redbubble-artist', 'etsy-finds', 'art-collector',
@@ -127,11 +127,11 @@ ${disclosureBadge}
 *${disclosureStatement}*
 
 ---
-*Cataloged in Sovereign Black Box &amp; Library Companion MD.*`;
+*Cataloged in Meow Black Box &amp; Library Companion MD.*`;
 
   return {
     title: baseTitle,
-    subtitle: `${medium} &bull; Sovereign Studio Edition`,
+    subtitle: `${medium} &bull; Meow Studio Edition`,
     description,
     disclosureType: input.disclosureType,
     disclosureStatement,
@@ -149,8 +149,8 @@ ${disclosureBadge}
  * Generates unified tags and descriptions for fiction, webnovels and stories
  */
 export function generateLocalStoryMetadata(input: StoryMetadataInput): LocalAiGenerationResult {
-  const baseTitle = input.title.trim() || 'The Sovereign Awakening';
-  const author = input.author.trim() || 'Sovereign Author';
+  const baseTitle = input.title.trim() || 'The Meow Awakening';
+  const author = input.author.trim() || 'Meow Author';
   const genre = input.genre || 'LitRPG / Progression Fantasy';
   
   const rawKeywords = input.synopsis
@@ -166,7 +166,7 @@ export function generateLocalStoryMetadata(input: StoryMetadataInput): LocalAiGe
     'progression-fantasy', 'litrpg', 'gamelit', 'danmei', 'cultivation',
     'webnovel', 'royal-road', 'system-apocalypse', 'weak-to-strong',
     'strategic-crafting', 'found-family', 'deep-lore', 'audiobook-ready',
-    'indie-author', 'serial-fiction', 'page-turner', 'sovereign-vault'
+    'indie-author', 'serial-fiction', 'page-turner', 'meow-vault'
   ];
 
   const uniqueTags = Array.from(new Set(coreTags)).slice(0, 30);
@@ -185,12 +185,12 @@ ${input.synopsis || 'An epic journey across shattered realms where craft, strate
 
 ### 🏷️ Content &amp; Taxonomy Highlights
 - **Primary Classification:** \`${genre}\`
-- **Trope Focus:** Progression &bull; Crafting &bull; Sovereign Vault Lore
+- **Trope Focus:** Progression &bull; Crafting &bull; Meow Vault Lore
 - **Ethical Author Disclosure:** ${disclosureBadge}
 > *${disclosureStatement}*
 
 ---
-*Cataloged in Sovereign Black Box &amp; Library Companion MD.*`;
+*Cataloged in Meow Black Box &amp; Library Companion MD.*`;
 
   return {
     title: baseTitle,
@@ -210,7 +210,7 @@ ${input.synopsis || 'An epic journey across shattered realms where craft, strate
 }
 
 /**
- * Converts generated AI metadata result into a sovereign Book/Sidecar record
+ * Converts generated AI metadata result into a meow Book/Sidecar record
  */
 export function convertAiResultToVaultBook(result: LocalAiGenerationResult, isArt: boolean = true): Book {
   const serial = generateZettelkastenSerial();
@@ -262,7 +262,7 @@ ${result.description}
   return {
     id: `ai-gen-${Date.now()}`,
     title: result.title,
-    author: isArt ? 'ArtKitty Studios' : 'Sovereign Author',
+    author: isArt ? 'ArtKitty Studios' : 'Meow Author',
     coverColor: isArt ? '#ec4899' : '#8b5cf6',
     sidecarMarkdown: yamlSidecar,
     totalChapters: 1,

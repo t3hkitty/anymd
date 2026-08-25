@@ -21,7 +21,7 @@ export const GoogleTaskStyleSyncWidget: React.FC = () => {
   const [animatingTaskId, setAnimatingTaskId] = useState<string | null>(null);
 
   // Synthesize a legally clean, beautiful high-dopamine chime using Web Audio API
-  const playSovereignChime = () => {
+  const playMeowChime = () => {
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) return;
@@ -59,7 +59,7 @@ export const GoogleTaskStyleSyncWidget: React.FC = () => {
   // Handles checking off a single item with the Google-style circle fade transition
   const handleCompleteSingle = (id: string) => {
     setAnimatingTaskId(id);
-    playSovereignChime();
+    playMeowChime();
 
     // Trigger local global confetti framework (hooked up by Antigravity)
     if ((window as any).confetti) {
@@ -74,7 +74,7 @@ export const GoogleTaskStyleSyncWidget: React.FC = () => {
 
   // SWEEP ALL: The Double Checkmark Button for piled-up timers
   const handleSweepAll = () => {
-    playSovereignChime();
+    playMeowChime();
     
     // Burst massive confetti
     if ((window as any).confetti) {

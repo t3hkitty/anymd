@@ -1,7 +1,7 @@
 /**
  * Kawaii ASCII Storyboard Plugin
  * 
- * Intercepts text nodes across LC-MD and generates live, animated ASCII art 
+ * Intercepts text nodes across Anymd and generates live, animated ASCII art 
  * acting out the prose. Separated into a core plugin so it can be invoked 
  * across telemetry, input logs, and story drafting.
  */

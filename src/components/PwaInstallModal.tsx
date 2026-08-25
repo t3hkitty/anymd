@@ -119,7 +119,7 @@ export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="font-extrabold text-sm text-sky-200 flex items-center space-x-2">
                     <Sparkles className="w-4 h-4 text-sky-400" />
-                    <span>Run LC-MD as a Standalone Sovereign App</span>
+                    <span>Run Anymd as a Standalone Meow App</span>
                   </span>
                   <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
                     OFFLINE CAPABLE

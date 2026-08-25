@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { SovereignUserAccount } from '../plugins/localSshAuthPlugin';
-import { getSavedSovereignAccounts, saveSovereignAccounts, generateSshKeypair, generateSshAuthorizedKeys } from '../plugins/localSshAuthPlugin';
+import type { MeowUserAccount } from '../plugins/localSshAuthPlugin';
+import { getSavedMeowAccounts, saveMeowAccounts, generateSshKeypair, generateSshAuthorizedKeys } from '../plugins/localSshAuthPlugin';
 import { X, Key, ShieldCheck, UserPlus, Copy, Check, Terminal, Lock, Cpu } from 'lucide-react';
 
 interface LocalSshAuthModalProps {
@@ -12,7 +12,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [accounts, setAccounts] = useState<SovereignUserAccount[]>(getSavedSovereignAccounts);
+  const [accounts, setAccounts] = useState<MeowUserAccount[]>(getSavedMeowAccounts);
   const [copiedKeys, setCopiedKeys] = useState(false);
   const [copiedTunnel, setCopiedTunnel] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -37,7 +37,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
     if (!newUsername.trim() || !newDisplayName.trim()) return;
 
     const pair = generatedKey || generateSshKeypair(newUsername);
-    const newAcc: SovereignUserAccount = {
+    const newAcc: MeowUserAccount = {
       username: newUsername.toLowerCase().replace(/[^a-z0-9_]/g, ''),
       displayName: newDisplayName,
       sshPublicKey: pair.publicKey,
@@ -50,7 +50,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
 
     const updated = [...accounts, newAcc];
     setAccounts(updated);
-    saveSovereignAccounts(updated);
+    saveMeowAccounts(updated);
 
     setNewUsername('');
     setNewDisplayName('');
@@ -101,7 +101,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="w-4.5 h-4.5 text-emerald-400" />
-                <span className="font-extrabold text-indigo-200 text-sm">100% Zero-Cloud Data Sovereignty</span>
+                <span className="font-extrabold text-indigo-200 text-sm">100% Zero-Cloud Data Meowty</span>
               </div>
               <p className="text-slate-300 text-[11px] font-sans">
                 Accounts & sidecars remain local to your hardware. Authenticate family members via SSH ED25519 key pairs without transmitting user data to any external cloud provider.
@@ -179,7 +179,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
           <div className="space-y-3 font-mono text-xs">
             <h4 className="font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
               <Key className="w-4 h-4 text-indigo-400" />
-              <span>Registered Local Sovereign Accounts ({accounts.length})</span>
+              <span>Registered Local Meow Accounts ({accounts.length})</span>
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -255,7 +255,7 @@ export const LocalSshAuthModal: React.FC<LocalSshAuthModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Local SSH Authentication & Account Sovereignty Engine
+            Local SSH Authentication & Account Meowty Engine
           </span>
           <button
             onClick={onClose}

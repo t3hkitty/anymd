@@ -15,7 +15,7 @@ export interface UserProfile {
   sslFingerprint?: string;
 }
 
-export function getSovereignInviteCode(): string {
+export function getMeowInviteCode(): string {
   try {
     const custom = localStorage.getItem('lc_md_custom_invite_code');
     if (custom && custom.trim()) return custom.trim();
@@ -25,7 +25,7 @@ export function getSovereignInviteCode(): string {
   return (import.meta as any).env?.VITE_INVITE_CODE || 'meow';
 }
 
-export function setSovereignInviteCode(newCode: string): void {
+export function setMeowInviteCode(newCode: string): void {
   try {
     const cleaned = newCode.trim().toLowerCase();
     if (cleaned) {
@@ -36,15 +36,15 @@ export function setSovereignInviteCode(newCode: string): void {
   }
 }
 
-export const SOVEREIGN_INVITE_CODE = getSovereignInviteCode();
+export const SOVEREIGN_INVITE_CODE = getMeowInviteCode();
 
 export const DEFAULT_PROFILES: UserProfile[] = [
   {
     id: 'user-lorik-admin',
     username: 'lorik_admin',
-    displayName: 'Lorik (Sovereign Admin)',
+    displayName: 'Lorik (Meow Admin)',
     avatarEmoji: '🐱',
-    bio: 'Architect of LC-MD & Black Box Site ecosystem. LitRPG enthusiast, PC builder, and sovereign vault curator.',
+    bio: 'Architect of Anymd & Black Box Site ecosystem. LitRPG enthusiast, PC builder, and meow vault curator.',
     role: 'Admin / Vault Owner',
     favoriteGenres: ['LitRPG & Cultivation', 'Danmei / SVSSS', 'TCG Grails', 'PC Rig Builds'],
     joinedDate: '2026-08-17',
@@ -131,12 +131,12 @@ export function registerNewUser(
   favoriteGenres: string[],
   inviteCode: string
 ): RegisterResult {
-  const currentMasterCode = getSovereignInviteCode();
+  const currentMasterCode = getMeowInviteCode();
   const normalizedCode = inviteCode.trim().toLowerCase();
   if (normalizedCode !== currentMasterCode.toLowerCase()) {
     return {
       success: false,
-      message: `Invalid invite code. Access is restricted. Secret invite code '${currentMasterCode}' is required to register on this sovereign node.`
+      message: `Invalid invite code. Access is restricted. Secret invite code '${currentMasterCode}' is required to register on this meow node.`
     };
   }
 
@@ -155,7 +155,7 @@ export function registerNewUser(
     username: cleanUsername,
     displayName: displayName.trim() || cleanUsername,
     avatarEmoji: avatarEmoji || '🐱',
-    bio: bio.trim() || 'Sovereign library member.',
+    bio: bio.trim() || 'Meow library member.',
     role: role || 'Family Member',
     favoriteGenres: favoriteGenres.length > 0 ? favoriteGenres : ['LitRPG & Cultivation', 'Cozy Fantasy'],
     joinedDate: new Date().toISOString().split('T')[0],

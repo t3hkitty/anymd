@@ -30,7 +30,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
   const handleGenerateSidecar = () => {
     const blackBoxBook: Book = {
       id: `blackbox-manifest-${Date.now()}`,
-      title: 'Sovereign Black Box Architecture Manifest',
+      title: 'Meow Black Box Architecture Manifest',
       author: 'Black Box Protocol (meow.artkitty.net)',
       coverColor: '#09090b',
       sidecarMarkdown: manifestMd,
@@ -46,7 +46,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
           category: 'Black Box Spec',
           progressPercent: 100,
           paragraphIndex: 0,
-          paragraphSnippet: CURRENT_BLACK_BOX_SPEC.sovereignNodeId,
+          paragraphSnippet: CURRENT_BLACK_BOX_SPEC.meowNodeId,
           formattedDate: new Date().toLocaleDateString(),
           timestamp: new Date().toISOString()
         }
@@ -56,7 +56,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
           title: 'Black Box Manifest Overview',
           cfiBase: 'epubcfi(/6/2[ch1]!)',
           paragraphs: [
-            `Node ID: ${CURRENT_BLACK_BOX_SPEC.sovereignNodeId}`,
+            `Node ID: ${CURRENT_BLACK_BOX_SPEC.meowNodeId}`,
             `Protocol: ${CURRENT_BLACK_BOX_SPEC.blackBoxVersion}`,
             `Active Vault Modules: ${CURRENT_BLACK_BOX_SPEC.activeVaultModules.length}`
           ]
@@ -84,7 +84,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
               <Box className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-tight tracking-tight">Sovereign Black Box Architecture & Ecosystem Manifest</h3>
+              <h3 className="font-bold text-lg leading-tight tracking-tight">Meow Black Box Architecture & Ecosystem Manifest</h3>
               <p className="text-xs text-slate-400">Natural Expansion of Black Box Site &bull; 100% Opaque Data Storage &bull; Controlled Outbound Egress</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
             </div>
 
             <p className="text-slate-300 text-xs leading-relaxed font-sans">
-              LC-MD acts as a natural expansion of your Black Box Site. Inputs (EPUBs, room photos, wishlists) enter the Black Box, process locally on your hardware, and outputs (affiliate links, OPDS feeds) are strictly controlled by you.
+              Anymd acts as a natural expansion of your Black Box Site. Inputs (EPUBs, room photos, wishlists) enter the Black Box, process locally on your hardware, and outputs (affiliate links, OPDS feeds) are strictly controlled by you.
             </p>
           </div>
 
@@ -148,7 +148,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
                     <span className="truncate">{mod}</span>
                   </li>
                 ))}
-                <li className="text-[10px] text-slate-500 italic">+ 4 more sovereign modules</li>
+                <li className="text-[10px] text-slate-500 italic">+ 4 more meow modules</li>
               </ul>
             </div>
 
@@ -197,7 +197,7 @@ export const BlackBoxModal: React.FC<BlackBoxModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Black Box Engine &bull; {CURRENT_BLACK_BOX_SPEC.sovereignNodeId}
+            Meow Black Box Engine &bull; {CURRENT_BLACK_BOX_SPEC.meowNodeId}
           </span>
           <button
             onClick={handleGenerateSidecar}

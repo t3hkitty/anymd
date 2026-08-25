@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { SOVEREIGN_PRIVACY_AUDIT, generateAntiScraperHtaccess } from '../plugins/sovereignPrivacyPlugin';
+import { SOVEREIGN_PRIVACY_AUDIT, generateAntiScraperHtaccess } from '../plugins/meowPrivacyPlugin';
 import { X, ShieldCheck, Lock, Terminal, Copy, Check, EyeOff } from 'lucide-react';
 
-interface SovereignPrivacyShieldModalProps {
+interface MeowPrivacyShieldModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const SovereignPrivacyShieldModal: React.FC<SovereignPrivacyShieldModalProps> = ({
+export const MeowPrivacyShieldModal: React.FC<MeowPrivacyShieldModalProps> = ({
   isOpen,
   onClose,
 }) => {
@@ -34,7 +34,7 @@ export const SovereignPrivacyShieldModal: React.FC<SovereignPrivacyShieldModalPr
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-tight tracking-tight">Sovereign Data Vault & Zero-Telemetry Privacy Shield</h3>
+              <h3 className="font-bold text-lg leading-tight tracking-tight">Meow Data Vault & Zero-Telemetry Privacy Shield</h3>
               <p className="text-xs text-slate-400">100% Self-Hostable &bull; Zero Ad-Tech Telemetry &bull; Private Markdown Storage Only</p>
             </div>
           </div>
@@ -62,7 +62,7 @@ export const SovereignPrivacyShieldModal: React.FC<SovereignPrivacyShieldModalPr
             </div>
 
             <p className="text-slate-300 text-xs leading-relaxed font-sans">
-              "{SOVEREIGN_PRIVACY_AUDIT.sovereignPledge}"
+              "{SOVEREIGN_PRIVACY_AUDIT.meowPledge}"
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px] border-t border-emerald-500/20">
@@ -93,14 +93,14 @@ export const SovereignPrivacyShieldModal: React.FC<SovereignPrivacyShieldModalPr
                 <h4 className="font-bold text-slate-100 text-xs uppercase">No Ad-Tech Harvesting</h4>
               </div>
               <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
-                Corporate discovery platforms monetize your interests by selling read logs & wishlists to advertisers. LC-MD keeps 100% of your data on your local hardware.
+                Corporate discovery platforms monetize your interests by selling read logs & wishlists to advertisers. Anymd keeps 100% of your data on your local hardware.
               </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
               <div className="flex items-center space-x-2 text-indigo-400">
                 <Lock className="w-4 h-4" />
-                <h4 className="font-bold text-slate-100 text-xs uppercase">Self-Hostable Sovereignty</h4>
+                <h4 className="font-bold text-slate-100 text-xs uppercase">Self-Hostable Meowty</h4>
               </div>
               <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
                 Deploy to your own StackCP, Midphase, Linux Server, or Raspberry Pi. Sync via WebDAV, SSH, or local file system.
@@ -135,7 +135,7 @@ export const SovereignPrivacyShieldModal: React.FC<SovereignPrivacyShieldModalPr
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Privacy Shield & Zero-Telemetry Engine
+            Meow Privacy Shield & Zero-Telemetry Engine
           </span>
           <button
             onClick={onClose}

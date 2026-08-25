@@ -1,7 +1,7 @@
 /**
  * Storage Quota and Local Folder Upgrade Plugin
  * Monitors browser cache / IndexedDB / localStorage memory limits and prompts users
- * to mount a sovereign local folder or WebDAV drive when image data scales up.
+ * to mount a meow local folder or WebDAV drive when image data scales up.
  */
 
 export interface StorageQuotaStatus {
@@ -69,10 +69,10 @@ export async function calculateStorageUsage(vaultBooks?: any[]): Promise<Storage
 
   if (usedBytes > 30 * 1024 * 1024 || usagePercent > 85) {
     recommendation = 'critical';
-    promptMessage = `⚠️ Vault image cache is reaching high capacity (${formatBytes(usedBytes)}). Mount a Sovereign Local Folder (File System Access) or WebDAV drive to stream unlimited full-resolution scans without browser memory limits!`;
+    promptMessage = `⚠️ Vault image cache is reaching high capacity (${formatBytes(usedBytes)}). Mount a Meow Local Folder (File System Access) or WebDAV drive to stream unlimited full-resolution scans without browser memory limits!`;
   } else if (isNearingLimit) {
     recommendation = 'upgrade_prompt';
-    promptMessage = `💡 High-resolution scanned card/comic covers detected (${formatBytes(usedBytes)} in cache). Upgrade to a Sovereign Local Folder for zero-cache file persistence!`;
+    promptMessage = `💡 High-resolution scanned card/comic covers detected (${formatBytes(usedBytes)} in cache). Upgrade to a Meow Local Folder for zero-cache file persistence!`;
   }
 
   return {
@@ -90,7 +90,7 @@ export async function calculateStorageUsage(vaultBooks?: any[]): Promise<Storage
 /**
  * Native File System Access API helper: Mounts a real local OS directory
  */
-export async function mountSovereignLocalFolder(): Promise<{ success: boolean; folderName?: string; error?: string }> {
+export async function mountMeowLocalFolder(): Promise<{ success: boolean; folderName?: string; error?: string }> {
   if (typeof window === 'undefined' || !('showDirectoryPicker' in window)) {
     return {
       success: false,

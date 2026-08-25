@@ -288,7 +288,7 @@ export async function testWebDAVWritePermission(
     const res = await fetch('/api/webdav-proxy', {
       method: 'PUT',
       headers,
-      body: `LC-MD Write Permission Test Ping [${new Date().toISOString()}]`
+      body: `Anymd Write Permission Test Ping [${new Date().toISOString()}]`
     });
 
     if (res.ok || res.status === 201 || res.status === 204 || res.status === 200) {

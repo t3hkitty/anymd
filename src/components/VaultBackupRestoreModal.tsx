@@ -87,7 +87,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
 
   const handleUnlockZipWithPin = async () => {
     if (!zipEnteredPin.trim()) {
-      setZipPinError('Please enter the ZIP Sovereign PIN.');
+      setZipPinError('Please enter the ZIP Meow PIN.');
       return;
     }
     setZipPinError(null);
@@ -141,7 +141,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
           // Store raw lock content on handle
           dirHandle._lockContent = lockText;
           setLockStatus('locked');
-          setLockSuccess('Found encrypted .vault-session.lock file in this folder. Enter your Sovereign PIN to unlock.');
+          setLockSuccess('Found encrypted .vault-session.lock file in this folder. Enter your Meow PIN to unlock.');
         } catch {
           // No lockfile found
           setLockStatus('unsealed');
@@ -161,7 +161,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
   // 3. Unlock with PIN
   const handleUnlockWithPin = async () => {
     if (!userPin.trim()) {
-      setLockError('Please enter your 4-6 digit Sovereign PIN.');
+      setLockError('Please enter your 4-6 digit Meow PIN.');
       return;
     }
 
@@ -184,7 +184,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
       if (res.success) {
         setLockStatus('unlocked');
         setUnlockedSessionData(res.sessionData);
-        setLockSuccess('✓ Sovereign PIN verified! Session unlocked successfully.');
+        setLockSuccess('✓ Meow PIN verified! Session unlocked successfully.');
 
         if (res.sessionData?.books && Array.isArray(res.sessionData.books)) {
           onRestoreBooks(res.sessionData.books, false);
@@ -214,7 +214,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
       const lockPayload = await createVaultLockPayload(userPin, {
         books: allBooks,
         activeBookId: activeBookId,
-        vaultName: `${selectedFolderName || 'Sovereign'} Vault`,
+        vaultName: `${selectedFolderName || 'Meow'} Vault`,
         cloudAccounts: cloudAccounts
       });
 
@@ -318,7 +318,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                   <Upload className="w-8 h-8" />
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-sm text-slate-100">Select or Drop Sovereign Vault ZIP Backup</h4>
+                  <h4 className="font-extrabold text-sm text-slate-100">Select or Drop Meow Vault ZIP Backup</h4>
                   <p className="text-xs text-slate-400 font-sans mt-1">
                     Extracts all <code className="text-amber-300">/Sidecars/*.companion.md</code> sidecars, <code className="text-indigo-300">/media/</code> cropped card covers, and reaction logs.
                   </p>
@@ -357,7 +357,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                     </span>
                   </div>
 
-                  {/* 🔐 ZIP Sovereign PIN Status & Verification Block */}
+                  {/* 🔐 ZIP Meow PIN Status & Verification Block */}
                   {zipResult.isPinProtected ? (
                     <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 space-y-2.5">
                       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -401,7 +401,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                     </div>
                   ) : (
                     <div className="px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                      <span>Standard Sovereign Archive (No PIN lockfile required)</span>
+                      <span>Standard Meow Archive (No PIN lockfile required)</span>
                       <span className="text-emerald-400 font-bold">✓ Ready for Direct Restore</span>
                     </div>
                   )}
@@ -524,7 +524,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                   {lockStatus === 'unlocked' && unlockedSessionData && (
                     <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-emerald-200 space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs">{unlockedSessionData.vaultName || 'Sovereign Vault Session'}</span>
+                        <span className="font-bold text-xs">{unlockedSessionData.vaultName || 'Meow Vault Session'}</span>
                         <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
                           {unlockedSessionData.books?.length || unlockedSessionData.totalBooks || 0} Items Decrypted
                         </span>
@@ -538,7 +538,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                   {/* PIN Input & Action Buttons */}
                   {lockStatus === 'locked' && (
                     <div className="space-y-3 pt-2">
-                      <label className="text-xs text-slate-300 font-bold block">Enter 4-6 Digit Sovereign PIN to Restore Session:</label>
+                      <label className="text-xs text-slate-300 font-bold block">Enter 4-6 Digit Meow PIN to Restore Session:</label>
                       <div className="flex gap-2">
                         <input
                           type="password"
@@ -562,7 +562,7 @@ export const VaultBackupRestoreModal: React.FC<VaultBackupRestoreModalProps> = (
                   {lockStatus === 'unsealed' && (
                     <div className="space-y-3 pt-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs text-slate-300 font-bold block">Set a Sovereign PIN to Seal this Folder:</label>
+                        <label className="text-xs text-slate-300 font-bold block">Set a Meow PIN to Seal this Folder:</label>
                         {cloudAccounts.length > 0 && (
                           <span className="text-[10px] text-cyan-300 flex items-center space-x-1 font-mono">
                             <Cloud className="w-3 h-3 text-cyan-400" />

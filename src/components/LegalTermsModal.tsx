@@ -122,7 +122,7 @@ export const LegalTermsModal: React.FC<LegalTermsModalProps> = ({
             })}
           </div>
 
-          {/* Sovereign Local-First Privacy Certification Note */}
+          {/* Meow Local-First Privacy Certification Note */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 border border-emerald-500/30 text-emerald-200 text-xs font-mono flex items-center space-x-2">
             <Info className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>

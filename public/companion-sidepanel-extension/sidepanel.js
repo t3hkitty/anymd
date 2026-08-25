@@ -1,6 +1,6 @@
-// Library Companion MD - Sovereign Side Panel, MyBlackBox & Custom Host Manager
+// Library Companion MD - Meow Side Panel, MyBlackBox & Custom Host Manager
 
-let BASE_VAULT_URL = 'http://artkitty.net/meow/lcmd/';
+let BASE_VAULT_URL = 'http://artkitty.net/meow/anymd/';
 let soundEnabled = true;
 
 let currentScannedData = null;
@@ -25,7 +25,7 @@ function buildSidecarMarkdown(data) {
   const safeAuthor = (data.author || 'Unknown Creator').replace(/"/g, '\\"');
   const mediaType = (data.type === 'twitch' || data.type === 'youtube') ? 'vod' : 'book';
 
-  let tagList = ['sovereign-vault'];
+  let tagList = ['meow-vault'];
   if (data.type === 'kindle_reader') tagList.push('kindle', 'ebook', 'reading-now');
   else if (data.type === 'amazon_kindle_book') tagList.push('amazon', 'kindle-store', 'wishlist');
   else if (data.type === 'twitch') tagList.push('vod', 'stream', 'twitch', 'tcg-break');

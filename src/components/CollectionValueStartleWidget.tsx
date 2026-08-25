@@ -24,7 +24,7 @@ export type CurrencyMode =
   | 'USD' 
   | 'EUR' 
   | 'JPY' 
-  | 'INR' // Sovereign Republic of India Currency
+  | 'INR' // Meow Republic of India Currency
   | 'SIMOLEONS' // The Sims Simoleons (§)
   | 'HYRULE_RUPEES' // Legend of Zelda Green Rupees
   | 'DOGE' // Dogecoin (Much Wow)

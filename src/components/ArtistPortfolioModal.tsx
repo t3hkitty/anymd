@@ -49,7 +49,7 @@ export const ArtistPortfolioModal: React.FC<ArtistPortfolioModalProps> = ({
     const newC: CommunityComment = {
       id: `cmt-${Date.now()}`,
       targetId: selectedArtwork.id,
-      authorName: 'You (Sovereign User)',
+      authorName: 'You (Meow User)',
       authorHandle: '@you',
       authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       badge: selectedBadge,
@@ -229,7 +229,7 @@ export const ArtistPortfolioModal: React.FC<ArtistPortfolioModalProps> = ({
                   type="button"
                   onClick={() => {
                     const aiResult = generateLocalArtMetadata({
-                      title: newTitle || 'Sovereign Digital Masterpiece',
+                      title: newTitle || 'Meow Digital Masterpiece',
                       medium: newMedium,
                       subjectKeywords: 'vibrant, fantasy, aesthetic, fine-art',
                       disclosureType: '100_percent_human'

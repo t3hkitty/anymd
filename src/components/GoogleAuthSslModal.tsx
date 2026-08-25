@@ -86,7 +86,7 @@ export const GoogleAuthSslModal: React.FC<GoogleAuthSslModalProps> = ({
                 <span className="font-extrabold text-sky-200 text-sm">Google Auth Enforces HTTPS SSL Encryption</span>
               </div>
               <p className="text-slate-300 text-[11px] font-sans">
-                Google OAuth 2.0 requires HTTPS for all production domains (<code className="text-sky-300">https://meow.artkitty.net/lcmd/</code>). StackCP Auto-SSL & Let's Encrypt certificates protect user sessions.
+                Google OAuth 2.0 requires HTTPS for all production domains (<code className="text-sky-300">https://meow.artkitty.net/anymd/</code>). StackCP Auto-SSL & Let's Encrypt certificates protect user sessions.
               </p>
             </div>
 

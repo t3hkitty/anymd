@@ -76,7 +76,7 @@ export const INITIAL_FAMILY_FEED: FamilyActivityItem[] = [
     friendAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     action: 'completed_book',
     bookTitle: 'The Crafting of Chess',
-    content: '🎉 Finished reading all chapters! Rated 5/5 stars on sovereign sidecar!',
+    content: '🎉 Finished reading all chapters! Rated 5/5 stars on meow sidecar!',
     timestamp: '1 hour ago',
     reactions: [
       { emoji: '👑', count: 2, reactedBy: ['Wife'] },

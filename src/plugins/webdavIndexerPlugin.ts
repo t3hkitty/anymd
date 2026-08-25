@@ -1,6 +1,6 @@
 import type { Book } from '../types/resonance';
 import type { CloudAccount } from '../types/cloudAccounts';
-import { cleanSovereignFilename } from '../utils/pathResolver';
+import { cleanMeowFilename } from '../utils/pathResolver';
 
 export interface WebDAVFileItem {
   filename: string;
@@ -136,8 +136,8 @@ export async function fetchWebDAVDirectoryItems(
         const authHeader = `Basic ${btoa(credentials)}`;
 
         const proxyRes = await fetch(
-          (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
-            ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+          (typeof window !== 'undefined' && window.location.pathname.includes('/anymd'))
+            ? `${window.location.pathname.split('/anymd')[0]}/anymd/api/webdav-proxy.php`
             : '/api/webdav-proxy',
           {
             method: 'PROPFIND',
@@ -163,8 +163,8 @@ export async function fetchWebDAVDirectoryItems(
     // TorBox REST API v1 via Server Proxy
     try {
       const items: WebDAVFileItem[] = [];
-      const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
-        ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+      const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/anymd'))
+        ? `${window.location.pathname.split('/anymd')[0]}/anymd/api/webdav-proxy.php`
         : '/api/webdav-proxy';
 
       // 1. Fetch torrents and inner files
@@ -249,8 +249,8 @@ export async function fetchWebDAVDirectoryItems(
   }
 
   try {
-    const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd'))
-      ? `${window.location.pathname.split('/lcmd')[0]}/lcmd/api/webdav-proxy.php`
+    const proxyUrl = (typeof window !== 'undefined' && window.location.pathname.includes('/anymd'))
+      ? `${window.location.pathname.split('/anymd')[0]}/anymd/api/webdav-proxy.php`
       : '/api/webdav-proxy';
 
     const proxyRes = await fetch(proxyUrl, {
@@ -378,7 +378,7 @@ export function generateWebDAVDirectoryMarkdownIndex(
 
   files.forEach(f => {
     const icon = f.isDir ? '📁' : f.filename.endsWith('.epub') ? '📖' : '📄';
-    const cleanName = cleanSovereignFilename(f.filename);
+    const cleanName = cleanMeowFilename(f.filename);
     md += `- ${icon} **[${cleanName}](${serverUrl.replace(/\/$/, '')}/${dirPath.replace(/^\//, '')}/${f.filename})** (${(f.size / 1024).toFixed(1)} KB)\n`;
   });
 
@@ -389,7 +389,7 @@ export function convertWebDAVFilesToBooks(files: WebDAVFileItem[], relLinkRoot: 
   const ebookFiles = files.filter(f => !f.isDir);
 
   return ebookFiles.map((f, idx) => {
-    const title = cleanSovereignFilename(f.filename.replace(/\.(epub|pdf|txt|md)$/i, ''));
+    const title = cleanMeowFilename(f.filename.replace(/\.(epub|pdf|txt|md)$/i, ''));
     return {
       id: `webdav-${idx}-${Date.now()}`,
       title,
@@ -408,7 +408,7 @@ export function convertWebDAVFilesToBooks(files: WebDAVFileItem[], relLinkRoot: 
           formattedDate: new Date().toLocaleTimeString(),
           progressPercent: 5,
           cfi: 'epubcfi(/6/4!/4/2/2/1:0)',
-          chapterTitle: 'Chapter 1: Sovereign Cloud Intake',
+          chapterTitle: 'Chapter 1: Meow Cloud Intake',
           paragraphIndex: 0,
           paragraphSnippet: `Streamed directly from Filejump WebDAV storage file: ${f.filename}.`,
           notes: 'Auto-indexed via Library Companion MD WebDAV Engine'
@@ -417,7 +417,7 @@ export function convertWebDAVFilesToBooks(files: WebDAVFileItem[], relLinkRoot: 
       sidecarMarkdown: `# Companion Sidecar: ${title}\n- **Relative Root:** \`${relLinkRoot}\`\n- **Remote Source:** Filejump WebDAV\n\n## Reader Resonance Stream\n- **[${new Date().toLocaleTimeString()} | 5%] [Category: Diaper Emergency]** *Indexed from Filejump WebDAV: ${f.filename}*\n`,
       chapters: [
         {
-          title: 'Chapter 1: Sovereign Cloud Intake',
+          title: 'Chapter 1: Meow Cloud Intake',
           cfiBase: `epubcfi(/6/${(idx + 1) * 4}[webdav0${idx + 1}]!`,
           paragraphs: [
             `Streamed directly from Filejump WebDAV storage file: ${f.filename}.`,

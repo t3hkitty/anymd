@@ -305,13 +305,13 @@ export const ArtistAiStudioModal: React.FC<ArtistAiStudioModalProps> = ({
                       </div>
                     </div>
 
-                    {/* Save to Sovereign Vault Button */}
+                    {/* Save to Meow Vault Button */}
                     <button
                       onClick={handleSaveToVault}
                       className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all"
                     >
                       {savedSuccess ? <Check className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                      <span>{savedSuccess ? 'Sidecar Saved to Grand Bookcase!' : '💾 Ingest as Sovereign .companion.md Sidecar'}</span>
+                      <span>{savedSuccess ? 'Sidecar Saved to Grand Bookcase!' : '💾 Ingest as Meow .companion.md Sidecar'}</span>
                     </button>
 
                   </div>
@@ -457,13 +457,13 @@ export const ArtistAiStudioModal: React.FC<ArtistAiStudioModalProps> = ({
                       </div>
                     </div>
 
-                    {/* Save to Sovereign Vault Button */}
+                    {/* Save to Meow Vault Button */}
                     <button
                       onClick={handleSaveToVault}
                       className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all"
                     >
                       {savedSuccess ? <Check className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                      <span>{savedSuccess ? 'Story Sidecar Saved to Vault!' : '💾 Ingest as Sovereign .companion.md Sidecar'}</span>
+                      <span>{savedSuccess ? 'Story Sidecar Saved to Vault!' : '💾 Ingest as Meow .companion.md Sidecar'}</span>
                     </button>
 
                   </div>
@@ -484,7 +484,7 @@ export const ArtistAiStudioModal: React.FC<ArtistAiStudioModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between font-sans">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Creator AI Studio &bull; 100% Local Browser Engine &bull; Redbubble &amp; Webnovels
+            Meow Creator AI Studio &bull; 100% Local Browser Engine &bull; Redbubble &amp; Webnovels
           </span>
           <button
             onClick={onClose}

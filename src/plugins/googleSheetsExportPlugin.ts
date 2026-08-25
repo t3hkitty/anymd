@@ -26,7 +26,7 @@ export function exportVaultToGoogleSheetsCsv(books: Book[]): string {
 
   const rows = books.map(b => {
     const tagsMatch = b.sidecarMarkdown.match(/tags:\s*\[(.*?)\]/);
-    const tags = tagsMatch ? tagsMatch[1].replace(/["']/g, '') : 'sovereign, webdav';
+    const tags = tagsMatch ? tagsMatch[1].replace(/["']/g, '') : 'meow, webdav';
     const isbnMatch = b.sidecarMarkdown.match(/isbn13:\s*["']?(.*?)["']?\n/);
     const locMatch = b.sidecarMarkdown.match(/loc_classification:\s*["']?(.*?)["']?\n/);
 

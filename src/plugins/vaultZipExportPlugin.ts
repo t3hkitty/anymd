@@ -6,7 +6,7 @@ import { slugifyTitle } from './zettelkastenSerialPlugin';
 import { createVaultLockPayload } from './vaultSessionLockPlugin';
 
 /**
- * Exports the entire Sovereign Vault as a structured ZIP archive
+ * Exports the entire Meow Vault as a structured ZIP archive
  * with a separate /media/ folder containing all cropped card covers, 
  * uncropped original full-size sheet uploads, reaction attachments,
  * optional cloud accounts configuration, and embedded PIN lockfile.
@@ -150,7 +150,7 @@ export async function exportVaultZipWithMedia(
       const lockPayload = await createVaultLockPayload(zipPin.trim(), {
         books,
         cloudAccounts,
-        vaultName: 'Sovereign Vault Archive'
+        vaultName: 'Meow Vault Archive'
       });
       zip.file('.vault-session.lock', lockPayload);
     } catch (e) {

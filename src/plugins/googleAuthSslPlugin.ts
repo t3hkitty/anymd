@@ -13,7 +13,7 @@ export const DEFAULT_GOOGLE_AUTH_SSL_CONFIG: GoogleAuthSslConfig = {
   googleClientSecret: 'GOCSPX-YourGoogleClientSecretHere',
   allowedEmails: ['lorik@artkitty.net', 'wife@artkitty.net', 'family@artkitty.net'],
   httpsDomain: 'https://meow.artkitty.net',
-  redirectUri: 'https://meow.artkitty.net/lcmd/',
+  redirectUri: 'https://meow.artkitty.net/anymd/',
   sslProvider: 'stackcp_autossl',
   isHttpsEnforced: true
 };
@@ -45,7 +45,7 @@ export function generateGoogleCloudConsoleConfig(config: GoogleAuthSslConfig = g
 
 2. Authorized Redirect URIs (HTTPS Required by Google):
    ${config.redirectUri}
-   ${config.httpsDomain}/lcmd/auth/google/callback
+   ${config.httpsDomain}/anymd/auth/google/callback
 
 3. Allowed Family Google Accounts Whitelist:
    ${config.allowedEmails.map(e => `- ${e}`).join('\n   ')}
@@ -54,7 +54,7 @@ export function generateGoogleCloudConsoleConfig(config: GoogleAuthSslConfig = g
 
 export function generateHttpsEnforcementHtaccess(_config: GoogleAuthSslConfig = getSavedGoogleAuthSslConfig()): string {
   return `# Apache HTTPS / SSL Enforcement + Google OAuth & mTLS Rewrite Rules
-# Path: /public_html/meow/lcmd/.htaccess
+# Path: /public_html/meow/anymd/.htaccess
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -63,11 +63,11 @@ export function generateHttpsEnforcementHtaccess(_config: GoogleAuthSslConfig = 
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-  RewriteBase /meow/lcmd/
+  RewriteBase /meow/anymd/
   RewriteRule ^index\\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /meow/lcmd/index.html [L]
+  RewriteRule . /meow/anymd/index.html [L]
 </IfModule>
 `;
 }

@@ -92,7 +92,7 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 
   // 7. VOD & Video Stream State
   const [vodUrl, setVodUrl] = useState('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
-  const [vodTitle, setVodTitle] = useState('Deep Work Sovereign Livestream & Architecture Review');
+  const [vodTitle, setVodTitle] = useState('Deep Work Meow Livestream & Architecture Review');
   const [vodCreator, setVodCreator] = useState('Antigravity Streamer');
   const [vodPlatform, setVodPlatform] = useState<VodPlatform>('youtube');
   const [vodDuration, setVodDuration] = useState('01:45:20');
@@ -494,7 +494,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
 
   const handleUnlockZipPin = async () => {
     if (!zipEnteredPin.trim() || !zipResult) {
-      setZipPinError('Please enter your 4-digit Sovereign PIN.');
+      setZipPinError('Please enter your 4-digit Meow PIN.');
       return;
     }
     setZipPinError(null);
@@ -509,10 +509,10 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
         } else if (zipResult.cloudAccounts && onRestoreCloudAccounts) {
           onRestoreCloudAccounts(zipResult.cloudAccounts);
         }
-        alert(`✓ Sovereign PIN Verified! Successfully unlocked and restored ${zipResult.importedCount} vault items and accounts!`);
+        alert(`✓ Meow PIN Verified! Successfully unlocked and restored ${zipResult.importedCount} vault items and accounts!`);
         onClose();
       } else {
-        setZipPinError(unlockRes.error || 'Incorrect Sovereign PIN.');
+        setZipPinError(unlockRes.error || 'Incorrect Meow PIN.');
       }
     } else {
       setZipPinUnlocked(true);
@@ -520,7 +520,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
       if (zipResult.cloudAccounts && onRestoreCloudAccounts) {
         onRestoreCloudAccounts(zipResult.cloudAccounts);
       }
-      alert(`✓ Sovereign PIN Verified! Successfully restored ${zipResult.importedCount} vault items and accounts!`);
+      alert(`✓ Meow PIN Verified! Successfully restored ${zipResult.importedCount} vault items and accounts!`);
       onClose();
     }
   };
@@ -543,7 +543,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     });
 
     onImportBooks([book], 'vod-import');
-    alert(`✓ Successfully imported "${vodTitle}" into Sovereign Vault!`);
+    alert(`✓ Successfully imported "${vodTitle}" into Meow Vault!`);
     onClose();
   };
 
@@ -711,7 +711,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                   <span>Bulk Room &amp; Cabinet Home Insurance Asset Inventory</span>
                 </span>
                 <p className="text-slate-300 text-xs leading-relaxed">
-                  Bulk photo scanner for physical asset protection. Scan photos of your study, bookcases, comic cabinets, and wardrobes to automatically generate replacement valuation records for your sovereign insurance vault.
+                  Bulk photo scanner for physical asset protection. Scan photos of your study, bookcases, comic cabinets, and wardrobes to automatically generate replacement valuation records for your meow insurance vault.
                 </p>
               </div>
 
@@ -1121,10 +1121,10 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
               <div className="p-4 rounded-2xl bg-red-950/30 border border-red-500/30 space-y-2 font-sans">
                 <span className="font-bold text-red-300 flex items-center space-x-1.5 text-xs font-mono">
                   <Tv className="w-4 h-4 text-red-400" />
-                  <span>Sovereign VOD &amp; Livestream Stream Archive Ingest</span>
+                  <span>Meow VOD &amp; Livestream Stream Archive Ingest</span>
                 </span>
                 <p className="text-slate-300 text-xs leading-relaxed">
-                  Catalog YouTube recordings, Twitch VODs, Kick streams, Vimeo videos, or TorBox Debrid streams into sovereign markdown companion sidecars with timestamped chapter markers.
+                  Catalog YouTube recordings, Twitch VODs, Kick streams, Vimeo videos, or TorBox Debrid streams into meow markdown companion sidecars with timestamped chapter markers.
                 </p>
               </div>
 
@@ -1260,7 +1260,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
               <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 space-y-2 font-sans">
                 <span className="font-bold text-amber-300 flex items-center space-x-1.5 text-xs font-mono">
                   <Archive className="w-4 h-4 text-amber-400" />
-                  <span>Sovereign Vault ZIP Archive Full Restore</span>
+                  <span>Meow Vault ZIP Archive Full Restore</span>
                 </span>
                 <p className="text-slate-300 text-xs leading-relaxed">
                   Extracts full library archives containing <code>/Sidecars/*.companion.md</code> markdown files, <code>/media/</code> cropped card covers, and reaction streams.
@@ -1287,7 +1287,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                         PIN-Protected Vault Archive Detected {zipResult.pinHint ? `(Hint: ${zipResult.pinHint})` : ''}
                       </h4>
                       <p className="text-xs text-slate-300 mt-0.5">
-                        This archive contains <span className="text-amber-300 font-bold">{zipResult.importedCount} books</span>, <span className="text-indigo-300 font-bold">{zipResult.mediaRestoredCount} images</span>, and encrypted cloud accounts. Enter your 4-digit Sovereign PIN to unlock.
+                        This archive contains <span className="text-amber-300 font-bold">{zipResult.importedCount} books</span>, <span className="text-indigo-300 font-bold">{zipResult.mediaRestoredCount} images</span>, and encrypted cloud accounts. Enter your 4-digit Meow PIN to unlock.
                       </p>
                     </div>
                   </div>
@@ -1319,7 +1319,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                 <div className="p-8 border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-3xl text-center space-y-3 bg-slate-950/60 transition-all">
                   <Archive className="w-12 h-12 text-amber-400 mx-auto" />
                   <div>
-                    <h4 className="font-bold text-sm text-slate-100">Select Sovereign Vault Backup ZIP</h4>
+                    <h4 className="font-bold text-sm text-slate-100">Select Meow Vault Backup ZIP</h4>
                     <p className="text-xs text-slate-400 mt-1">Unpacks sidecars, media assets, and validates PIN security lockfile.</p>
                   </div>
                   <button

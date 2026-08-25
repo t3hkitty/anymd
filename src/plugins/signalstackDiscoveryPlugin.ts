@@ -2,7 +2,7 @@
  * SignalStack Discovery Engine Plugin
  * - Keyword Subscriptions
  * - One Shade Off Lateral Expansion
- * - Directly generates LCMD Sidecar `.companion.md` data structures
+ * - Directly generates Anymd Sidecar `.companion.md` data structures
  */
 
 import type { Book } from '../types/resonance';
@@ -13,7 +13,7 @@ export interface KeywordSubscription {
 }
 
 export const DEFAULT_KEYWORD_SUBSCRIPTIONS: KeywordSubscription[] = [
-  { keyword: "Zettelkasten", tags: ["#pkm", "#zettelkasten", "#lcmd"] },
+  { keyword: "Zettelkasten", tags: ["#pkm", "#zettelkasten", "#anymd"] },
   { keyword: "Distributed Systems", tags: ["#engineering", "#systems", "#architecture"] },
   { keyword: "Webnovel Archiving", tags: ["#media", "#calibre", "#preservation"] },
   { keyword: "Tactile Audio Synthesis", tags: ["#synth", "#sound-design", "#hardware"] }
@@ -47,7 +47,7 @@ export function processDiscoveryFeedIntoBooks(feed: DiscoveryFeedItem[], subs = 
     const lateralTopic = getLateralPivot(matchedSub.keyword);
     const timestamp = new Date().toISOString();
     
-    // Create a synthesized LCMD Book/Sidecar object
+    // Create a synthesized Anymd Book/Sidecar object
     return {
       id: `signalstack-${Date.now()}-${idx}`,
       title: item.title,

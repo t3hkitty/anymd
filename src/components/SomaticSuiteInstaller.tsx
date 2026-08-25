@@ -80,7 +80,7 @@ export const SomaticSuiteInstaller: React.FC = () => {
 
   return (
     <WidgetPanel 
-      title="🌸 Somatic Sovereignty Master Suite" 
+      title="🌸 Somatic Meowty Master Suite" 
       badge="⚙️ SUITE BUILDER"
       className="border-4 border-black shadow-[4px_4px_0_#000] bg-[#faf5ff] p-4 rounded-none max-w-lg"
     >

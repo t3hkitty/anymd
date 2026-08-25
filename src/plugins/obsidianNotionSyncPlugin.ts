@@ -18,7 +18,7 @@ export function convertToObsidianVaultFormat(book: Book, relLinkRoot: string = '
   md += `---\n\n`;
 
   md += `# ${formatZettelkastenLink(serial, book.title)}\n\n`;
-  md += `> [!info] Sovereign Companion Sidecar [ZK: \`${serial}\`]\n`;
+  md += `> [!info] Meow Companion Sidecar [ZK: \`${serial}\`]\n`;
   md += `> **Author:** [[${book.author}]]\n`;
   md += `> **Zettelkasten Serial:** \`${serial}\`\n`;
   md += `> **File Identifier:** \`${serial}-${slug}.md\`\n`;

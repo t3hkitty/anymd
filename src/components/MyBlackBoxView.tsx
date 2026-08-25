@@ -206,12 +206,12 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
           </button>
 
           <button
-            onClick={() => window.location.href = './lcmd/'}
+            onClick={() => window.location.href = './'}
             className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center space-x-1.5"
             title="Open Full myBlackbox Microlog Dashboard with 23 Customizable Panels & Layout Manager"
           >
             <span>🧹</span>
-            <span>Layout &amp; Panels (/lcmd/)</span>
+            <span>Layout &amp; Panels (/anymd/)</span>
           </button>
 
           <button
@@ -572,7 +572,7 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
                   Total Wake Lead-Time Required: {totalCalculatedWakeLeadTime} minutes
                 </span>
                 <button
-                  onClick={() => TtsDirectorAudio.speakCue(morningSettings.ttsAlarmGreeting || "Wake up sovereign operator!", undefined, 1.0)}
+                  onClick={() => TtsDirectorAudio.speakCue(morningSettings.ttsAlarmGreeting || "Wake up meow operator!", undefined, 1.0)}
                   className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center space-x-1.5 shadow-md"
                 >
                   <Volume2 className="w-4 h-4" />
@@ -587,7 +587,7 @@ export const MyBlackBoxView: React.FC<MyBlackBoxViewProps> = ({
         {activeTab === 'spec' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white font-mono">Sovereign Isolation Spec &amp; Dataflow</h3>
+              <h3 className="text-base font-bold text-white font-mono">Meow Isolation Spec &amp; Dataflow</h3>
               <button
                 onClick={handleCopyManifest}
                 className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold font-mono flex items-center space-x-1 border border-slate-700"

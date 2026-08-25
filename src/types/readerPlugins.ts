@@ -1,6 +1,6 @@
 import type { ResonanceEntry } from './resonance';
 
-export type ReaderEngineId = 'sovereign-canvas' | 'e-ink-focus' | 'koreader-web';
+export type ReaderEngineId = 'meow-canvas' | 'e-ink-focus' | 'koreader-web';
 
 export interface ReaderEnginePlugin {
   id: ReaderEngineId;

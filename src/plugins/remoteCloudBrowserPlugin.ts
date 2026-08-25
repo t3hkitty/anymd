@@ -36,9 +36,9 @@ export async function proxyFetch(
   let proxyUrl = '/api/webdav-proxy';
   let httpMethod = method;
 
-  if (typeof window !== 'undefined' && window.location.pathname.includes('/lcmd')) {
-    const basePath = window.location.pathname.split('/lcmd')[0];
-    proxyUrl = `${basePath}/lcmd/api/webdav-proxy.php`;
+  if (typeof window !== 'undefined' && window.location.pathname.includes('/anymd')) {
+    const basePath = window.location.pathname.split('/anymd')[0];
+    proxyUrl = `${basePath}/anymd/api/webdav-proxy.php`;
     if (method === 'PROPFIND' || method === 'MKCOL') {
       httpMethod = 'POST';
     }

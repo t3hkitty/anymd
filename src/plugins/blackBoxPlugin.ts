@@ -1,6 +1,6 @@
 export interface BlackBoxVaultSpec {
   blackBoxVersion: string;
-  sovereignNodeId: string;
+  meowNodeId: string;
   isBlackBoxIsolated: boolean;
   activeVaultModules: string[];
   inputStreams: string[];
@@ -9,11 +9,11 @@ export interface BlackBoxVaultSpec {
 }
 
 export const CURRENT_BLACK_BOX_SPEC: BlackBoxVaultSpec = {
-  blackBoxVersion: 'v4.0 Sovereign Black Box Protocol',
-  sovereignNodeId: 'node-blackbox-meow-artkitty-2026',
+  blackBoxVersion: 'v4.0 Meow Black Box Protocol',
+  meowNodeId: 'node-blackbox-meow-artkitty-2026',
   isBlackBoxIsolated: true,
   activeVaultModules: [
-    'Sovereign Grand Bookcase & EPUB Reader',
+    'Meow Grand Bookcase & EPUB Reader',
     'Artist Portfolio & Creator Profiles (Redbubble, INPRNT, Etsy)',
     'Binder Sheet Card Scanner & TCG Grails',
     'Home Insurance Asset Inventory & Replacement Claims',
@@ -39,25 +39,25 @@ export const CURRENT_BLACK_BOX_SPEC: BlackBoxVaultSpec = {
 
 export function generateBlackBoxManifestMarkdown(spec: BlackBoxVaultSpec = CURRENT_BLACK_BOX_SPEC): string {
   return `---
-title: "Sovereign Black Box Architecture Manifest"
-node_id: "${spec.sovereignNodeId}"
+title: "Meow Black Box Architecture Manifest"
+node_id: "${spec.meowNodeId}"
 version: "${spec.blackBoxVersion}"
 isolation_status: "${spec.isBlackBoxIsolated ? '100% ISOLATED BLACK BOX' : 'CONNECTED'}"
 format: "dcmd/black-box-manifest"
 timestamp: "${spec.blackBoxManifestTimestamp}"
 ---
 
-# ⬛ Sovereign Black Box Ecosystem Manifest
+# ⬛ Meow Black Box Ecosystem Manifest
 
 > **Natural Expansion of the Black Box Site**: A private, tamper-proof digital vault where personal data, discovery lists, and curation portfolios remain 100% opaque to outside corporate scrapers and ad-tech tracking networks.
 
 ## 📥 Inbound Input Streams (Black Box Ingest)
 ${spec.inputStreams.map(i => `- **[Ingest]**: ${i}`).join('\n')}
 
-## 📦 Active Sovereign Vault Modules
+## 📦 Active Meow Vault Modules
 ${spec.activeVaultModules.map(m => `- **[Module]**: ${m}`).join('\n')}
 
-## 📤 Controlled Outbound Output Streams (Sovereign Egress)
+## 📤 Controlled Outbound Output Streams (Meow Egress)
 ${spec.outputStreams.map(o => `- **[Egress]**: ${o}`).join('\n')}
 `;
 }

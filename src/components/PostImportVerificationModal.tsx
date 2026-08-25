@@ -67,11 +67,11 @@ export const PostImportVerificationModal: React.FC<PostImportVerificationModalPr
         sidecarMarkdown: mdBody,
         chapters: [
           {
-            title: 'Chapter 1: Sovereign Workspace',
+            title: 'Chapter 1: Meow Workspace',
             cfiBase: `epubcfi(/6/${(idx + 1) * 4}[imp0${idx + 1}]!`,
             paragraphs: [
               `Verified reading list entry for ${item.title} by ${item.author}.`,
-              `Sovereign relative link root configured to ${targetRelRoot}.`
+              `Meow relative link root configured to ${targetRelRoot}.`
             ]
           }
         ]

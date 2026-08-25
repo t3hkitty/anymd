@@ -1,7 +1,7 @@
 {
-  "name": "Library Companion MD - Sovereign Discovery Vault",
-  "short_name": "LC-MD",
-  "description": "Local-first sovereign library companion, discovery vault, and 3D Grand Bookcase with Web Share Target mobile import.",
+  "name": "Library Companion MD - Meow Discovery Vault",
+  "short_name": "Anymd",
+  "description": "Local-first meow library companion, discovery vault, and 3D Grand Bookcase with Web Share Target mobile import.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -30,7 +30,7 @@
     {
       "name": "Grand Bookcase",
       "short_name": "Library",
-      "description": "Open your sovereign Grand Bookcase library",
+      "description": "Open your meow Grand Bookcase library",
       "url": "./#library",
       "icons": [{ "src": "favicon.svg", "sizes": "any" }]
     },

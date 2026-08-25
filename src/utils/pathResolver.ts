@@ -1,8 +1,8 @@
 /**
- * Sanitizes book/author titles to clean sovereign file paths.
+ * Sanitizes book/author titles to clean meow file paths.
  * Strips Calibre-style parentheses numbers e.g. "Dune (1249)" -> "Dune"
  */
-export function cleanSovereignFilename(input: string): string {
+export function cleanMeowFilename(input: string): string {
   if (!input) return 'Untitled';
   return input
     .replace(/\s*\(\d+\)\s*/g, '') // remove numbers in parentheses like (1249)
@@ -10,12 +10,12 @@ export function cleanSovereignFilename(input: string): string {
 }
 
 /**
- * Normalizes a file path to clean sovereign Markdown format.
+ * Normalizes a file path to clean meow Markdown format.
  * Author/Title/Title.epub
  */
-export function buildSovereignBookPath(author: string, title: string, extension: string = 'epub'): string {
-  const cleanAuth = cleanSovereignFilename(author).replace(/[^a-zA-Z0-9\s_-]/g, '').trim();
-  const cleanTitle = cleanSovereignFilename(title).replace(/[^a-zA-Z0-9\s_-]/g, '').trim();
+export function buildMeowBookPath(author: string, title: string, extension: string = 'epub'): string {
+  const cleanAuth = cleanMeowFilename(author).replace(/[^a-zA-Z0-9\s_-]/g, '').trim();
+  const cleanTitle = cleanMeowFilename(title).replace(/[^a-zA-Z0-9\s_-]/g, '').trim();
   return `${cleanAuth || 'Unknown_Author'}/${cleanTitle || 'Untitled_Book'}.${extension}`;
 }
 
@@ -25,8 +25,8 @@ export function buildSovereignBookPath(author: string, title: string, extension:
  */
 export function resolveMoonPlusLink(relRoot: string, author: string, title: string, filename: string): string {
   const cleanRoot = (relRoot || './Library').replace(/\/+$/, '');
-  const cleanAuth = cleanSovereignFilename(author);
-  const cleanTitle = cleanSovereignFilename(title);
+  const cleanAuth = cleanMeowFilename(author);
+  const cleanTitle = cleanMeowFilename(title);
   
   return `${cleanRoot}/${cleanAuth}/${cleanTitle}/${filename}`;
 }
@@ -40,8 +40,8 @@ export function buildCompanionSidecarHeader(
   relRoot: string,
   extraMetadata?: Record<string, string | number | string[]>
 ): string {
-  const cleanT = cleanSovereignFilename(title);
-  const cleanA = cleanSovereignFilename(author);
+  const cleanT = cleanMeowFilename(title);
+  const cleanA = cleanMeowFilename(author);
   const root = relRoot || './Library';
 
   let yaml = `---\n`;

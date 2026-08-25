@@ -2,8 +2,8 @@ import type { ReaderEnginePlugin } from '../types/readerPlugins';
 
 export const REGISTERED_READER_ENGINES: ReaderEnginePlugin[] = [
   {
-    id: 'sovereign-canvas',
-    name: 'Sovereign Reader Canvas (Default)',
+    id: 'meow-canvas',
+    name: 'Meow Reader Canvas (Default)',
     version: '3.8.0',
     description: 'Dual-pane reading canvas with real-time CFI locators, progress tracking, and instant floating quick capture.',
     icon: '📖',

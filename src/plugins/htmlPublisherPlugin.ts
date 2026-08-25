@@ -5,7 +5,7 @@ import type { WebDAVConfig } from '../types/plugins';
 export function generateStandaloneShowcaseHtml(
   books: Book[],
   mediaItems: MediaItem[],
-  siteTitle = 'Sovereign Grand Library & TCG Vault'
+  siteTitle = 'Meow Grand Library & TCG Vault'
 ): string {
   const totalValuation = mediaItems.reduce((acc, item) => {
     if (item.tcgInfo) return acc + (item.tcgInfo.currentValuation || 0);
@@ -39,7 +39,7 @@ export function generateStandaloneShowcaseHtml(
           <span class="text-xs px-3 py-1 rounded-full badge-gold font-mono font-bold">Self-Hosted Showcase</span>
         </h1>
         <p className="text-sm text-slate-400 font-mono mt-1">
-          Published with LC-MD v3.8 &bull; ${books.length} Books &bull; ${mediaItems.length} Physical / TCG Items
+          Published with Anymd v3.8 &bull; ${books.length} Books &bull; ${mediaItems.length} Physical / TCG Items
         </p>
       </div>
 
@@ -128,7 +128,7 @@ export function generateStandaloneShowcaseHtml(
 
     <!-- Footer -->
     <footer class="pt-8 text-center text-xs text-slate-500 font-mono border-t border-slate-800">
-      Generated with Sovereign Library Companion MD v3.8 &bull; 100% Free & Open Source (FOSS)
+      Generated with Meow Library Companion MD v3.8 &bull; 100% Free & Open Source (FOSS)
     </footer>
 
   </div>

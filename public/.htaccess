@@ -4,6 +4,6 @@
 
     # Route /api/webdav-proxy to php proxy
     RewriteRule ^api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
-    RewriteRule ^lcmd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
-    RewriteRule ^meow/lcmd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
+    RewriteRule ^anymd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
+    RewriteRule ^meow/anymd/api/webdav-proxy/?$ api/webdav-proxy.php [L,QSA]
 </IfModule>

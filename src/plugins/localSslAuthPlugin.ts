@@ -1,4 +1,4 @@
-export interface SovereignSslAccount {
+export interface MeowSslAccount {
   username: string;
   displayName: string;
   email: string;
@@ -10,14 +10,14 @@ export interface SovereignSslAccount {
   isAdmin: boolean;
 }
 
-export const INITIAL_SSL_ACCOUNTS: SovereignSslAccount[] = [
+export const INITIAL_SSL_ACCOUNTS: MeowSslAccount[] = [
   {
     username: 'lorik_admin',
-    displayName: 'Lorik (Sovereign Admin)',
+    displayName: 'Lorik (Meow Admin)',
     email: 'lorik@artkitty.net',
     certFingerprint: 'SHA256:8F:A2:4B:91:C3:E7:01:29:FF:42:01... (mTLS X.509)',
     serialNumber: '0x7F91B243C88E',
-    issuerCN: 'Sovereign-Local-CA-2026',
+    issuerCN: 'Meow-Local-CA-2026',
     validDays: 365,
     createdTimestamp: '2026-08-17',
     isAdmin: true
@@ -28,14 +28,14 @@ export const INITIAL_SSL_ACCOUNTS: SovereignSslAccount[] = [
     email: 'wife@artkitty.net',
     certFingerprint: 'SHA256:4C:19:D8:E2:04:A1:77:88:B3:99... (mTLS X.509)',
     serialNumber: '0x3D11A990E41B',
-    issuerCN: 'Sovereign-Local-CA-2026',
+    issuerCN: 'Meow-Local-CA-2026',
     validDays: 365,
     createdTimestamp: '2026-08-17',
     isAdmin: false
   }
 ];
 
-export function getSavedSslAccounts(): SovereignSslAccount[] {
+export function getSavedSslAccounts(): MeowSslAccount[] {
   try {
     const raw = localStorage.getItem('lc_md_ssl_accounts');
     if (raw) return JSON.parse(raw);
@@ -45,7 +45,7 @@ export function getSavedSslAccounts(): SovereignSslAccount[] {
   return INITIAL_SSL_ACCOUNTS;
 }
 
-export function saveSslAccounts(accounts: SovereignSslAccount[]): void {
+export function saveSslAccounts(accounts: MeowSslAccount[]): void {
   try {
     localStorage.setItem('lc_md_ssl_accounts', JSON.stringify(accounts));
   } catch (err) {
@@ -77,7 +77,7 @@ ${username.toUpperCase()}_RSA_4096_PRIVATE_KEY_SNIPPET
 
 export function generateApacheMtlsHtaccess(): string {
   return `# Apache Mutual TLS (mTLS) Client Certificate Enforcement (.htaccess)
-# Path: /public_html/meow/lcmd/.htaccess
+# Path: /public_html/meow/anymd/.htaccess
 
 <IfModule mod_ssl.c>
   SSLVerifyClient require

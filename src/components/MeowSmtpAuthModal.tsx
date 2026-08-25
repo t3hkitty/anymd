@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../plugins/profileManagementPlugin';
 import { getActiveProfile, updateExistingProfile } from '../plugins/profileManagementPlugin';
-import { DEFAULT_STACKCP_SMTP_CONFIG, generateSmtpPhpScript } from '../plugins/sovereignSmtpAuthPlugin';
+import { DEFAULT_STACKCP_SMTP_CONFIG, generateSmtpPhpScript } from '../plugins/meowSmtpAuthPlugin';
 import {
   X,
   Mail,
@@ -17,13 +17,13 @@ import {
   BookOpen
 } from 'lucide-react';
 
-interface SovereignSmtpAuthModalProps {
+interface MeowSmtpAuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onVerifiedUser?: (profile: UserProfile) => void;
 }
 
-export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
+export const MeowSmtpAuthModal: React.FC<MeowSmtpAuthModalProps> = ({
   isOpen,
   onClose,
   onVerifiedUser
@@ -62,7 +62,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
         body: JSON.stringify({ email: email.trim(), otp: newOtp })
       }).catch(() => {
         // Fallback for local dev server
-        console.log(`[Sovereign SMTP Auth] Local Dev OTP generated: ${newOtp} for ${email}`);
+        console.log(`[Meow SMTP Auth] Local Dev OTP generated: ${newOtp} for ${email}`);
       });
     } catch {
       // Ignore network errors on localhost dev server
@@ -81,7 +81,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
       return;
     }
 
-    // Bind verified email to current sovereign profile
+    // Bind verified email to current meow profile
     const current = getActiveProfile();
     const updated: UserProfile = {
       ...current,
@@ -118,7 +118,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight flex items-center space-x-2">
-                <span>Sovereign SMTP Email Verification & Zero-Cloud Accounts</span>
+                <span>Meow SMTP Email Verification & Zero-Cloud Accounts</span>
               </h3>
               <p className="text-xs text-slate-400">Unified Account for Black Box & Library &bull; 100% Self-Hosted SMTP on mail.artkitty.net</p>
             </div>
@@ -147,7 +147,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
             </div>
 
             <p className="text-slate-300 text-xs leading-relaxed font-sans">
-              <strong>Yes!</strong> Your sovereign account works seamlessly across both the <strong>Black Box Site</strong> and the <strong>Grand Library</strong>. By using self-hosted SMTP email verification (`mail.artkitty.net`), you authenticate family and friends without giving data to Auth0, Firebase, or Google.
+              <strong>Yes!</strong> Your meow account works seamlessly across both the <strong>Black Box Site</strong> and the <strong>Grand Library</strong>. By using self-hosted SMTP email verification (`mail.artkitty.net`), you authenticate family and friends without giving data to Auth0, Firebase, or Google.
             </p>
 
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
@@ -289,7 +289,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
                 onClick={onClose}
                 className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md transition-all"
               >
-                Continue to Sovereign App
+                Continue to Meow App
               </button>
             </div>
           )}
@@ -321,7 +321,7 @@ export const SovereignSmtpAuthModal: React.FC<SovereignSmtpAuthModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign SMTP: <strong className="text-amber-300">{DEFAULT_STACKCP_SMTP_CONFIG.smtpHost}</strong> (Zero Cloud)
+            Meow SMTP: <strong className="text-amber-300">{DEFAULT_STACKCP_SMTP_CONFIG.smtpHost}</strong> (Zero Cloud)
           </span>
           <button
             onClick={onClose}

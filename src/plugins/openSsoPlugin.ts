@@ -49,7 +49,7 @@ export const SUPPORTED_OPEN_SSO_PROVIDERS: SsoProviderConfig[] = [
   },
   {
     id: 'invite_code',
-    name: 'Sovereign Passphrase (Code: meow)',
+    name: 'Meow Passphrase (Code: meow)',
     badge: '🐱 INSTANT ACCESS',
     description: 'Simple shared family passphrase authentication requiring the master secret invite code "meow".',
     isSelfHostable: true,
@@ -72,13 +72,13 @@ export async function registerWebAuthnPasskey(username: string): Promise<{ succe
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
       challenge,
       rp: {
-        name: 'Sovereign Black Box & Library (meow.artkitty.net)',
+        name: 'Meow Black Box & Library (meow.artkitty.net)',
         id: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname
       },
       user: {
         id: userId,
         name: username,
-        displayName: `${username} (Sovereign Member)`
+        displayName: `${username} (Meow Member)`
       },
       pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
       authenticatorSelection: {

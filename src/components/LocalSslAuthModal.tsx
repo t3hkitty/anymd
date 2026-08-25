@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { SovereignSslAccount } from '../plugins/localSslAuthPlugin';
+import type { MeowSslAccount } from '../plugins/localSslAuthPlugin';
 import { getSavedSslAccounts, saveSslAccounts, generateSslClientCert, generateApacheMtlsHtaccess } from '../plugins/localSslAuthPlugin';
 import { X, ShieldCheck, UserPlus, Copy, Check, Terminal, Lock, Cpu, Award } from 'lucide-react';
 
@@ -12,7 +12,7 @@ export const LocalSslAuthModal: React.FC<LocalSslAuthModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [accounts, setAccounts] = useState<SovereignSslAccount[]>(getSavedSslAccounts);
+  const [accounts, setAccounts] = useState<MeowSslAccount[]>(getSavedSslAccounts);
   const [copiedHtaccess, setCopiedHtaccess] = useState(false);
   const [copiedCert, setCopiedCert] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -37,13 +37,13 @@ export const LocalSslAuthModal: React.FC<LocalSslAuthModalProps> = ({
     if (!newUsername.trim() || !newDisplayName.trim()) return;
 
     const cert = generatedCert || generateSslClientCert(newUsername, newEmail || `${newUsername}@artkitty.net`);
-    const newAcc: SovereignSslAccount = {
+    const newAcc: MeowSslAccount = {
       username: newUsername.toLowerCase().replace(/[^a-z0-9_]/g, ''),
       displayName: newDisplayName,
       email: newEmail || `${newUsername}@artkitty.net`,
       certFingerprint: cert.fingerprint,
       serialNumber: cert.serial,
-      issuerCN: 'Sovereign-Local-CA-2026',
+      issuerCN: 'Meow-Local-CA-2026',
       validDays: 365,
       createdTimestamp: new Date().toISOString().split('T')[0],
       isAdmin: accounts.length === 0

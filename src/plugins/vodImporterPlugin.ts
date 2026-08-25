@@ -1,6 +1,6 @@
 /**
- * Sovereign VOD & Video Stream Companion Plugin
- * Catalogs YouTube, Twitch, Kick, and Live Streams into sovereign markdown companion notes
+ * Meow VOD & Video Stream Companion Plugin
+ * Catalogs YouTube, Twitch, Kick, and Live Streams into meow markdown companion notes
  * with native 1-click timestamp jump links that open directly in the official player.
  */
 
@@ -182,7 +182,7 @@ export function parseRawTimestampLines(text: string, baseUrl: string = '', platf
 }
 
 /**
- * Converts VOD metadata input into a sovereign Book/Sidecar object
+ * Converts VOD metadata input into a meow Book/Sidecar object
  */
 export function convertVodToVaultItem(
   input: VodMetadataInput
@@ -226,7 +226,7 @@ export function convertVodToVaultItem(
       cfi: 'cfi:vod:0',
       chapterTitle: 'Overview',
       paragraphIndex: 0,
-      paragraphSnippet: `Sovereign VOD companion cataloged for ${platform.toUpperCase()}. Direct native link: ${input.url}`,
+      paragraphSnippet: `Meow VOD companion cataloged for ${platform.toUpperCase()}. Direct native link: ${input.url}`,
       intensityScore: 5,
       reactionImageUrl: thumbnailUrl,
       reactionGifCaption: input.title,
@@ -265,7 +265,7 @@ ${chapters.length > 0
 
 ## 📝 Break Notes & Synthesis
 
-${input.description || 'Sovereign companion sidecar cataloged with direct timestamp jump links.'}
+${input.description || 'Meow companion sidecar cataloged with direct timestamp jump links.'}
 `;
 
   return {

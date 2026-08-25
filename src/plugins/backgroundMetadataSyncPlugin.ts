@@ -48,7 +48,7 @@ export function enrichBookMetadata(book: Book): Book {
 
   // 4. Ensure tags are populated
   if (!md.includes('tags:')) {
-    const autoTags = Array.from(new Set(['sovereign', 'webdav', ...nuData.tags]));
+    const autoTags = Array.from(new Set(['meow', 'webdav', ...nuData.tags]));
     const tagsLine = `tags: [${autoTags.map(t => `"${t}"`).join(', ')}]`;
     md += `\n${tagsLine}\n`;
   }

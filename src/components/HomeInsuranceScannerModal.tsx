@@ -102,12 +102,12 @@ export const HomeInsuranceScannerModal: React.FC<HomeInsuranceScannerModalProps>
         {/* Content Body */}
         <div className="p-6 space-y-5 overflow-y-auto flex-1 font-sans">
           
-          {/* Zero Keys & Sovereignty Banner */}
+          {/* Zero Keys & Meowty Banner */}
           <div className="p-4 rounded-3xl bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 border border-emerald-500/60 flex items-center justify-between gap-4 font-mono text-xs shadow-xl">
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span className="font-extrabold text-emerald-300 text-sm">Sovereign Home Insurance Inventory Protection</span>
+                <span className="font-extrabold text-emerald-300 text-sm">Meow Home Insurance Inventory Protection</span>
               </div>
               <p className="text-slate-300 text-[11px] font-sans">
                 Scan room photos to inventory all valuable items for insurance claim policies without sharing personal home photos with third-party servers.
@@ -228,7 +228,7 @@ export const HomeInsuranceScannerModal: React.FC<HomeInsuranceScannerModalProps>
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-mono">
-            Sovereign Home Insurance Asset Inventory Engine
+            Meow Home Insurance Asset Inventory Engine
           </span>
           {items ? (
             <button

@@ -694,7 +694,7 @@ export const WebDAVAccountManagerModal: React.FC<WebDAVAccountManagerModalProps>
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
-                  When enabled, LC-MD will scan this storage when your device is resting to discover files matching your sidecars.
+                  When enabled, Anymd will scan this storage when your device is resting to discover files matching your sidecars.
                 </p>
 
                 {enableBackgroundIdleScan && (

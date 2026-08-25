@@ -55,7 +55,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
   const [copiedTsv, setCopiedTsv] = useState(false);
 
   // HTML Showcase State
-  const [customTitle, setCustomTitle] = useState('Sovereign Library Showcase');
+  const [customTitle, setCustomTitle] = useState('Meow Library Showcase');
   const [publishedSuccess, setPublishedSuccess] = useState(false);
 
   if (!isOpen) return null;
@@ -88,7 +88,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Sovereign_Library_Vault_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `Meow_Library_Vault_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -254,19 +254,19 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
               <div className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-500/30 space-y-2 font-sans">
                 <span className="font-bold text-indigo-300 flex items-center space-x-1.5 text-xs font-mono">
                   <FolderArchive className="w-4 h-4 text-indigo-400" />
-                  <span>Sovereign Vault Complete ZIP Archive Package</span>
+                  <span>Meow Vault Complete ZIP Archive Package</span>
                 </span>
                 <p className="text-slate-300 text-xs leading-relaxed">
                   Generates an immutable standard archive including a separate <code>/media/</code> directory for all individual cropped card covers, high-resolution original uncropped binder sheets, and media attachments. Markdown sidecars automatically link to <code>./media/filename</code> for Obsidian and filesystem parity.
                 </p>
               </div>
 
-              {/* 🔐 Sovereign Archive Access PIN Display Card */}
+              {/* 🔐 Meow Archive Access PIN Display Card */}
               <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-indigo-950/40 border border-amber-500/40 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center space-x-2">
                     <KeyRound className="w-4 h-4 text-amber-400" />
-                    <span className="font-bold text-slate-100 text-xs">Sovereign Archive Access PIN</span>
+                    <span className="font-bold text-slate-100 text-xs">Meow Archive Access PIN</span>
                     <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
                       AES-GCM LOCKFILE
                     </span>
@@ -356,7 +356,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
                       const url = URL.createObjectURL(zipBlob);
                       const link = document.createElement('a');
                       link.href = url;
-                      link.download = `Sovereign_Vault_Archive_${new Date().toISOString().split('T')[0]}.zip`;
+                      link.download = `Meow_Vault_Archive_${new Date().toISOString().split('T')[0]}.zip`;
                       document.body.appendChild(link);
                       link.click();
                       document.body.removeChild(link);
@@ -376,7 +376,7 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
 
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1.5">
                 <span className="text-indigo-400 font-bold block uppercase text-[10px]">ZIP Directory Structure:</span>
-                <p>📁 <code>Sovereign_Vault_Archive.zip</code></p>
+                <p>📁 <code>Meow_Vault_Archive.zip</code></p>
                 <p className="pl-4">├── 📁 <code>Sidecars/</code> (All markdown .companion.md files with relative image links)</p>
                 <p className="pl-4">├── 📁 <code>media/</code> (Cropped card covers, uncropped scans &amp; reaction photos)</p>
                 <p className="pl-4">└── 📄 <code>manifest.json</code> (Vault catalog schema &amp; valuation indexes)</p>
@@ -606,16 +606,16 @@ export const UnifiedExportShareModal: React.FC<UnifiedExportShareModalProps> = (
 
               <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
                 <div className="p-4 bg-white rounded-2xl shadow-xl">
-                  {/* Visual QR Code Placeholder with Sovereign Icon */}
+                  {/* Visual QR Code Placeholder with Meow Icon */}
                   <div className="w-40 h-40 bg-slate-950 rounded-xl p-3 flex flex-col items-center justify-center text-amber-300 font-mono text-[10px] space-y-2">
                     <QrCode className="w-16 h-16 text-amber-400" />
-                    <span>LC-MD Sovereign QR</span>
+                    <span>Anymd Meow QR</span>
                     <span className="text-slate-400 text-[8px]">{activeBook ? activeBook.title.slice(0, 20) : 'Library Vault'}</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-bold text-sm text-slate-100">{activeBook ? activeBook.title : 'Sovereign Library Hub'}</h4>
+                  <h4 className="font-bold text-sm text-slate-100">{activeBook ? activeBook.title : 'Meow Library Hub'}</h4>
                   <p className="text-xs text-slate-400">Scan with any mobile camera to open on phone.</p>
                 </div>
               </div>

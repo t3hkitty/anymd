@@ -262,7 +262,7 @@ export const SpotifyMusicModal: React.FC<SpotifyMusicModalProps> = ({
                   <span>Black Box Linking — Send to Library with Playback Telemetry</span>
                 </span>
                 <p className="text-slate-300 text-xs">
-                  Generate a Sovereign Black Box companion sidecar note for your music collection with Zettelkasten serial linking, listening time, and acoustic telemetry.
+                  Generate a Meow Black Box companion sidecar note for your music collection with Zettelkasten serial linking, listening time, and acoustic telemetry.
                 </p>
               </div>
 

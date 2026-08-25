@@ -70,7 +70,7 @@ export const WebDAVIndexerModal: React.FC<WebDAVIndexerModalProps> = ({
 
   const [fileList, setFileList] = useState<WebDAVFileItem[]>([
     { filename: 'My_Filejump_Book_1.epub', size: 1499968, lastModified: '2026-08-17', isDir: false },
-    { filename: 'Filejump_Sovereign_Guide.pdf', size: 2100500, lastModified: '2026-08-16', isDir: false },
+    { filename: 'Filejump_Meow_Guide.pdf', size: 2100500, lastModified: '2026-08-16', isDir: false },
     { filename: 'Backup_Subfolder', size: 0, lastModified: '2026-08-15', isDir: true }
   ]);
   const [generatedIndexMd, setGeneratedIndexMd] = useState('');
@@ -154,7 +154,7 @@ export const WebDAVIndexerModal: React.FC<WebDAVIndexerModalProps> = ({
       setScanNotice(result.error || 'No remote XML items found. Using parsed directory items.');
       
       const fallbackItems = parseTextDirectoryListing(`My_Filejump_Book_1.epub
-Filejump_Sovereign_Guide.pdf`);
+Filejump_Meow_Guide.pdf`);
       setFileList(fallbackItems);
       const indexMd = generateWebDAVDirectoryMarkdownIndex(serverUrl, dirPath, fallbackItems);
       setGeneratedIndexMd(indexMd);

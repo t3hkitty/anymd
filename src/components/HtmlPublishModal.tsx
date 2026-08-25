@@ -20,7 +20,7 @@ export const HtmlPublishModal: React.FC<HtmlPublishModalProps> = ({
   webdavConfig,
   onClose,
 }) => {
-  const [siteTitle, setSiteTitle] = useState('Sovereign Grand Library & TCG Vault');
+  const [siteTitle, setSiteTitle] = useState('Meow Grand Library & TCG Vault');
   const [remoteFilename, setRemoteFilename] = useState('library_showcase.html');
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState<{ success: boolean; publicUrl: string; error?: string } | null>(null);

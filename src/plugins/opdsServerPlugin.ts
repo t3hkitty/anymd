@@ -9,7 +9,7 @@ export function generateOPDSAtomXml(books: Book[], relLinkRoot: string = './Libr
   xml += `  <title>Library Companion MD OPDS Server Feed</title>\n`;
   xml += `  <id>urn:uuid:lc-md-opds-catalog-root</id>\n`;
   xml += `  <updated>${updatedIso}</updated>\n`;
-  xml += `  <author><name>LC-MD Sovereign Core</name></author>\n`;
+  xml += `  <author><name>Anymd Meow Core</name></author>\n`;
   xml += `  <link rel="self" href="/opds/catalog.xml" type="application/atom+xml;profile=opds-catalog;kind=navigation"/>\n`;
   xml += `  <link rel="start" href="/opds/catalog.xml" type="application/atom+xml;profile=opds-catalog;kind=navigation"/>\n\n`;
 
@@ -25,7 +25,7 @@ export function generateOPDSAtomXml(books: Book[], relLinkRoot: string = './Libr
     xml += `    <id>urn:uuid:${b.id}</id>\n`;
     xml += `    <updated>${bookUpdated}</updated>\n`;
     xml += `    <author><name>${cleanAuthor}</name></author>\n`;
-    xml += `    <summary>Sovereign EPUB with companion .md sidecar. Chapters: ${b.totalChapters}, Reactions: ${b.resonanceStream.length}.</summary>\n`;
+    xml += `    <summary>Meow EPUB with companion .md sidecar. Chapters: ${b.totalChapters}, Reactions: ${b.resonanceStream.length}.</summary>\n`;
     xml += `    <link rel="http://opds-spec.org/acquisition" href="${bookUrl}" type="application/epub+zip"/>\n`;
     xml += `    <link rel="http://opds-spec.org/acquisition/sidecar" href="${sidecarUrl}" type="text/markdown"/>\n`;
     xml += `  </entry>\n\n`;
@@ -42,7 +42,7 @@ export function buildOPDSCatalogFeedObject(books: Book[], relLinkRoot: string): 
     title: b.title,
     author: b.author,
     updated,
-    summary: `Sovereign companion book with ${b.resonanceStream.length} micro-log reactions.`,
+    summary: `Meow companion book with ${b.resonanceStream.length} micro-log reactions.`,
     epubUrl: `${relLinkRoot}/${b.author}/${b.title}.epub`,
     sidecarUrl: `${relLinkRoot}/${b.author}/${b.title}.companion.md`,
   }));

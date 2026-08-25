@@ -65,7 +65,7 @@ export const DEFAULT_CHARACTER_SLUGS: CharacterSlugDefinition[] = [
     roleSlug: '[ML]',
     characterName: 'Luo Binghe',
     aliases: ['Bing-mei', 'Demon Lord', 'White Lotus'],
-    roleTitle: 'Male Lead / Heavenly Demon Sovereign',
+    roleTitle: 'Male Lead / Heavenly Demon Meow',
     characteristics: {
       eyes: 'starry obsidian with hidden crimson flames',
       flaw: 'overwhelming abandonment dread',
@@ -142,7 +142,7 @@ export const DEFAULT_CYA_FORKS: CYABranchingFork[] = [
         label: 'Option B: Emotional Vulnerability & Flaw Trigger',
         loreAnchor: '[ML:flaw] (Abandonment Dread) and [MC:tell] (Fan snapping).',
         description: '[ML] steps in front of [MC] with drawn Xin Mo, declaring that any move against Shizun is an act of war.',
-        impact: 'Deepens bond, but confirms rumors that Qing Jing Peak harbors demonic sovereign power.'
+        impact: 'Deepens bond, but confirms rumors that Qing Jing Peak harbors demonic meow power.'
       },
       {
         label: 'Option C: Lore Inversion & Unsealed Secret',

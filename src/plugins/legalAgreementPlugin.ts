@@ -13,7 +13,7 @@ export const LEGAL_TERMS_SECTIONS: LegalAgreementSection[] = [
     jurisdiction: 'Global / Standard International',
     lastUpdated: '2026-08-17',
     content: `### 1. Acceptance of Terms
-By accessing or using this self-hosted Library Companion MD (LC-MD) and Sovereign Black Box portal ("Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not access or use the application.
+By accessing or using this self-hosted Library Companion MD (Anymd) and Meow Black Box portal ("Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not access or use the application.
 
 ### 2. Nature of Software (Local-First & Open Source)
 This application is distributed under the MIT Open Source License. It operates on a local-first, decentralized architecture where personal library collections, notes, valuations, and sidecar markdown files are processed on your local device and stored exclusively in your local storage or self-hosted server environment.
@@ -56,7 +56,7 @@ In accordance with the Personal Information Protection and Electronic Documents 
     content: `### 1. DMCA Notice & Takedown Procedure
 This software is an open-source tool for organizing personal notes and commentary. Each node operator is responsible for their own instance.
 
-If you are a copyright owner or agent thereof and believe that content hosted on a specific public sovereign node infringes upon your copyright, you may submit a formal DMCA notification to the node administrator containing:
+If you are a copyright owner or agent thereof and believe that content hosted on a specific public meow node infringes upon your copyright, you may submit a formal DMCA notification to the node administrator containing:
 1. Physical or electronic signature of the copyright owner.
 2. Identification of the copyrighted work claimed to have been infringed.
 3. Specific URL location of the infringing material.
@@ -75,6 +75,6 @@ Nothing in these terms excludes, restricts, or modifies any consumer rights or s
 In accordance with Japan's APPI, personal information stored in sidecars is under the strict direct custody and control of the end-user.
 
 ### 3. Node Operator Independence
-Each sovereign deployment (e.g. at \`meow.artkitty.net\` or private homelab) is operated independently. The open-source code maintainers bear no control or liability for individual third-party deployments.`
+Each meow deployment (e.g. at \`meow.artkitty.net\` or private homelab) is operated independently. The open-source code maintainers bear no control or liability for individual third-party deployments.`
   }
 ];

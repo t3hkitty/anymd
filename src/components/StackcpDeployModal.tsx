@@ -24,11 +24,11 @@ export const StackcpDeployModal: React.FC<StackcpDeployModalProps> = ({
 
   const htaccessContent = `<IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /meow/lcmd/
+  RewriteBase /meow/anymd/
   RewriteRule ^index\\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /meow/lcmd/index.html [L]
+  RewriteRule . /meow/anymd/index.html [L]
 </IfModule>`;
 
   const handleSaveConfig = (e: React.FormEvent) => {

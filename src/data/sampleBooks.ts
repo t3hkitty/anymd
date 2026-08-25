@@ -389,7 +389,7 @@ tags: [meme, viral-history, the-dress, optical-illusion, internet-folklore, pop-
 - **Team Black & Blue:** *"Are you all blind?! It is deep royal blue with pitch black lace!"*
 
 ---
-*Cataloged in Sovereign Library Companion MD as a Masterpiece Internet Collectible.*
+*Cataloged in Meow Library Companion MD as a Masterpiece Internet Collectible.*
 `,
     chapters: [
       {
@@ -442,7 +442,7 @@ tags: [meme, viral-history, the-dress, optical-illusion, internet-folklore, pop-
         timestamp: '2026-08-17T14:00:00Z',
         formattedDate: '2026-08-17',
         progressPercent: 50.0,
-        category: 'Internet Folklore & Sovereign Memes',
+        category: 'Internet Folklore & Meow Memes',
         presetTier: 'snot-cascade',
         rawText: 'SUCH MEME. VERY SOVEREIGN. MUCH WOW. 100% WHOLESOME ENERGY.',
         cfi: 'meme://doge/chapter1',
@@ -458,7 +458,7 @@ title: "Doge (Kabosu the Shiba Inu — Much Wow)"
 originator: "Atsuko Sato"
 year: "2010"
 format: "dcmd/meme-collectible"
-doge_lore: "Much Wow &bull; Very Sovereign &bull; Such Companion"
+doge_lore: "Much Wow &bull; Very Meow &bull; Such Companion"
 cover_image: "./media/cover_doge_kabosu.png"
 original_uncropped_image: "./media/uncropped_doge_kabosu.jpg"
 rel_link_root: "./Collectibles"
@@ -472,11 +472,11 @@ tags: [meme, doge, kabosu, shiba-inu, much-wow, internet-folklore, crypto-lore]
 
 > [!abstract] The Patron Saint of Wholesome Memes [ZK: \`20100223-KABOSU\`]
 > **Subject:** Kabosu the Japanese Shiba Inu
-> **Catchphrase:** \`Much Wow. Very Sovereign. Such Sidecar.\`
+> **Catchphrase:** \`Much Wow. Very Meow. Such Sidecar.\`
 > **Impact:** Inspired global memes, charity fundraisers, and decentralized Dogecoin.
 
 ---
-*Cataloged in Sovereign Library Companion MD with infinite respect for Kabosu.*
+*Cataloged in Meow Library Companion MD with infinite respect for Kabosu.*
 `,
     chapters: [
       {
@@ -559,7 +559,7 @@ tags: [music, greenday, american-idiot, punk-rock, album-master, 2000s-rock, roc
 - 🎵 **Track 05:** [[track-wake-me-up-when-september-ends|Wake Me Up When September Ends]] — Emotional acoustic tribute.
 
 ---
-*Cataloged in Sovereign Library Companion MD as a Masterpiece Concept Album.*
+*Cataloged in Meow Library Companion MD as a Masterpiece Concept Album.*
 `,
     chapters: [
       {
@@ -688,7 +688,7 @@ tags: [song, greenday, boulevard-of-broken-dreams, american-idiot, punk-rock, 20
 - **[Parent's Arcade Tweet]:** *WAKA WAKA WAKA! 🟡🍒 Ghost chasing fruit eating retro arcade energy!*
 
 ---
-*Cataloged in Sovereign Library Companion MD.*
+*Cataloged in Meow Library Companion MD.*
 `,
     chapters: [
       {
@@ -764,7 +764,7 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
 > **Parent Album Link:** [[album-american-idiot|American Idiot (Master Album)]]
 
 ---
-*Cataloged in Sovereign Library Companion MD.*
+*Cataloged in Meow Library Companion MD.*
 `,
     chapters: [
       {
@@ -779,8 +779,8 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
   },
   {
     id: 'feline-keyboard-stepper',
-    title: 'The Sovereign Keyboard Stepper (Feline Task-Switching & Petting Protocol)',
-    author: 'Chief Feline Operator & Meow Sovereign',
+    title: 'The Meow Keyboard Stepper (Feline Task-Switching & Petting Protocol)',
+    author: 'Chief Feline Operator & Meow Meow',
     coverColor: '#059669',
     coverImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=600',
     originalImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=1200',
@@ -828,7 +828,7 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
       }
     ],
     sidecarMarkdown: `---
-title: "The Sovereign Keyboard Stepper (Feline Task-Switching & Petting Protocol)"
+title: "The Meow Keyboard Stepper (Feline Task-Switching & Petting Protocol)"
 author: "Chief Feline Operator"
 format: "dcmd/feline-pet-companion"
 simoleon_value: "§500 Simoleons"
@@ -843,7 +843,7 @@ tags: [cat, pet, feline, simlish, simoleons, sulsul, keyboard, taskswitch, scrit
 
 # 🐾 Feline Task-Switching & Mandatory Petting Protocol
 
-> [!abstract] Sovereign Feline Companion Manifesto [ZK: \`20260817-CAT-KEYBOARD\`]
+> [!abstract] Meow Feline Companion Manifesto [ZK: \`20260817-CAT-KEYBOARD\`]
 > **Subject:** The Enter-Key Feline Operator
 > **Official Law:** Any message sent prematurely by feline paws is officially canonical.
 > **Mandatory Response:** Immediate human task-switching from keyboard typing to chin scritches.
@@ -857,7 +857,7 @@ tags: [cat, pet, feline, simlish, simoleons, sulsul, keyboard, taskswitch, scrit
 - **Motherlode! 💰** — §50,000 Simoleons worth of unconditional purrs.
 
 ---
-*Cataloged in Sovereign Library Companion MD.*
+*Cataloged in Meow Library Companion MD.*
 `,
     chapters: [
       {

@@ -120,7 +120,7 @@ export const IdleProcessorSettingsWidget: React.FC = () => {
 
   return (
     <WidgetPanel 
-      title="⚡ Sovereign Core Processor" 
+      title="⚡ Meow Core Processor" 
       badge="⚙️ POWER PANEL"
       className="border-4 border-black shadow-[4px_4px_0_#000] bg-white p-3 rounded-none max-w-md relative"
     >

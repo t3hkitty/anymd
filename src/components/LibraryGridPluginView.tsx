@@ -5,7 +5,7 @@ import type { CuratedCollection } from '../types/mediaTypes';
 import { extractTradeValueFromBook, isBookAvailableForTrade, toggleBookTradeAvailability } from '../plugins/tradeValuePlugin';
 import { extractBreakFeedFromBook } from '../plugins/tcgBreakFeedPlugin';
 import { getDefaultSidecarPrice, setDefaultSidecarPrice } from '../plugins/sidecarPricingPlugin';
-import { calculateStorageUsage, mountSovereignLocalFolder, type StorageQuotaStatus } from '../plugins/storageQuotaPlugin';
+import { calculateStorageUsage, mountMeowLocalFolder, type StorageQuotaStatus } from '../plugins/storageQuotaPlugin';
 import { Radio, FileText, Search, Sparkles, Trash2, PlusCircle, LayoutGrid, List, ChevronLeft, ChevronRight, Bookmark, Shirt, ArrowUpDown, Crown, Coins, Filter, FolderPlus, Tag, X, Check, Newspaper, Scale, Handshake, Lock, Tv, HardDrive, ExternalLink, Edit3, Eye } from 'lucide-react';
 
 interface LibraryGridPluginViewProps {
@@ -315,10 +315,10 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
-              title="Switch to My Private Sovereign Vault"
+              title="Switch to My Private Meow Vault"
             >
               <span>🔒</span>
-              <span>My Sovereign Vault</span>
+              <span>My Meow Vault</span>
             </button>
           </div>
 
@@ -349,7 +349,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-extrabold text-slate-100 flex items-center space-x-2">
-              <span>{vaultMode === 'sandbox' ? '🧪 Sandbox Demo Vault' : '🔒 Sovereign Grand Library'}</span>
+              <span>{vaultMode === 'sandbox' ? '🧪 Sandbox Demo Vault' : '🔒 Meow Grand Library'}</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono">
                 {vaultMode === 'sandbox' ? 'NON-SENSITIVE DEMO' : 'PRIVATE VAULT'}
               </span>
@@ -809,7 +809,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
             </div>
             <div>
               <span className="font-bold text-amber-300 block">
-                {mountedFolderName ? `Mounted Sovereign Local Folder: ${mountedFolderName}` : 'Browser Cache Notice: Image Storage Growing'}
+                {mountedFolderName ? `Mounted Meow Local Folder: ${mountedFolderName}` : 'Browser Cache Notice: Image Storage Growing'}
               </span>
               <p className="text-slate-400 text-[11px]">
                 Vault Cache Usage: <strong className="text-amber-200">{storageStatus.usedFormatted}</strong>. {mountedFolderName ? 'Syncing directly with your local directory.' : 'Upgrade to a local folder or export ZIP to keep unlimited full-resolution master scans.'}
@@ -821,10 +821,10 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
             {!mountedFolderName && (
               <button
                 onClick={async () => {
-                  const result = await mountSovereignLocalFolder();
+                  const result = await mountMeowLocalFolder();
                   if (result.success && result.folderName) {
                     setMountedFolderName(result.folderName);
-                    alert(`✓ Sovereign Local Folder "${result.folderName}" successfully mounted! Raw scans and cropped covers will stream locally without cache limits.`);
+                    alert(`✓ Meow Local Folder "${result.folderName}" successfully mounted! Raw scans and cropped covers will stream locally without cache limits.`);
                   }
                 }}
                 className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all flex items-center space-x-1"
@@ -880,9 +880,9 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
 
             const yamlMetadata = {
               rel_link_root: relLinkRoot,
-              sovereign_format: 'dcmd/sidecar',
+              meow_format: 'dcmd/sidecar',
               resonance_count: book.resonanceStream.length,
-              tags: ['sovereign', 'webdav', 'companion', 'md']
+              tags: ['meow', 'webdav', 'companion', 'md']
             };
 
             return (
@@ -1000,7 +1000,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
 
                   <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-1 text-[11px] font-mono">
                     <div className="flex items-center justify-between text-indigo-400 font-bold text-[10px] uppercase">
-                      <span>LC-MD YAML Frontmatter</span>
+                      <span>Anymd YAML Frontmatter</span>
                       <Sparkles className="w-3 h-3 text-amber-400" />
                     </div>
                     <p className="text-slate-400 truncate">
@@ -1035,7 +1035,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                     <button
                       onClick={() => handleViewItem(book)}
                       className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs transition-all flex items-center space-x-1"
-                      title={book.externalReaderUri ? `View in Sovereign Reader & copy local path (${book.externalReaderUri})` : 'View in Sovereign Reader'}
+                      title={book.externalReaderUri ? `View in Meow Reader & copy local path (${book.externalReaderUri})` : 'View in Meow Reader'}
                     >
                       <Eye className="w-3 h-3 text-amber-400" />
                       <span>View</span>
@@ -1137,7 +1137,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                   <button
                     onClick={() => handleViewItem(book)}
                     className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold text-xs shadow-md transition-all flex items-center space-x-1"
-                    title={book.externalReaderUri ? `View in Sovereign Reader & copy local path (${book.externalReaderUri})` : 'View in Sovereign Reader'}
+                    title={book.externalReaderUri ? `View in Meow Reader & copy local path (${book.externalReaderUri})` : 'View in Meow Reader'}
                   >
                     <Eye className="w-3.5 h-3.5 text-amber-400" />
                     <span>View</span>
@@ -1324,7 +1324,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
                       {/* Fabric Size Tag */}
                       <div className="flex items-center justify-between text-[10px] font-mono">
                         <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-bold">
-                          SIZE: LC-MD
+                          SIZE: Anymd
                         </span>
                         <span className="text-emerald-400 font-bold">${valuation.toLocaleString()}</span>
                       </div>
@@ -1351,7 +1351,7 @@ export const LibraryGridPluginView: React.FC<LibraryGridPluginViewProps> = ({
           </div>
 
           <p className="text-center text-xs text-purple-300/80 font-mono">
-            👗 Your books and media items are securely hung on wooden dress hangers inside your sovereign cedar closet!
+            👗 Your books and media items are securely hung on wooden dress hangers inside your meow cedar closet!
           </p>
         </div>
       )}

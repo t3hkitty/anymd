@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 import type { Book } from '../types/resonance';
-import { cleanSovereignFilename, buildCompanionSidecarHeader } from '../utils/pathResolver';
+import { cleanMeowFilename, buildCompanionSidecarHeader } from '../utils/pathResolver';
 
 export async function parseEpubFile(file: File, relLinkRoot: string = './Library'): Promise<Book> {
   const zip = await JSZip.loadAsync(file);
@@ -28,12 +28,12 @@ export async function parseEpubFile(file: File, relLinkRoot: string = './Library
     
     const titleMatch = opfXml.match(/<dc:title[^>]*>([^<]+)<\/dc:title>/i);
     if (titleMatch && titleMatch[1]) {
-      title = cleanSovereignFilename(titleMatch[1]);
+      title = cleanMeowFilename(titleMatch[1]);
     }
 
     const creatorMatch = opfXml.match(/<dc:creator[^>]*>([^<]+)<\/dc:creator>/i);
     if (creatorMatch && creatorMatch[1]) {
-      author = cleanSovereignFilename(creatorMatch[1]);
+      author = cleanMeowFilename(creatorMatch[1]);
     }
   }
 
@@ -71,7 +71,7 @@ export async function parseEpubFile(file: File, relLinkRoot: string = './Library
       title: 'Chapter 1: Opening Narrative',
       cfiBase: 'epubcfi(/6/4[chap01]!',
       paragraphs: [
-        `Extracted from sovereign file ${file.name}.`,
+        `Extracted from meow file ${file.name}.`,
         'The journey begins with raw unfiltered reader resonance.'
       ]
     });

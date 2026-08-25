@@ -1,5 +1,5 @@
 /**
- * Sovereign Vault Session Lock & Local Folder PIN Protection Plugin
+ * Meow Vault Session Lock & Local Folder PIN Protection Plugin
  * Securely seals and restores session state in a local directory using a PIN-protected lockfile (.vault-session.lock).
  */
 
@@ -89,7 +89,7 @@ export async function createVaultLockPayload(
   const lockPayload: VaultLockFilePayload = {
     version: '1.0',
     created_at: new Date().toISOString(),
-    vault_name: sessionData.vaultName || 'Sovereign Companion Vault',
+    vault_name: sessionData.vaultName || 'Meow Companion Vault',
     salt_hex: saltHex,
     pin_hash_hex: hashHex,
     encrypted_session: encryptedHex,

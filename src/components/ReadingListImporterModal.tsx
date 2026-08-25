@@ -19,7 +19,7 @@ export const ReadingListImporterModal: React.FC<ReadingListImporterModalProps> =
   const [inputText, setInputText] = useState(`Book Id,Title,Author,My Rating,Date Read,Shelves
 1042,"The Hyperion Resonance","Kaelen Vance",5,2026/08/17,"scifi, favorites"
 2048,"The Alchemy of Midnight Coffee","Seraphina Vance",4,2026/08/16,"drama"
-3096,"Dune Sovereign Edition","Frank Herbert",5,2026/08/15,"classics"`);
+3096,"Dune Meow Edition","Frank Herbert",5,2026/08/15,"classics"`);
 
   if (!isOpen) return null;
 

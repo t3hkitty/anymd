@@ -1,12 +1,12 @@
 {
-  "name": "LC-MD Sovereign Official FOSS Plugin Registry",
+  "name": "Anymd Meow Official FOSS Plugin Registry",
   "author": "t3hkitty",
   "license": "Unlicense / FOSS",
-  "description": "Official community plugin repository for Library Companion MD (LC-MD) v3.8 Sovereign",
+  "description": "Official community plugin repository for Library Companion MD (Anymd) v3.8 Meow",
   "plugins": [
     {
       "id": "library-view",
-      "name": "Sovereign Grand Library Bookshelf Grid",
+      "name": "Meow Grand Library Bookshelf Grid",
       "version": "3.8.0",
       "author": "t3hkitty",
       "description": "Beauty & The Beast Grand Bookcase Library view for YAML sidecars (.md/dcmd).",
@@ -16,7 +16,7 @@
       "id": "custom-monetizer-plugin",
       "name": "Custom Referral & Monetization Plugin Template",
       "version": "1.0.0",
-      "author": "Sovereign Community",
+      "author": "Meow Community",
       "description": "Developer template for attaching custom non-intrusive referral codes or donation links.",
       "enabledByDefault": false
     },

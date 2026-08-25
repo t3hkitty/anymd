@@ -36,7 +36,7 @@ export const INITIAL_COMMUNITY_COMMENTS: CommunityComment[] = [
   {
     id: 'cmt-3',
     targetId: 'art-2',
-    authorName: 'SovereignAdmin',
+    authorName: 'MeowAdmin',
     authorHandle: '@lorik',
     authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     badge: '🔥 Insta-Buy',

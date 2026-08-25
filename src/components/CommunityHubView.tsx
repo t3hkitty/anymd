@@ -58,7 +58,7 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
       id: `tpl-user-${Date.now()}`,
       title: newTplTitle,
       category: newTplCategory,
-      authorName: 'You (Sovereign User)',
+      authorName: 'You (Meow User)',
       authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       downloadsCount: 1,
       upvotesCount: 1,
@@ -83,7 +83,7 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
       id: `thread-${Date.now()}`,
       title: newThreadTitle,
       category: newThreadCategory,
-      authorName: 'You (Sovereign User)',
+      authorName: 'You (Meow User)',
       authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       repliesCount: 0,
       upvotesCount: 1,
@@ -114,7 +114,7 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="font-extrabold text-xl text-slate-100 tracking-tight">Sovereign Community Hub & Marketplace</h2>
+              <h2 className="font-extrabold text-xl text-slate-100 tracking-tight">Meow Community Hub & Marketplace</h2>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
                 ONLINE COMMUNITY
               </span>
@@ -496,7 +496,7 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
 
           <div className="space-y-3">
             {[
-              { rank: 1, name: 'DanmeiScholar', title: 'Top Sidecar Architect', points: '14,250 pts', badge: '🥇 Sovereign Master' },
+              { rank: 1, name: 'DanmeiScholar', title: 'Top Sidecar Architect', points: '14,250 pts', badge: '🥇 Meow Master' },
               { rank: 2, name: 'DungeonMasterCarl', title: 'LitRPG Guild Champion', points: '11,890 pts', badge: '🥈 Guild Master' },
               { rank: 3, name: 'TCG_Collector99', title: 'PSA 10 Grail Authenticator', points: '9,450 pts', badge: '🥉 Grail Curator' }
             ].map(user => (
