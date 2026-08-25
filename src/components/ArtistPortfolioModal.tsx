@@ -132,7 +132,7 @@ export const ArtistPortfolioModal: React.FC<ArtistPortfolioModalProps> = ({
           <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950 via-slate-900 to-indigo-950 border border-amber-500/60 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs shadow-xl">
             <div className="flex items-center space-x-4">
               <img
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150"
+                src="https://images.unsplash.com/photo-[REDACTED_PHONE]-94ddf0286df2?w=150"
                 alt="ArtKitty Artist Profile"
                 className="w-14 h-14 rounded-full border-2 border-amber-400 object-cover shadow-lg"
               />

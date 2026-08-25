@@ -70,7 +70,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
       { name: 'xmen_1_gatefold.jpg', url: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400' }
     ] : [
       { name: 'moonbreon_vmax_alt.jpg', url: 'https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?w=400' },
-      { name: 'charizard_base_psa10.jpg', url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400' }
+      { name: 'charizard_base_psa10.jpg', url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-adc38448a05e?w=400' }
     ];
 
     setUploadedPhotos(demoFiles);

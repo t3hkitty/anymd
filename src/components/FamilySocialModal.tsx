@@ -188,7 +188,7 @@ export const FamilySocialModal: React.FC<FamilySocialModalProps> = ({
                   type="email"
                   value={newFriendEmail}
                   onChange={(e) => setNewFriendEmail(e.target.value)}
-                  placeholder="Google Email (e.g. wife.piplup@gmail.com)"
+                  placeholder="Google Email (e.g. [REDACTED_EMAIL])"
                   className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-100"
                   required
                 />

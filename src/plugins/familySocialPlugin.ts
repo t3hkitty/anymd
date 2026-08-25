@@ -28,8 +28,8 @@ export const INITIAL_FAMILY_FRIENDS: FamilyFriend[] = [
   {
     id: 'friend-wife',
     name: 'Wife (Dawn & Piplup Fan 🐧)',
-    email: 'wife.piplup@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+    email: '[REDACTED_EMAIL]',
+    avatar: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-94ddf0286df2?w=150',
     relationship: 'Wife',
     favoritePokemon: '🐧 Piplup (Penguin Pokemon)',
     themePreference: 'piplup-dawn',
@@ -41,7 +41,7 @@ export const INITIAL_FAMILY_FRIENDS: FamilyFriend[] = [
   {
     id: 'friend-brother',
     name: 'Brother (Sinnoh Champion)',
-    email: 'bro.sinnoh@gmail.com',
+    email: '[REDACTED_EMAIL]',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     relationship: 'Sibling',
     favoritePokemon: '🔥 Infernape',
@@ -58,7 +58,7 @@ export const INITIAL_FAMILY_FEED: FamilyActivityItem[] = [
     id: 'act-1',
     friendId: 'friend-wife',
     friendName: 'Wife (Dawn & Piplup Fan 🐧)',
-    friendAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+    friendAvatar: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-94ddf0286df2?w=150',
     action: 'added_quote',
     bookTitle: 'The Scum Villain\'s Self-Saving System',
     content: '✨ "System B-Points restored! Piplup Bubble Beam approved quote in Chapter 3!"',

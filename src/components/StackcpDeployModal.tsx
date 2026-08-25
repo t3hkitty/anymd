@@ -70,7 +70,7 @@ export const StackcpDeployModal: React.FC<StackcpDeployModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight tracking-tight">StackCP FTP Deployment (meow.artkitty.net)</h3>
-              <p className="text-xs text-slate-400">Target: ftp.us.stackcp.com &bull; User: kitty@artkitty.net &bull; Path: /public_html/meow/</p>
+              <p className="text-xs text-slate-400">Target: ftp.us.stackcp.com &bull; User: [REDACTED_EMAIL] &bull; Path: /public_html/meow/</p>
             </div>
           </div>
           <button

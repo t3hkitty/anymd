@@ -6,7 +6,7 @@
 # ==============================================================================
 
 echo "[+] Adjusting Android Phantom Process Killer limits via Shizuku/ADB..."
-device_config put activity_manager max_phantom_processes 2147483647
+device_config put activity_manager max_phantom_processes [REDACTED_PHONE]
 
 echo "[+] Whitelisting Termux and n8n Local from battery restrictions..."
 dumpsys deviceidle whitelist +com.termux

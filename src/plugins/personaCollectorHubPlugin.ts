@@ -133,7 +133,7 @@ export const DEFAULT_PIPLUP_CAMEOS: PiplupCameoItem[] = [
     artistOrStudio: 'Yuu Nishida',
     releaseYear: 2021,
     marketPriceUsd: 28.50,
-    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500',
+    imageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-adc38448a05e?w=500',
     rarityTier: 'Secret Rare Grail',
     loreSnippet: 'Dawn lovingly cradling Piplup after winning the Sinnoh Grand Festival ribbon.',
     verifiedLink: 'https://www.pokemon.com/us/pokemon-tcg/'
@@ -157,7 +157,7 @@ export const DEFAULT_PIPLUP_CAMEOS: PiplupCameoItem[] = [
     artistOrStudio: 'Build-A-Bear Workshop',
     releaseYear: 2018,
     marketPriceUsd: 95.00,
-    imageUrl: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500',
+    imageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-f21724e3856d?w=500',
     rarityTier: 'Holo Rare',
     loreSnippet: 'Full sized 15-inch plush with authentic 6-in-1 sound box and custom winter parka.',
     verifiedLink: 'https://www.buildabear.com'
@@ -179,7 +179,7 @@ export const DEFAULT_PLUSHIE_CUBBIES: PlushieItem[] = [
       { id: 'app-2', itemName: 'Miniature Snow Boots', category: 'Footwear', color: '#334155' },
       { id: 'app-3', itemName: 'Sinnoh Ribbon Badge', category: 'Accessory', color: '#f59e0b' }
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500',
+    imageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-f21724e3856d?w=500',
     estimatedValueUsd: 95.00
   },
   {

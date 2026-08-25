@@ -134,7 +134,7 @@ Header set Access-Control-Allow-Origin "*"
                 type="text"
                 value={authConfig.allowedEmails.join(', ')}
                 onChange={(e) => setAuthConfig({ ...authConfig, allowedEmails: e.target.value.split(',').map(s => s.trim()) })}
-                placeholder="family.member1@gmail.com, family.member2@gmail.com"
+                placeholder="[REDACTED_EMAIL], [REDACTED_EMAIL]"
                 className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-emerald-300 focus:outline-none focus:border-amber-500"
                 required
               />

@@ -474,7 +474,7 @@
     const btnExecShizukuKeepalive = document.getElementById('btn-exec-shizuku-keepalive');
     if (btnExecShizukuKeepalive) {
       btnExecShizukuKeepalive.addEventListener('click', () => {
-        const shizukuCmd = 'device_config put activity_manager max_phantom_processes 2147483647';
+        const shizukuCmd = 'device_config put activity_manager max_phantom_processes [REDACTED_PHONE]';
         copyToClipboard(shizukuCmd, 'Shizuku ADB command copied. Paste in rish terminal.');
         logEvent('INFO', 'Shizuku keep-alive instructions triggered.');
       });

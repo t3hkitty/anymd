@@ -11,7 +11,7 @@ export async function searchOpenLibraryMetadata(query: string): Promise<Metadata
       const coverId = doc.cover_i;
       const coverUrl = coverId
         ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
-        : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400';
+        : 'https://images.unsplash.com/photo-[REDACTED_PHONE]-ca5e3f4abd8c?w=400';
 
       return {
         id: doc.key || `ol-${idx}`,

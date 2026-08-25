@@ -16,7 +16,7 @@ export const INITIAL_COMMUNITY_COMMENTS: CommunityComment[] = [
     targetId: 'art-1',
     authorName: 'Wife (Dawn & Piplup Fan 🐧)',
     authorHandle: '@wife_piplup',
-    authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+    authorAvatar: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-94ddf0286df2?w=150',
     badge: '🎨 Masterpiece',
     content: '💖 Oh my goodness, the Piplup Bubble Beam lighting effects are stunning! Best Sinnoh contest fanart ever!',
     timestamp: '15 minutes ago',

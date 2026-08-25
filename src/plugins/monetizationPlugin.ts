@@ -20,7 +20,7 @@ export const DEFAULT_MONETIZATION_CONFIG: CurationMonetizationConfig = {
   microCenterTag: 'mc-artkitty-vault',
   kindleUnlimitedTag: 'artkitty-ku-20',
   bookshopOrgId: 'artkitty-books',
-  ebayCampaignId: '5338901234',
+  ebayCampaignId: '[REDACTED_PHONE]',
   koboAffiliateId: 'rakuten-artkitty',
   redbubbleStoreUrl: 'https://www.redbubble.com/people/artkitty/shop',
   inprntStoreUrl: 'https://www.inprnt.com/gallery/artkitty/',

@@ -646,7 +646,7 @@ tags: [music, greenday, american-idiot, punk-rock, album-master, 2000s-rock, roc
         chapterTitle: 'Track 04: Boulevard of Broken Dreams (Outro Solo)',
         paragraphIndex: 1,
         paragraphSnippet: 'The thunderous guitar distortion crashes in while Billie Joe holds the high vocal harmony.',
-        reactionImageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',
+        reactionImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-9bc0b252726f?w=400',
         reactionGifCaption: 'WAKA WAKA WAKA 🟡🍒 Pac-Man Chasing Ghosts & Eating Fruit!',
         intensityScore: 5,
         emojiReactions: ['🕹️', '🟡', '👻', '🍒', '🤣', '🎸']
@@ -782,8 +782,8 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
     title: 'The Meow Keyboard Stepper (Feline Task-Switching & Petting Protocol)',
     author: 'Chief Feline Operator & Meow Meow',
     coverColor: '#059669',
-    coverImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=600',
-    originalImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=1200',
+    coverImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-1cf6624b9987?w=600',
+    originalImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-1cf6624b9987?w=1200',
     externalReaderUri: 'file://./Pets/Feline_Task_Switching_Protocol.dcmd',
     totalChapters: 2,
     currentChapterIndex: 0,
@@ -804,7 +804,7 @@ tags: [song, greenday, american-idiot, punk-rock, title-track]
         chapterTitle: 'Chapter 1: The Paws on the Enter Key',
         paragraphIndex: 0,
         paragraphSnippet: 'When human fingers are rapidly typing, the cat recognizes the glowing keyboard as a heated bed engineered solely for feline chin elevation.',
-        reactionImageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400',
+        reactionImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-1cf6624b9987?w=400',
         reactionGifCaption: 'Cat Stepped on Keyboard & Demanding Priority Petting',
         intensityScore: 5,
         emojiReactions: ['🐾', '🐱', '😼', '⌨️', '💆']

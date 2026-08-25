@@ -244,7 +244,7 @@
               </div>
               <div class="form-group">
                 <label for="wh-payload">JSON Payload</label>
-                <textarea id="wh-payload" rows="3" placeholder='{"source": "android-local", "event": "manual-test", "timestamp": 1724370000}'></textarea>
+                <textarea id="wh-payload" rows="3" placeholder='{"source": "android-local", "event": "manual-test", "timestamp": [REDACTED_PHONE]}'></textarea>
               </div>
               <div class="webhook-actions">
                 <button type="button" class="btn btn-secondary" id="btn-fire-webhook">Send Webhook Request</button>
@@ -335,7 +335,7 @@ pm2 save</code></pre>
             <ul>
               <li>Disable Battery Optimization for <strong>Termux</strong> and <strong>n8n Local</strong> (Settings → Apps → Battery → Unrestricted).</li>
               <li>If using <strong>Shizuku</strong>, run the following ADB command once via Shizuku/rish to disable phantom process limits:
-                <pre><code>device_config put activity_manager max_phantom_processes 2147483647</code></pre>
+                <pre><code>device_config put activity_manager max_phantom_processes [REDACTED_PHONE]</code></pre>
               </li>
               <li>Acquire a Termux Wake Lock by running <code>termux-wake-lock</code> or starting n8n via the provided starter script.</li>
             </ul>

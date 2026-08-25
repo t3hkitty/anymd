@@ -16,14 +16,14 @@ export interface GoogleAuthConfig {
 export const MOCK_GOOGLE_FAMILY_MEMBERS: GoogleUserProfile[] = [
   {
     googleId: 'g-1092837419283',
-    email: 'lorik.family@gmail.com',
+    email: '[REDACTED_EMAIL]',
     name: 'Lorik (Host)',
     picture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
     familyRole: 'Admin / Host'
   },
   {
     googleId: 'g-8273641092834',
-    email: 'family.reader@gmail.com',
+    email: '[REDACTED_EMAIL]',
     name: 'Family Member 1',
     picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     familyRole: 'Family Member'
@@ -39,7 +39,7 @@ export function getSavedGoogleAuthConfig(): GoogleAuthConfig {
   }
   return {
     clientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
-    allowedEmails: ['lorik.family@gmail.com', 'family.reader@gmail.com'],
+    allowedEmails: ['[REDACTED_EMAIL]', '[REDACTED_EMAIL]'],
     autoSyncGoogleDrive: true,
     midphaseDomain: 'https://library.yourdomain.com'
   };

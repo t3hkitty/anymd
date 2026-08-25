@@ -61,7 +61,7 @@ export const DEFAULT_VPS_CRON_JOBS: CronJobTask[] = [
     humanReadable: 'Daily at 4:00 AM',
     enabled: false,
     targetAction: 'sidecar-backup',
-    vpsScriptCommand: 'rsync -avz --delete /opt/lc-md/vault/ user@backup.vps:/var/www/vault/',
+    vpsScriptCommand: 'rsync -avz --delete /opt/lc-md/vault/ [REDACTED_EMAIL]:/var/www/vault/',
     executionLogs: ['[STANDBY] Awaiting target server rsync credentials.']
   },
   {

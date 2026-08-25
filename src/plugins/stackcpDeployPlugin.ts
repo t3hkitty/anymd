@@ -10,7 +10,7 @@ export interface StackcpDeployConfig {
 
 export const DEFAULT_STACKCP_CONFIG: StackcpDeployConfig = {
   host: 'ftp.us.stackcp.com',
-  user: 'kitty@artkitty.net',
+  user: '[REDACTED_EMAIL]',
   pass: 'YOUR_STACKCP_FTP_PASSWORD_HERE',
   localDir: './dist',
   remoteDir: '/public_html/meow/anymd/',

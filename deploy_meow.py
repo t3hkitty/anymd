@@ -4,7 +4,7 @@ import ftplib
 HOST = "ftp.us.stackcp.com"
 USER = "kitty@artkitty.net"
 PASS = '1bZ1XL3O`t$:'
-REMOTE_DIR = "/public_html/meow"
+REMOTE_DIR = "/meow/anymd"
 LOCAL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
 
 def make_dirs_recursive(ftp, remote_dir):

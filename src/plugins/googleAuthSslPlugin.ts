@@ -11,7 +11,7 @@ export interface GoogleAuthSslConfig {
 export const DEFAULT_GOOGLE_AUTH_SSL_CONFIG: GoogleAuthSslConfig = {
   googleClientId: '891234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com',
   googleClientSecret: 'GOCSPX-YourGoogleClientSecretHere',
-  allowedEmails: ['lorik@artkitty.net', 'wife@artkitty.net', 'family@artkitty.net'],
+  allowedEmails: ['[REDACTED_EMAIL]', '[REDACTED_EMAIL]', '[REDACTED_EMAIL]'],
   httpsDomain: 'https://meow.artkitty.net',
   redirectUri: 'https://meow.artkitty.net/anymd/',
   sslProvider: 'stackcp_autossl',

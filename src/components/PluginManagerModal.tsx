@@ -480,7 +480,7 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
                       Don't want to use GitHub? Send your FOSS plugin JSON manifest directly to our review maintainers!
                     </p>
                     <a
-                      href="mailto:plugins@librarycompanion.md?subject=Anymd%20FOSS%20Plugin%20Submission&body=Hi%20Anymd%20Team,%0A%0AI%20would%20like%20to%20submit%20my%20FOSS%20Open-Source%20Plugin!%0A%0APlugin%20JSON%20Manifest:%0A"
+                      href="mailto:[REDACTED_EMAIL]?subject=Anymd%20FOSS%20Plugin%20Submission&body=Hi%20Anymd%20Team,%0A%0AI%20would%20like%20to%20submit%20my%20FOSS%20Open-Source%20Plugin!%0A%0APlugin%20JSON%20Manifest:%0A"
                       className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all mt-1"
                     >
                       <Mail className="w-3.5 h-3.5" />

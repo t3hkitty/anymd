@@ -151,7 +151,7 @@ export const LocalSslAuthModal: React.FC<LocalSslAuthModalProps> = ({
                   type="email"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="Email (e.g. wife@artkitty.net)"
+                  placeholder="Email (e.g. [REDACTED_EMAIL])"
                   className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100"
                 />
               </div>

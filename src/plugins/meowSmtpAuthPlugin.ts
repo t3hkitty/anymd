@@ -10,9 +10,9 @@ export interface SmtpConfig {
 export const DEFAULT_STACKCP_SMTP_CONFIG: SmtpConfig = {
   smtpHost: 'mail.artkitty.net',
   smtpPort: 587,
-  smtpUser: 'auth@artkitty.net',
+  smtpUser: '[REDACTED_EMAIL]',
   smtpSecure: 'STARTTLS',
-  fromEmail: 'noreply@artkitty.net',
+  fromEmail: '[REDACTED_EMAIL]',
   fromName: 'Meow Black Box Library (meow.artkitty.net)'
 };
 

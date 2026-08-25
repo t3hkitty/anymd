@@ -28,7 +28,7 @@ export function searchAnnasArchiveIsbnDb(queryIsbnOrTitle: string): AnnasArchive
     },
     {
       isbn13: '9781773840925',
-      isbn10: '1773840920',
+      isbn10: '[REDACTED_PHONE]',
       title: 'The Crafting of Chess: A LitRPG Novel',
       author: 'Kit Falbo',
       publisher: 'Shadow Alley Press',

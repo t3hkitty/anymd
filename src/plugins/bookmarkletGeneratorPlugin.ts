@@ -69,7 +69,7 @@ export function generateNovelUpdatesBookmarklet(): { bookmarkletJs: string; rawJ
 
       var overlay = document.createElement('div');
       overlay.id = 'lc-md-overlay';
-      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:[REDACTED_PHONE];width:360px;background:#090d16;color:#f8fafc;border:2px solid #6366f1;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
       var header = document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
@@ -179,7 +179,7 @@ export function generateGoodreadsBookmarklet(): { bookmarkletJs: string; rawJs: 
 
       var overlay = document.createElement('div');
       overlay.id = 'lc-md-overlay';
-      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:[REDACTED_PHONE];width:360px;background:#090d16;color:#f8fafc;border:2px solid #eab308;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
       var header = document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
@@ -287,7 +287,7 @@ export function generateYouTubeVodBookmarklet(): { bookmarkletJs: string; rawJs:
 
       var overlay = document.createElement('div');
       overlay.id = 'lc-md-overlay';
-      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
+      overlay.style.cssText = 'position:fixed;top:20px;right:20px;z-index:[REDACTED_PHONE];width:380px;background:#090d16;color:#f8fafc;border:2px solid #ef4444;border-radius:20px;padding:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.9);font-family:system-ui,-apple-system,sans-serif;font-size:12px;';
 
       var header = document.createElement('div');
       header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';

@@ -216,7 +216,7 @@ ${pulsesMarkdown || '*No pulses recorded for this date yet. Use MyBlackBox WYD t
     paragraphIndex: idx,
     paragraphSnippet: p.bodySnippet || p.headline,
     intensityScore: p.intensity,
-    reactionImageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+    reactionImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
     reactionGifCaption: p.headline,
     emojiReactions: p.emojiBurst.length > 0 ? p.emojiBurst : ['📓', '⚡']
   }));
@@ -229,7 +229,7 @@ ${pulsesMarkdown || '*No pulses recorded for this date yet. Use MyBlackBox WYD t
     title: `📓 BlackBox Daily Journal • ${dateDisplay}`,
     author: "Captain's Log (MyBlackBox)",
     coverColor: '#0f172a',
-    coverImageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
     totalChapters: 2,
     currentChapterIndex: 0,
     currentParagraphIndex: 0,

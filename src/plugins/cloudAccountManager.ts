@@ -105,7 +105,7 @@ export const INITIAL_CLOUD_ACCOUNTS: CloudAccount[] = [
     name: 'My Koofr Drive',
     presetId: 'koofr',
     serverUrl: 'https://app.koofr.net/dav/Koofr/',
-    username: 'reader@koofr.app',
+    username: '[REDACTED_EMAIL]',
     tokenOrPassword: '',
     remoteRootFolder: '/md_library',
     isActive: false,

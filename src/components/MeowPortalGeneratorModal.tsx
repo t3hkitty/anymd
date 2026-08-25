@@ -52,7 +52,7 @@ export const MeowPortalGeneratorModal: React.FC<MeowPortalGeneratorModalProps> =
   const scriptContent = `#!/bin/bash
 # StackCP FTP Root Index Deployment Script for meow.artkitty.net
 HOST="ftp.us.stackcp.com"
-USER="kitty@artkitty.net"
+USER="[REDACTED_EMAIL]"
 PASS='YOUR_STACKCP_FTP_PASSWORD_HERE'
 
 echo "Deploying root index.html to /public_html/meow/..."

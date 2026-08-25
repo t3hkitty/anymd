@@ -40,7 +40,7 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
   {
     id: 'gif-crying-thumbsup',
     title: 'Crying Thumbs Up Cat',
-    url: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=400',
+    url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-b7f9aef128ce?w=400',
     category: 'snot-cascade',
     tags: ['crying', 'tears', 'thumbsup', 'emotional', 'pain', 'sad'],
     emoji: '😭'
@@ -58,7 +58,7 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
   {
     id: 'gif-shocked-expression',
     title: 'Shocked / Mind Blown Gasp',
-    url: 'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=400',
+    url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-0b1f7e6d8ac1?w=400',
     category: 'betrayal-rage',
     tags: ['shock', 'betrayal', 'gasp', 'unbelievable', 'rage', 'tableflip'],
     emoji: '😱'
@@ -84,7 +84,7 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
   {
     id: 'gif-facepalm',
     title: 'Cat Facepalm / Despair',
-    url: 'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=400',
+    url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-380ab8ebc7b7?w=400',
     category: 'trash-fire',
     tags: ['facepalm', 'cringe', 'awkward', 'ooc', 'scum-villain'],
     emoji: '🤦'
@@ -118,7 +118,7 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
   {
     id: 'gif-pacman-ghost-fruit',
     title: 'Pac-Man Chasing Ghosts & Eating Fruit (Waka Waka Waka)',
-    url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',
+    url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-9bc0b252726f?w=400',
     category: 'wholesome',
     tags: ['pacman', 'waka', 'ghost', 'fruit', 'arcade', 'retro', 'alone', 'greenday', 'boulevard', 'eating', 'nostalgia', 'kid', 'tweet', 'punk', 'rock'],
     emoji: '🕹️'
@@ -126,7 +126,7 @@ export const CONTEXT_AWARE_REACTION_GIFS: ReactionGifItem[] = [
   {
     id: 'gif-cat-keyboard-petting',
     title: 'Cat Stepping on Keyboard & Demanding Priority Petting',
-    url: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400',
+    url: 'https://images.unsplash.com/photo-[REDACTED_PHONE]-1cf6624b9987?w=400',
     category: 'wholesome',
     tags: ['cat', 'keyboard', 'petting', 'pet', 'kitty', 'taskswitch', 'sulsul', 'offended', 'feline', 'chin', 'scritch', 'enter', 'animal', 'purr'],
     emoji: '🐾'

@@ -20,7 +20,7 @@ export const CalibreImportModal: React.FC<CalibreImportModalProps> = ({
     "title": "The Quantum Fall (1042)",
     "authors": ["Kaelen Vance"],
     "tags": ["SciFi", "Calibre"],
-    "isbn": "978-1234567890",
+    "isbn": "978-[REDACTED_PHONE]",
     "comments": "Imported from Calibre DB export. Numbers in parentheses stripped for meow mobile path portability."
   }
 ]`);

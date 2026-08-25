@@ -14,7 +14,7 @@ export const INITIAL_SSL_ACCOUNTS: MeowSslAccount[] = [
   {
     username: 'lorik_admin',
     displayName: 'Lorik (Meow Admin)',
-    email: 'lorik@artkitty.net',
+    email: '[REDACTED_EMAIL]',
     certFingerprint: 'SHA256:8F:A2:4B:91:C3:E7:01:29:FF:42:01... (mTLS X.509)',
     serialNumber: '0x7F91B243C88E',
     issuerCN: 'Meow-Local-CA-2026',
@@ -25,7 +25,7 @@ export const INITIAL_SSL_ACCOUNTS: MeowSslAccount[] = [
   {
     username: 'wife_piplup',
     displayName: 'Wife (Piplup & Dawn Reader 🐧)',
-    email: 'wife@artkitty.net',
+    email: '[REDACTED_EMAIL]',
     certFingerprint: 'SHA256:4C:19:D8:E2:04:A1:77:88:B3:99... (mTLS X.509)',
     serialNumber: '0x3D11A990E41B',
     issuerCN: 'Meow-Local-CA-2026',
@@ -67,10 +67,7 @@ MDAwMFoXDTI3MDgxNzAwMDAwMFowRzELMAkGA1UEBhMCVVMxDDAKBgNVBAgMA09D
 QTEWMBQGA1UECgwNU292ZXJlaWduIExhYjEVMBMGA1UEAwwM${username.toUpperCase()}
 -----END CERTIFICATE-----`;
 
-  const keyPem = `-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC78J9v...
-${username.toUpperCase()}_RSA_4096_PRIVATE_KEY_SNIPPET
------END PRIVATE KEY-----`;
+  const keyPem = `[REDACTED_PRIVATE_KEY]`;
 
   return { certPem, keyPem, fingerprint: `SHA256:${hash} (X.509 mTLS)`, serial };
 }

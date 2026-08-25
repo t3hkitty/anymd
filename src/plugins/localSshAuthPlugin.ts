@@ -14,8 +14,8 @@ export const INITIAL_SOVEREIGN_ACCOUNTS: MeowUserAccount[] = [
   {
     username: 'lorik_admin',
     displayName: 'Lorik (Meow Admin)',
-    email: 'lorik@artkitty.net',
-    sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7... lorik@midphase.local',
+    email: '[REDACTED_EMAIL]',
+    sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7... [REDACTED_EMAIL]',
     sshPrivateKeyFingerprint: 'SHA256:x91Kz+M3qP82... (ed25519)',
     authMethod: 'ssh_key',
     createdTimestamp: '2026-08-17',
@@ -25,8 +25,8 @@ export const INITIAL_SOVEREIGN_ACCOUNTS: MeowUserAccount[] = [
   {
     username: 'wife_piplup',
     displayName: 'Wife (Piplup & Dawn Reader 🐧)',
-    email: 'wife@artkitty.net',
-    sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9... wife@midphase.local',
+    email: '[REDACTED_EMAIL]',
+    sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9... [REDACTED_EMAIL]',
     sshPrivateKeyFingerprint: 'SHA256:k73Pz+L9aM41... (ed25519)',
     authMethod: 'ssh_key',
     createdTimestamp: '2026-08-17',

@@ -140,7 +140,7 @@ export const GoogleAuthSslModal: React.FC<GoogleAuthSslModalProps> = ({
                     type="email"
                     value={newEmailInput}
                     onChange={(e) => setNewEmailInput(e.target.value)}
-                    placeholder="Add family Google email (e.g. wife@artkitty.net)"
+                    placeholder="Add family Google email (e.g. [REDACTED_EMAIL])"
                     className="flex-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-100"
                   />
                   <button

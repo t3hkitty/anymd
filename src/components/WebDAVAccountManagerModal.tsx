@@ -655,7 +655,7 @@ export const WebDAVAccountManagerModal: React.FC<WebDAVAccountManagerModalProps>
                       type="text"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      placeholder="user@email.com or Client ID"
+                      placeholder="[REDACTED_EMAIL] or Client ID"
                       className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
                     />
                   </div>

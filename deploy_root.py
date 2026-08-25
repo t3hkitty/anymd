@@ -7,7 +7,7 @@ PASS = '1bZ1XL3O`t$:'
 print("Connecting to FTP to deploy root meow_root_index.html...")
 ftp = ftplib.FTP(HOST)
 ftp.login(USER, PASS)
-ftp.cwd("/public_html/meow")
+ftp.cwd("/meow")
 
 with open("meow_root_index.html", "rb") as f:
     ftp.storbinary("STOR index.html", f)

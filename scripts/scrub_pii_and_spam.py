@@ -68,7 +68,7 @@ def scrub_file(file_path: str) -> None:
 def walk_and_scrub(target_dir: str) -> None:
     for root, dirs, files in os.walk(target_dir):
         # Skip node_modules, .git, and binary cache dirs
-        if any(ignored in root for ignored in ["node_modules", ".git", "__pycache__", ".gradle", "gradle", "build"]):
+        if any(ignored in root for ignored in ["node_modules", ".git", "__pycache__", ".gradle", "gradle", "build", "dist", "out"]):
             continue
         
         for file in files:
