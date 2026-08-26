@@ -23,18 +23,18 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
         className="w-full flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800 text-xs font-mono text-neutral-300 hover:text-neutral-100 transition-colors"
       >
         <span className="flex items-center space-x-2">
-          <span>🐾 MBB (My Black Box) Micrologging Suite</span>
+          <span>🐾 MBB (My Black Box) Micrologging - "Why did the ship go down?" Event Telemetry</span>
         </span>
         {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
 
       {isOpen && (
-        <div className="p-4 flex flex-wrap gap-3 items-center justify-between bg-neutral-950/20">
+        <div className="p-4 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-neutral-950/20">
           <div className="text-[10px] text-neutral-500 font-mono hidden md:block">
-            <pre className="leading-tight text-neutral-600">
-{`   /\\_/\\
-  ( o.o )  My Black Box (MBB) Engine
-   > ^ <   Active`}
+            <pre className="leading-tight text-neutral-400">
+{`   /\\_/\\    MBB (My Black Box) Flight Recorder
+  ( o.o )   Tracing prompt failures, crash states,
+   > ^ <    and microlog companion telemetry.`}
             </pre>
           </div>
           <div className="flex flex-wrap gap-2">

@@ -16,7 +16,7 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
 }) => {
   const [templates, setTemplates] = useState<CommunitySidecarTemplate[]>(getSavedCommunityTemplates);
   const [threads, setThreads] = useState<CommunityForumThread[]>(COMMUNITY_FORUM_THREADS);
-  const [activeTab, setActiveTab] = useState<'marketplace' | 'forums' | 'leaderboard'>('marketplace');
+  const [activeTab, setActiveTab] = useState<'marketplace' | 'forums' | 'leaderboard' | 'prefilled-vaults'>('marketplace');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -171,6 +171,17 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
             }`}
           >
             🏆 Leaderboards
+          </button>
+
+          <button
+            onClick={() => setActiveTab('prefilled-vaults')}
+            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+              activeTab === 'prefilled-vaults'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            🏛️ Prefilled Public Vaults
           </button>
         </div>
 
@@ -514,6 +525,93 @@ export const CommunityHubView: React.FC<CommunityHubViewProps> = ({
                     {user.badge}
                   </span>
                   <span className="font-bold text-emerald-400">{user.points}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Prefilled Public Vaults Tab */}
+      {activeTab === 'prefilled-vaults' && (
+        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-6 font-mono text-xs shadow-xl">
+          <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="font-bold text-sm text-amber-300 uppercase tracking-wider flex items-center space-x-2">
+                <span>🏛️</span>
+                <span>Prefilled Public Vaults (Community Registry)</span>
+              </h3>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Download pre-seeded vault templates directly from the official repository tracked by your spam/moderation check scripts.
+              </p>
+            </div>
+            <a
+              href="https://github.com/t3hkitty/anymd-public-vaults"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-bold transition-all"
+            >
+              Open Repo ➔
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                id: 'lcmd-sandbox-core',
+                name: 'LCMD Sandbox Core Vault',
+                description: 'Pre-populated sandbox files featuring early prototype templates, zettels, and custom configurations.',
+                url: 'https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/lcmd-sandbox-core.zip',
+                fileCount: 24,
+                size: '154 KB'
+              },
+              {
+                id: 'danmei-mxtx-companion',
+                name: 'Danmei & MXTX Companion Vault',
+                description: 'Complete companion Markdown files for Mo Xiang Tong Xiu webnovels, rating metrics, and sidecar cards.',
+                url: 'https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/danmei-mxtx-companion.zip',
+                fileCount: 42,
+                size: '280 KB'
+              },
+              {
+                id: 'tcg-grail-valuation',
+                name: 'TCG Grail & Card Valuation Vault',
+                description: 'Pre-seeded catalog featuring popular Pokémon, MtG, and Yu-Gi-Oh cards, grading metrics, and transaction ledgers.',
+                url: 'https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/tcg-grail-valuation.zip',
+                fileCount: 18,
+                size: '98 KB'
+              },
+              {
+                id: 'audhd-life-companion',
+                name: 'AuDHD Life Companion Tracker Vault',
+                description: 'Fully customized templates for daily pacing, executive dysfunction tracking, and grounding exercises.',
+                url: 'https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/audhd-life-companion.zip',
+                fileCount: 31,
+                size: '185 KB'
+              }
+            ].map(vault => (
+              <div key={vault.id} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold text-slate-100 text-sm">{vault.name}</span>
+                    <span className="px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 text-[9px] font-bold">
+                      {vault.size}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-2 font-sans leading-relaxed">
+                    {vault.description}
+                  </p>
+                </div>
+
+                <div className="flex justify-between items-center pt-3 border-t border-slate-900">
+                  <span className="text-[10px] text-slate-500">{vault.fileCount} pre-seeded notes</span>
+                  <a
+                    href={vault.url}
+                    download
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all"
+                  >
+                    Download ZIP ➔
+                  </a>
                 </div>
               </div>
             ))}

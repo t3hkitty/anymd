@@ -1,5 +1,5 @@
 import React from 'react';
-import { Database, Edit3, Activity, Layers, Settings, User, Puzzle, Grid } from 'lucide-react';
+import { Database, Edit3, Activity, Layers, Settings, User, Puzzle, Grid, Globe, Sliders } from 'lucide-react';
 
 interface LeftIconRailProps {
   activeTab: string;
@@ -20,6 +20,8 @@ export const LeftIconRail: React.FC<LeftIconRailProps> = ({
     { id: 'inputs', icon: <Activity size={20} />, label: 'Inputs' },
     { id: 'processed', icon: <Layers size={20} />, label: 'Processed' },
     { id: 'all', icon: <Grid size={20} />, label: 'All Actions' },
+    { id: 'community', icon: <Globe size={20} />, label: 'Community Hub' },
+    { id: 'vault-manager', icon: <Sliders size={20} />, label: 'Vault Manager' },
   ];
 
   return (

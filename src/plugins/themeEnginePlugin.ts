@@ -166,6 +166,15 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     category: 'reader'
   },
   {
+    id: 'webnovel-reader',
+    name: 'Meow Webnovel Reader & Scraper Plugin',
+    version: '1.5.0',
+    description: 'Renders custom webnovel chapters, tracks translation progression status, and scrapes NovelUpdates series data.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
     id: 'calibre-db',
     name: 'Calibre Library JSON Importer',
     version: '1.1.0',

@@ -63,7 +63,7 @@ import {
   getKawaiiBadge
 } from '../plugins/anymdCorePlugins';
 
-type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'all' | 'settings';
+type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'all' | 'settings' | 'community' | 'vault-manager';
 type VaultId = string;
 
 
@@ -361,9 +361,56 @@ export const VaultWorkspaceLayout: React.FC = () => {
     }
   };
 
+  const DEFAULT_VAULT_FILES: Record<string, { name: string; content: string }[]> = {
+    'anymd-main': [
+      {
+        name: 'Welcome_to_AnyMD.md',
+        content: `---\ntitle: Welcome to AnyMD Primary\ntags: [tutorial, journal]\nstatus: ready\ntype: journal_note\n---\n# Welcome to AnyMD\nThis is your main vault for daily logs, companion notes, and webnovel tracking!\n\n## Features\n- 📓 **Bujo Board**: Bullet journal dashboard with Excalidraw sketching.\n- 🌐 **NovelUpdates Scraper**: Pull Danmei, webnovel chapters, and author logs from web pages.\n- 🐾 **MBB Engine**: My Black Box micrologging suite for tracing events.`
+      },
+      {
+        name: 'Daily_Notes_2026-08-26.md',
+        content: `---\ntitle: Daily Notes - August 26, 2026\ntags: [journal, bujo]\nstatus: active\ntype: daily_log\n---\n# Wednesday, Aug 26, 2026\n\n## Morning Routine\n- [x] 1-Click Routine Builder: Run Morning Wake\n- [x] Fasting & Nourishment: Rest interval active\n\n## Bullet Journal (Bujo) Spread\nSee the Bujo section below the file workspace layout for the Excalidraw spread.`
+      },
+      {
+        name: 'My_Black_Box_Telemetry.md',
+        content: `---\ntitle: MBB Telemetry: System Audit\ntags: [mbb, telemetry]\nstatus: critical\ntype: microlog\n---\n# MBB (My Black Box) Crash Log\n- **Timestamp**: 2026-08-26T16:18:26-07:00\n- **Event**: Local Webnovel Plugin initialized.\n- **Status**: Rate-limiter failsafe passed. Port 3050 sync online.`
+      }
+    ],
+    'signalstack-discovery': [
+      {
+        name: 'SignalStack_Overview.md',
+        content: `---\ntitle: SignalStack Discovery Overview\ntags: [tutorial, signalstack]\nstatus: ready\ntype: system_note\n---\n# SignalStack Discovery\nThis feed contains tracked resources, community vault links, and public templates.`
+      },
+      {
+        name: 'Prefilled_Community_Vault_Links.md',
+        content: `---\ntitle: Prefilled Public Vaults & Repository\ntags: [community, vaults]\nstatus: active\ntype: community_link\n---\n# Prefilled Public Vaults\nHere are the direct ZIP links to prefilled vaults from the official public repository:\n\n1. **LCMD Sandbox Core Vault**: [Download Core ZIP](https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/lcmd-sandbox-core.zip)\n2. **Danmei & MXTX Companion Vault**: [Download Danmei ZIP](https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/danmei-mxtx-companion.zip)\n3. **TCG Grail & Card Valuation Vault**: [Download TCG ZIP](https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/tcg-grail-valuation.zip)\n4. **AuDHD Life Companion Vault**: [Download AuDHD ZIP](https://raw.githubusercontent.com/t3hkitty/anymd-public-vaults/main/audhd-life-companion.zip)\n\nRepository URL: [github.com/t3hkitty/anymd-public-vaults](https://github.com/t3hkitty/anymd-public-vaults)`
+      }
+    ],
+    'storycraft-lore': [
+      {
+        name: 'Storycraft_Bible.md',
+        content: `---\ntitle: Storycraft Lore Bible\ntags: [lore, tutorial]\nstatus: ready\ntype: writing_note\n---\n# Storycraft Lore Bible\nOrganize your novels, character details, stage environments, and narrative outline.`
+      },
+      {
+        name: 'Character_Lorik.md',
+        content: `---\ntitle: Character Profile - Lorik\ntags: [lore, character]\nstatus: ready\ntype: character_profile\n---\n# Lorik (Protagonist)\n- **Role**: Protagonist\n- **Relation**: Self\n- **Description**: Main character. Survived the first blackbox test.`
+      },
+      {
+        name: 'Pretentious_Journal_Spread.md',
+        content: `---\ntitle: Pretentious Journal Spread\ntags: [bujo, excalidraw]\nstatus: ready\ntype: bujo_spread\n---\n# Pretentious Bullet Journal Spread\nUse this companion page alongside the Excalidraw canvas widget below.`
+      }
+    ],
+    'draft-playground': [
+      {
+        name: 'Scene_Draft_1.md',
+        content: `---\ntitle: Scene Draft 1\ntags: [draft, sandbox]\nstatus: ready\ntype: writing_note\n---\n# Scene Draft 1\nStart writing your chapter drafts here.`
+      }
+    ]
+  };
+
   const loadVaultFromLocalStorage = (vaultId: VaultId) => {
     const prefix = `anymd_file_${vaultId}_`;
-    const files: VaultFile[] = [];
+    let files: VaultFile[] = [];
     let hasFiles = false;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -379,17 +426,37 @@ export const VaultWorkspaceLayout: React.FC = () => {
       }
     }
     if (!hasFiles) {
-      const name = 'Welcome.md';
-      const content = `---\ntitle: Welcome to Anymd Local Sandbox\ntags: [tutorial]\n---\nHello! This file is stored in your Local Storage Sandbox.\nConfigure n8n or use directory picker to link physical folders!`;
-      localStorage.setItem(`${prefix}${name}`, content);
-      files.push({
-        name,
-        snippet: content.slice(0, 100).replace(/[\r\n\t]+/g, ' '),
-        lastModified: new Date().toLocaleString()
+      const defaults = DEFAULT_VAULT_FILES[vaultId] || [
+        {
+          name: 'Welcome.md',
+          content: `---\ntitle: Welcome to Anymd Local Sandbox\ntags: [tutorial]\nstatus: ready\ntype: reading_note\n---\nHello! This file is stored in your Local Storage Sandbox.\nConfigure n8n or use directory picker to link physical folders!`
+        }
+      ];
+      defaults.forEach(d => {
+        localStorage.setItem(`${prefix}${d.name}`, d.content);
+        files.push({
+          name: d.name,
+          snippet: d.content.slice(0, 100).replace(/[\r\n\t]+/g, ' '),
+          lastModified: new Date().toLocaleString()
+        });
       });
     }
     setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
     setSyncStatus('local_only');
+
+    // Auto-select first file to avoid blank editor screen on load
+    if (files.length > 0) {
+      const firstFile = files[0];
+      const text = localStorage.getItem(`${prefix}${firstFile.name}`) || '';
+      setSelectedFile(firstFile.name);
+      setSelectedFileContent(text.replace(/^---\r?\n([\s\S]*?)\r?\n---/, '').trim());
+      const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      setSelectedFileMetadata(fmMatch ? fmMatch[1] : '');
+    } else {
+      setSelectedFile(null);
+      setSelectedFileContent('');
+      setSelectedFileMetadata('');
+    }
   };
 
   const loadVaultFolder = async (vaultId: VaultId, sourceOverride?: 'local_picker' | 'n8n_cloud' | 'local_storage') => {
@@ -1437,6 +1504,106 @@ export const VaultWorkspaceLayout: React.FC = () => {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* COMMUNITY HUB VIEW */}
+          {activeTab === 'community' && (
+            <div className={`h-full border overflow-hidden flex flex-col p-6 ${panelBg}`}>
+              <div className="flex-1 overflow-auto">
+                <CommunityHubView
+                  books={[]}
+                  onImportSidecarTemplate={(templateMarkdown, title) => {
+                    const cleanName = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
+                    localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, templateMarkdown);
+                    loadVaultFromLocalStorage(activeVault);
+                    setSelectedFile(cleanName);
+                    setActiveTab('vaults');
+                    alert(`Imported template "${title}" into active vault!`);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* VAULT MANAGER VIEW */}
+          {activeTab === 'vault-manager' && (
+            <div className={`h-full border overflow-hidden flex flex-col p-6 ${panelBg}`}>
+              <div className="flex items-start justify-between mb-4 border-b border-neutral-800/40 pb-4 shrink-0">
+                <div>
+                  <h3 className="text-lg font-bold text-sky-400 flex items-center">
+                    <Sliders className="mr-2" size={18} />
+                    <span>Vault Manager &amp; Workspace Connection Settings</span>
+                  </h3>
+                  <p className={`text-xs mt-1 ${textMuted}`}>
+                    Manage all local-first markdown vaults, directory connection streams, and webhook synchronization protocols.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-auto space-y-6 pr-2">
+                <div className={`p-6 rounded-xl border space-y-4 ${panelInner}`}>
+                  <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                    <span className="font-bold text-slate-200 text-sm">Active Vaults Registry</span>
+                    <button
+                      onClick={() => setIsAddVaultOpen(true)}
+                      className="px-3 py-1 bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-300 font-mono text-[10px] rounded transition-all hover:scale-[1.02]"
+                    >
+                      + Create/Link New Vault
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {vaultList.map((v) => {
+                      const currentSource = vaultLoadSource[v.id] || 'local_storage';
+                      return (
+                        <div key={v.id} className="flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg bg-neutral-950 border border-neutral-900 gap-3 text-xs">
+                          <div className="space-y-1">
+                            <span className="font-bold text-slate-100">{v.name}</span>
+                            <span className="text-[10px] text-neutral-500 font-mono block">
+                              ID: {v.id} | Category: {v.category}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex flex-col">
+                              <label className="text-[9px] text-neutral-500 font-mono uppercase">Connection Source</label>
+                              <select
+                                value={currentSource}
+                                onChange={(e) => {
+                                  const src = e.target.value as any;
+                                  setVaultLoadSource(prev => ({ ...prev, [v.id]: src }));
+                                  if (src === 'local_picker') {
+                                    loadVaultFolder(v.id, 'local_picker');
+                                  }
+                                }}
+                                className="bg-neutral-900 border border-neutral-800 rounded px-2 py-1 outline-none text-neutral-300"
+                              >
+                                <option value="local_storage">Local Sandbox Storage</option>
+                                <option value="local_picker">Direct File System Folder</option>
+                                <option value="n8n_cloud">n8n Local Webhook Sync</option>
+                              </select>
+                            </div>
+
+                            {v.id !== 'anymd-main' && v.id !== 'signalstack-discovery' && v.id !== 'storycraft-lore' && (
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to remove vault workspace "${v.name}"?`)) {
+                                    setVaultList(prev => prev.filter(item => item.id !== v.id));
+                                  }
+                                }}
+                                className="text-red-400 hover:text-red-300 font-mono text-[10px] mt-3"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           )}
