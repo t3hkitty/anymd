@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Companion MD — GitHubOnly Pages Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Master Top Bar Hubs -->
+  <header class="master-top-bar">
+    <div class="brand">
+      <span class="cat-logo">=^.^=</span>
+      <h1>AnyMD Portal</h1>
+    </div>
+    
+    <div class="hubs">
+      <div class="hub-dropdown">
+        <button class="hub-btn">Project Hub ▾</button>
+        <div class="hub-content">
+          <a href="#" onclick="switchTab('dashboard')">📊 Status & Webhooks</a>
+          <a href="#" onclick="switchTab('inbox')">📥 Gmail Inbox View</a>
+          <a href="#" onclick="switchTab('discovery')">🎨 Discovery Board</a>
+        </div>
+      </div>
+
+      <div class="hub-dropdown">
+        <button class="hub-btn">Cognitive Hub ▾</button>
+        <div class="hub-content">
+          <a href="#" onclick="setFocusState('Focused')">🟢 Focus State: Focused</a>
+          <a href="#" onclick="setFocusState('Drifting')">🟡 Focus State: Drifting</a>
+          <a href="#" onclick="setFocusState('Hyperfocused')">🔴 Focus State: Hyperfocused</a>
+        </div>
+      </div>
+
+      <div class="hub-dropdown">
+        <button class="hub-btn">Utility Hub ▾</button>
+        <div class="hub-content">
+          <a href="#" onclick="incrementSips()">🥤 Sip Tracker</a>
+          <a href="#" onclick="triggerExcretionBreak()">🚽 Excretion Station</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dual-Pane Cockpit -->
+  <main class="cockpit-container">
+    
+    <!-- Tab 1: Status Dashboard & Webhooks -->
+    <section id="tab-dashboard" class="tab-panel active">
+      <div class="panel-header">
+        <h2>📊 Serverless n8n & anymddb Status</h2>
+        <span class="status-indicator" id="focus-indicator">State: Focused</span>
+      </div>
+      <div class="brutalist-grid">
+        <div class="card bg-cream">
+          <h3>🐈 Sovereign Lifeboat</h3>
+          <p>Browser sandbox IndexedDB is vulnerable to auto-purging. Back up your AnyMD workspace regularly!</p>
+          <button class="btn btn-primary font-bold shadow-hard" onclick="triggerBackup()">🚨 EXPORT ENTIRE VAULT (.ZIP)</button>
+        </div>
+
+        <div class="card">
+          <h3>🥤 Bio-Telemetry (Sip Tracker)</h3>
+          <div class="sip-meter">
+            <span class="sip-badge" id="sip-badge-name">Hamster Dropper</span>
+            <span class="sip-count" id="sip-count-display">0 / 8 sips</span>
+          </div>
+          <button class="btn btn-secondary shadow-hard w-full mt-2" onclick="incrementSips()">🥤 Drink Water</button>
+        </div>
+
+        <div class="card col-span-2">
+          <h3>⚡ Local Webhook Ingestion Receiver (Port 3050)</h3>
+          <p>Send POST requests to synchronize data directly. Use custom filenames to avoid the 500 files issue.</p>
+          <div class="form-group">
+            <label>Target Vault Name</label>
+            <input type="text" id="target-vault" value="sandbox_vault" class="form-control">
+          </div>
+          <div class="form-group mt-2">
+            <label>Specific Filename (Append Mode)</label>
+            <input type="text" id="target-filename" placeholder="Daily-Log.md" class="form-control">
+          </div>
+          <button class="btn btn-primary shadow-hard mt-3 w-full" onclick="generateWebhookUrl()">🔗 Generate Secure Webhook Endpoint</button>
+          <div id="webhook-output" class="output-box hidden font-mono"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Gmail-style Inbox View -->
+    <section id="tab-inbox" class="tab-panel">
+      <div class="panel-header">
+        <h2>📥 Gmail-style Inbox Triage</h2>
+        <button class="btn btn-secondary shadow-hard" onclick="openCreateModal()">📝 New Zettel</button>
+      </div>
+      <div class="inbox-list" id="inbox-container">
+        <!-- Dyn list -->
+      </div>
+    </section>
+
+    <!-- Tab 3: Discovery Board -->
+    <section id="tab-discovery" class="tab-panel">
+      <div class="panel-header">
+        <h2>🎨 Discovery Board Grid</h2>
+      </div>
+      <div class="discovery-grid" id="discovery-container">
+        <!-- Dyn cards -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for Zettel Creation -->
+  <div id="zettel-modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Create New AnyMD Record</h3>
+        <button class="close-btn" onclick="closeCreateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="zettel-title" placeholder="My Cozy Journal Entry" class="form-control">
+        </div>
+        <div class="form-group mt-2">
+          <label>Tags (Comma separated)</label>
+          <input type="text" id="zettel-tags" placeholder="#lifeboat, #journal" class="form-control">
+        </div>
+        <div class="form-group mt-2">
+          <label>Markdown Content</label>
+          <textarea id="zettel-content" rows="8" class="form-control font-mono" placeholder="Write markdown body here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+        <button class="btn btn-primary shadow-hard" onclick="saveNewZettel()">Create Record</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="anymd-adapter.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
