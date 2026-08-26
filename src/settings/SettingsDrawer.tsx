@@ -1,7 +1,35 @@
-import React from 'react';
-import { X, Key, Shield, HelpCircle, HardDrive, Cpu, Palette, Sliders } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Key, Shield, HelpCircle, HardDrive, Cpu, Palette, Sliders, Plus, Trash2, Globe } from 'lucide-react';
 import type { PluginState, PluginId } from '../types/plugins';
 import { DEFAULT_PLUGINS } from '../plugins/themeEnginePlugin';
+
+const REPOS_STORAGE_KEY = 'lc_md_plugin_repos_v3';
+const DEFAULT_REPOS = [
+  'https://raw.githubusercontent.com/t3hkitty/anymd-plugins/main/repository.json',
+  'https://raw.githubusercontent.com/anymd/public-plugins/main/repository.json',
+  'https://plugins.anymd.app/registry.json'
+];
+
+function loadSavedRepos(): string[] {
+  try {
+    const raw = localStorage.getItem(REPOS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    console.warn('Failed to load plugin repos:', err);
+  }
+  return DEFAULT_REPOS;
+}
+
+function saveRepos(repos: string[]): void {
+  try {
+    localStorage.setItem(REPOS_STORAGE_KEY, JSON.stringify(repos));
+  } catch (err) {
+    console.warn('Failed to save plugin repos:', err);
+  }
+}
 
 interface SettingsDrawerProps {
   isOpen: boolean;
@@ -67,7 +95,35 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
   pluginState,
   onTogglePlugin,
 }) => {
+  const [pluginRepos, setPluginRepos] = useState<string[]>(loadSavedRepos);
+  const [newRepoUrl, setNewRepoUrl] = useState('');
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+
   if (!isOpen) return null;
+
+  const handleAddRepo = () => {
+    const trimmed = newRepoUrl.trim();
+    if (!trimmed) return;
+    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+      setStatusMsg('Error: Must start with http:// or https://');
+      return;
+    }
+    if (pluginRepos.includes(trimmed)) {
+      setStatusMsg('Already exists.');
+      return;
+    }
+    const updated = [trimmed, ...pluginRepos];
+    setPluginRepos(updated);
+    saveRepos(updated);
+    setNewRepoUrl('');
+    setStatusMsg('Success! Repository added.');
+  };
+
+  const handleRemoveRepo = (url: string) => {
+    const updated = pluginRepos.filter(r => r !== url);
+    setPluginRepos(updated);
+    saveRepos(updated);
+  };
 
   return (
     <div className="fixed inset-y-0 right-0 w-96 bg-neutral-950 border-l border-neutral-800 shadow-2xl z-50 flex flex-col font-mono text-xs text-neutral-300">
@@ -137,7 +193,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
             <Sliders size={14} />
             <span>Plugins ({DEFAULT_PLUGINS.length})</span>
           </h3>
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
             {DEFAULT_PLUGINS.map((plugin) => (
               <label key={plugin.id} className="flex items-center justify-between cursor-pointer py-0.5">
                 <span title={plugin.description} className="truncate pr-2">{plugin.name}</span>
@@ -149,6 +205,36 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                 />
               </label>
             ))}
+          </div>
+
+          <div className="pt-2 border-t border-neutral-900 space-y-2">
+            <span className="block text-sky-400 font-bold flex items-center space-x-1">
+              <Globe size={12} />
+              <span>Plugin Repositories ({pluginRepos.length})</span>
+            </span>
+            <div className="space-y-1 max-h-24 overflow-y-auto pr-1">
+              {pluginRepos.map((repo) => (
+                <div key={repo} className="flex items-center justify-between bg-neutral-950 p-1 rounded border border-neutral-900">
+                  <span className="truncate pr-2 text-[10px] text-neutral-400" title={repo}>{repo}</span>
+                  <button onClick={() => handleRemoveRepo(repo)} className="text-red-400 hover:text-red-300 cursor-pointer shrink-0">
+                    <Trash2 size={10} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex space-x-1 pt-1">
+              <input
+                type="text"
+                value={newRepoUrl}
+                onChange={(e) => { setNewRepoUrl(e.target.value); setStatusMsg(null); }}
+                placeholder="Add custom repository JSON URL..."
+                className="flex-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none text-[10px]"
+              />
+              <button onClick={handleAddRepo} className="px-2 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded cursor-pointer shrink-0">
+                <Plus size={12} />
+              </button>
+            </div>
+            {statusMsg && <span className="block text-[10px] text-amber-300">{statusMsg}</span>}
           </div>
         </section>
 
