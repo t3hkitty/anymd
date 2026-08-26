@@ -1380,6 +1380,63 @@ export const VaultWorkspaceLayout: React.FC = () => {
                     </div>
                   )}
                 </div>
+
+                {/* 5. BUJO & EXCALIDRAW SKETCHING BOARD (IF PLUGIN ENABLED) */}
+                {pluginState.enabledPlugins['plugin-pretentious-leather-journal'] && (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
+                      📓 Pretentious Leather Journal &amp; Bujo (Excalidraw)
+                    </h4>
+                    <div className={`p-6 rounded-xl border space-y-4 border-amber-900/40 bg-gradient-to-br from-neutral-900 to-amber-950/20 ${panelInner}`}>
+                      <div className="flex justify-between items-center pb-2 border-b border-amber-900/20">
+                        <span className="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+                          <span>📓</span> Pretentious Bujo Canvas
+                        </span>
+                        <div className="flex gap-1.5">
+                          <button onClick={() => alert('Drawing saved to vault as bujo_spread.png')} className="px-2 py-1 bg-amber-950 border border-amber-800 text-amber-400 font-mono text-[9px] rounded hover:bg-amber-900">
+                            Save Spread
+                          </button>
+                          <button onClick={() => alert('Excalidraw JSON exported')} className="px-2 py-1 bg-amber-950 border border-amber-800 text-amber-400 font-mono text-[9px] rounded hover:bg-amber-900">
+                            Export JSON
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="h-64 rounded-xl border border-neutral-800 bg-neutral-950 p-4 font-mono text-xs relative flex flex-col justify-between overflow-hidden shadow-inner group">
+                        <div className="absolute inset-0 bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none opacity-50"></div>
+                        
+                        <div className="relative z-10 flex justify-between items-start">
+                          <div className="text-neutral-400">
+                            <span>Spread: August 2026 Daily Tracker</span>
+                          </div>
+                          <div className="bg-neutral-900 border border-neutral-800 rounded p-1 flex gap-1 items-center">
+                            {['✏️', '📏', '🔤', '🧹'].map((tool) => (
+                              <button key={tool} onClick={() => alert(`Tool "${tool}" selected`)} className="p-1 hover:bg-neutral-800 rounded text-neutral-300 hover:text-white" title={tool}>
+                                {tool}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="relative z-10 my-auto text-center font-bold text-amber-300/80 leading-relaxed max-w-md mx-auto select-none pointer-events-none">
+                          <pre className="text-[9px] leading-tight">
+{` +-------------------------------------------+
+ |               AUGUST SPREAD               |
+ |  [x] Laundry Day      [ ] Hydrate (2L)    |
+ |  [x] Run Port 3050    [ ] Excalidraw Bujo |
+ |                                           |
+ |       (o.o)   <- Kawaii Mascot            |
+ +-------------------------------------------+`}
+                          </pre>
+                        </div>
+
+                        <div className="relative z-10 text-[9px] text-neutral-500 text-right">
+                          Double-click or drag to sketch custom vector shapes using Excalidraw canvas bridge.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
