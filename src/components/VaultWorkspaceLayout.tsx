@@ -25,6 +25,7 @@ import { LeftIconRail } from '../layout/LeftIconRail';
 
 // Settings drawer
 import { SettingsDrawer } from '../settings/SettingsDrawer';
+import { convertToObsidianVaultFormat } from '../plugins/obsidianNotionSyncPlugin';
 
 // Security Guard
 import { UiGuardOverlay } from '../security/UiGuardOverlay';
@@ -344,12 +345,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
     setSyncStatus('local_only');
   };
 
-  const loadVaultFolder = async (vaultId: VaultId) => {
-    if (vaultLoadSource[vaultId] === 'n8n_cloud') {
+  const loadVaultFolder = async (vaultId: VaultId, sourceOverride?: 'local_picker' | 'n8n_cloud' | 'local_storage') => {
+    const source = sourceOverride || vaultLoadSource[vaultId];
+    if (source === 'n8n_cloud') {
       await loadVaultFromN8n(vaultId);
       return;
     }
-    if (vaultLoadSource[vaultId] === 'local_storage') {
+    if (source === 'local_storage') {
       loadVaultFromLocalStorage(vaultId);
       return;
     }
@@ -534,7 +536,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
     id: string;
     name: string;
     category: string;
-    storageType: 'local_storage' | 'local_picker' | 'n8n_cloud';
+    storageType: 'local_storage' | 'local_picker' | 'n8n_cloud' | 'lcmd_personal' | 'lcmd_sandbox';
     dirHandle: FileSystemDirectoryHandle | null;
     endpointUrl: string;
   }) => {
@@ -545,9 +547,31 @@ export const VaultWorkspaceLayout: React.FC = () => {
     };
     setVaultList(prev => [...prev, newVaultItem]);
 
+    // Handle old lcmd format migration
+    if (vaultData.storageType === 'lcmd_personal' || vaultData.storageType === 'lcmd_sandbox') {
+      const key = vaultData.storageType === 'lcmd_personal' ? 'lc_md_books_personal_v3' : 'lc_md_books_sandbox_v3';
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const parsedBooks = JSON.parse(raw);
+          if (Array.isArray(parsedBooks)) {
+            parsedBooks.forEach((book: any) => {
+              const fileContent = convertToObsidianVaultFormat(book, '');
+              const fileName = `${book.title.replace(/[^a-zA-Z0-9_\-]/g, '_')}.md`;
+              localStorage.setItem(`anymd_file_${vaultData.id}_${fileName}`, fileContent);
+            });
+          }
+        } catch (e) {
+          console.error('Failed to import old lcmd vault:', e);
+        }
+      }
+    }
+
     setVaultLoadSource(prev => ({
       ...prev,
-      [vaultData.id]: vaultData.storageType
+      [vaultData.id]: (vaultData.storageType === 'lcmd_personal' || vaultData.storageType === 'lcmd_sandbox')
+        ? 'local_storage'
+        : vaultData.storageType
     }));
 
     if (vaultData.dirHandle) {
@@ -857,8 +881,22 @@ export const VaultWorkspaceLayout: React.FC = () => {
         onVaultLoadSourceChange={(vid, src) => {
           setVaultLoadSource(prev => ({ ...prev, [vid]: src as any }));
           if (src === 'local_picker') {
-            setTimeout(() => loadVaultFolder(vid), 100);
+            loadVaultFolder(vid, 'local_picker');
           }
+        }}
+        pluginState={pluginState}
+        onTogglePlugin={(id) => {
+          setPluginState(prev => {
+            const next = {
+              ...prev,
+              enabledPlugins: {
+                ...prev.enabledPlugins,
+                [id]: !prev.enabledPlugins[id]
+              }
+            };
+            savePluginState(next);
+            return next;
+          });
         }}
       />
 

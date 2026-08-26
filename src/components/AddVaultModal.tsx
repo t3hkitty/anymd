@@ -8,7 +8,7 @@ interface AddVaultModalProps {
     id: string;
     name: string;
     category: string;
-    storageType: 'local_storage' | 'local_picker' | 'n8n_cloud';
+    storageType: 'local_storage' | 'local_picker' | 'n8n_cloud' | 'lcmd_personal' | 'lcmd_sandbox';
     dirHandle: FileSystemDirectoryHandle | null;
     endpointUrl: string;
   }) => void;
@@ -22,7 +22,7 @@ export const AddVaultModal: React.FC<AddVaultModalProps> = ({
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState('');
   const [category, setCategory] = useState('Books');
-  const [storageType, setStorageType] = useState<'local_storage' | 'local_picker' | 'n8n_cloud'>('local_storage');
+  const [storageType, setStorageType] = useState<'local_storage' | 'local_picker' | 'n8n_cloud' | 'lcmd_personal' | 'lcmd_sandbox'>('local_storage');
   
   // Validation targets
   const [selectedDirHandle, setSelectedDirHandle] = useState<FileSystemDirectoryHandle | null>(null);
@@ -146,55 +146,89 @@ export const AddVaultModal: React.FC<AddVaultModalProps> = ({
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <label className="block font-bold text-sky-400 mb-2">3. Storage & Integration Type</label>
-              
-              <div className="grid grid-cols-1 gap-3">
-                {/* Local Storage Option */}
-                <div 
-                  onClick={() => { setStorageType('local_storage'); setErrorMsg(null); }}
-                  className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                    storageType === 'local_storage' 
-                      ? 'bg-sky-950/20 border-sky-500/50' 
-                      : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
-                  }`}
-                >
-                  <HardDrive size={18} className="text-sky-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-bold block text-neutral-200">Local Sandbox (Web Storage)</span>
-                    <span className="text-[10px] text-neutral-500">Fast, in-browser storage. Ideal for quick drafts and testing.</span>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+              <div className="space-y-4">
+                <label className="block font-bold text-sky-400 mb-2">3. Storage & Integration Type</label>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  {/* Local Storage Option */}
+                  <div 
+                    onClick={() => { setStorageType('local_storage'); setErrorMsg(null); }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
+                      storageType === 'local_storage' 
+                        ? 'bg-sky-950/20 border-sky-500/50' 
+                        : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
+                    }`}
+                  >
+                    <HardDrive size={18} className="text-sky-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold block text-neutral-200">Local Sandbox (Web Storage)</span>
+                      <span className="text-[10px] text-neutral-500">Fast, in-browser storage. Ideal for quick drafts and testing.</span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Local Directory Option */}
-                <div 
-                  onClick={() => { setStorageType('local_picker'); setErrorMsg(null); }}
-                  className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                    storageType === 'local_picker' 
-                      ? 'bg-sky-950/20 border-sky-500/50' 
-                      : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
-                  }`}
-                >
-                  <FolderOpen size={18} className="text-emerald-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-bold block text-neutral-200">Direct Local Folder (Native File System)</span>
-                    <span className="text-[10px] text-neutral-500">Read & write directly to your local folders. Requires browser permission.</span>
+                  {/* Local Directory Option */}
+                  <div 
+                    onClick={() => { setStorageType('local_picker'); setErrorMsg(null); }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
+                      storageType === 'local_picker' 
+                        ? 'bg-sky-950/20 border-sky-500/50' 
+                        : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
+                    }`}
+                  >
+                    <FolderOpen size={18} className="text-emerald-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold block text-neutral-200">Direct Local Folder (Native File System)</span>
+                      <span className="text-[10px] text-neutral-500">Read & write directly to your local folders. Requires browser permission.</span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Cloud Webhook Option */}
-                <div 
-                  onClick={() => { setStorageType('n8n_cloud'); setErrorMsg(null); }}
-                  className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                    storageType === 'n8n_cloud' 
-                      ? 'bg-sky-950/20 border-sky-500/50' 
-                      : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
-                  }`}
-                >
-                  <Cloud size={18} className="text-purple-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-bold block text-neutral-200">n8n Cloud Webhook Relay</span>
-                    <span className="text-[10px] text-neutral-500">Sync notes through an active n8n automation webhook.</span>
+                  {/* Cloud Webhook Option */}
+                  <div 
+                    onClick={() => { setStorageType('n8n_cloud'); setErrorMsg(null); }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
+                      storageType === 'n8n_cloud' 
+                        ? 'bg-sky-950/20 border-sky-500/50' 
+                        : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
+                    }`}
+                  >
+                    <Cloud size={18} className="text-purple-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold block text-neutral-200">n8n Cloud Webhook Relay</span>
+                      <span className="text-[10px] text-neutral-500">Sync notes through an active n8n automation webhook.</span>
+                    </div>
+                  </div>
+
+                  {/* Old LC_MD Personal Option */}
+                  <div 
+                    onClick={() => { setStorageType('lcmd_personal'); setErrorMsg(null); }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
+                      storageType === 'lcmd_personal' 
+                        ? 'bg-sky-950/20 border-sky-500/50' 
+                        : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
+                    }`}
+                  >
+                    <HardDrive size={18} className="text-amber-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold block text-neutral-200">Import Old LC_MD Personal Vault</span>
+                      <span className="text-[10px] text-neutral-500">Migrate resonance streams from `lc_md_books_personal_v3` local storage.</span>
+                    </div>
+                  </div>
+
+                  {/* Old LC_MD Sandbox Option */}
+                  <div 
+                    onClick={() => { setStorageType('lcmd_sandbox'); setErrorMsg(null); }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start space-x-3 ${
+                      storageType === 'lcmd_sandbox' 
+                        ? 'bg-sky-950/20 border-sky-500/50' 
+                        : 'bg-neutral-950/50 border-neutral-800 hover:border-neutral-700'
+                    }`}
+                  >
+                    <Sparkles size={18} className="text-pink-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold block text-neutral-200">Import Old LC_MD Sandbox Vault</span>
+                      <span className="text-[10px] text-neutral-500">Migrate resonance streams from `lc_md_books_sandbox_v3` local storage.</span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { X, Key, Shield, HelpCircle, HardDrive, Cpu, Palette, Sliders } from 'lucide-react';
+import type { PluginState, PluginId } from '../types/plugins';
+import { DEFAULT_PLUGINS } from '../plugins/themeEnginePlugin';
 
 interface SettingsDrawerProps {
   isOpen: boolean;
@@ -30,6 +32,10 @@ interface SettingsDrawerProps {
   onMobileLocalhostEnabledChange: (val: boolean) => void;
   vaultLoadSource: Record<string, string>;
   onVaultLoadSourceChange: (vaultId: string, source: string) => void;
+
+  // Plugin System Props
+  pluginState: PluginState;
+  onTogglePlugin: (id: PluginId) => void;
 }
 
 export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
@@ -57,6 +63,9 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
   onMobileLocalhostEnabledChange,
   vaultLoadSource,
   onVaultLoadSourceChange,
+
+  pluginState,
+  onTogglePlugin,
 }) => {
   if (!isOpen) return null;
 
@@ -126,21 +135,20 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
         <section className="space-y-3">
           <h3 className="text-sky-400 font-bold border-b border-neutral-900 pb-1 flex items-center space-x-1.5">
             <Sliders size={14} />
-            <span>Plugins (.anymd/plugins/)</span>
+            <span>Plugins ({DEFAULT_PLUGINS.length})</span>
           </h3>
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span>Book Companion Generator</span>
-              <input type="checkbox" defaultChecked className="rounded border-neutral-800 bg-neutral-900 text-sky-500" />
-            </label>
-            <label className="flex items-center justify-between">
-              <span>Rsync Engine Plugin</span>
-              <input type="checkbox" defaultChecked className="rounded border-neutral-800 bg-neutral-900 text-sky-500" />
-            </label>
-            <label className="flex items-center justify-between">
-              <span>Zettelkasten Autolinker</span>
-              <input type="checkbox" defaultChecked className="rounded border-neutral-800 bg-neutral-900 text-sky-500" />
-            </label>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+            {DEFAULT_PLUGINS.map((plugin) => (
+              <label key={plugin.id} className="flex items-center justify-between cursor-pointer py-0.5">
+                <span title={plugin.description} className="truncate pr-2">{plugin.name}</span>
+                <input
+                  type="checkbox"
+                  checked={!!pluginState.enabledPlugins[plugin.id]}
+                  onChange={() => onTogglePlugin(plugin.id)}
+                  className="rounded border-neutral-800 bg-neutral-900 text-sky-500 shrink-0"
+                />
+              </label>
+            ))}
           </div>
         </section>
 

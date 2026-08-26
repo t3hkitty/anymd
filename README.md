@@ -26,3 +26,21 @@ All your settings, custom interface themes (Classic, Cute, Silly), active worksp
 Even when GitHub Pages builds and publishes new updates to your repository, your local environment state remains intact, untouched, and fully authenticated cite: 43, 116.
 🐾 Next Step Idea: Since your codebase compiles into clean static assets, would you like me to generate a GitHub Actions workflow script (deploy.yml) so that every time you save an idea or push a design edit, GitHub automatically builds and publishes your working site directly to your free HTTPS GitHub Pages domain cite: 32, 105?
 
+
+---
+
+## 🌸 Kawaii Feature Updates! (=^･ω･^=)
+
+```text
+      /\_/\
+    ( =^.^= )  nyaa~
+     \  -  /
+    ( | | | )
+   (__d_b___)
+```
+
+- **💾 Sync Directory Picker Gesture Fix**: Resolves browser permission blockages by calling `window.showDirectoryPicker()` synchronously inside the user-gesture click and change event handlers in settings and modals.
+- **⚙️ Dynamic Plugins inside Settings Drawer**: Renders checkboxes dynamically for all active plugins from the anymd registry repository, allowing immediate toggle control.
+- **🔄 Old LC_MD Vault Import & Migration**: Adds options inside the "Create New Vault" storage picker to import and convert old local-storage based `lc_md_` vaults (Personal or Sandbox) into modern companion Markdown (.md) structures.
+
+
