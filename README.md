@@ -43,6 +43,23 @@ Even when GitHub Pages builds and publishes new updates to your repository, your
 - **⚙️ Dynamic Plugins inside Settings Drawer**: Renders checkboxes dynamically for all active plugins from the anymd registry repository, allowing immediate toggle control.
 - **🔄 Old LC_MD Vault Import & Migration**: Adds options inside the "Create New Vault" storage picker to import and convert old local-storage based `lc_md_` vaults (Personal or Sandbox) into modern companion Markdown (.md) structures.
 - **🎵 Music Vault & Mondegreen Synchronized Lyrics Engine**: Local-first audio player with precision timecoded LRC synchronizer, 3-tier phonetic mishearing dial (`Canonical`, `Mondegreen`, `WWSGD`), ASCII audio spectrum analyzer, and AuDHD speed gears (`0.75x` - `1.25x`).
+- **🚪 Somatic & Spatial Routine Builder**: TTS step-by-step guidance for Leaving House, Morning Wake, Sustenance, and Bedtime routines.
+- **⚙️ Vault Manager**: Unified administration workspace to customize, connection-sync, and manage local vaults.
+- **📥 Ingestion & Import Studio**: Universal hub mapping photo scanners (TCG/Insurance), VOD/Stream indexers, webnovels, ISBN library lookups, and Calibre library DBs.
+- **😻 All Actions Hub**: High-density 1-click panel consolidating somatic tools, import pipelines, and community settings.
+
+```text
+       /\_/\
+      ( o.o )  meow!
+       > ^ <
+    
+     / \__/\
+    (  q p  )  All Systems: ONLINE
+    ( =  ^  = )
+    )         (
+   (           )
+  (             )
+```
 
 ```text
       |\      _,,,---,,_
