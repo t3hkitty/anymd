@@ -77,6 +77,7 @@ import { PersonaCollectorHubModal } from './components/PersonaCollectorHubModal'
 import { VaultBackupRestoreModal } from './components/VaultBackupRestoreModal';
 import { VodImporterModal } from './components/VodImporterModal';
 import { GeminiSparkPluginModal } from './components/GeminiSparkPluginModal';
+import { MusicVaultPlayerModal } from './components/MusicVaultPlayerModal';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -353,6 +354,7 @@ export function App() {
   const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
   const [isVodImporterOpen, setIsVodImporterOpen] = useState(false);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
+  const [isMusicVaultOpen, setIsMusicVaultOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -933,6 +935,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenStoryMakerBible={() => setIsStoryMakerBibleOpen(true)}
             onOpenSpatialRoutine={() => setIsSpatialRoutineOpen(true)}
             onOpenPersonaCollector={() => setIsPersonaCollectorOpen(true)}
+            onOpenMusicVault={() => setIsMusicVaultOpen(true)}
             onOpenHtmlPublish={() => setIsHtmlPublishOpen(true)}
             onOpenCommunityHub={() => setActiveView('community')}
 
@@ -1966,6 +1969,12 @@ date_cataloged: "${new Date().toISOString()}"
           setActiveBookId(book.id);
           setActiveView('library');
         }}
+      />
+
+      {/* 15. Music Vault, Synchronized Lyrics & Mondegreen Deck */}
+      <MusicVaultPlayerModal
+        isOpen={isMusicVaultOpen}
+        onClose={() => setIsMusicVaultOpen(false)}
       />
 
       {/* ⚡ Idle Background Auto-Worker Toast Notice */}

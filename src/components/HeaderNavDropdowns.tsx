@@ -62,6 +62,7 @@ interface HeaderNavDropdownsProps {
   onOpenStoryMakerBible: () => void;
   onOpenSpatialRoutine: () => void;
   onOpenPersonaCollector: () => void;
+  onOpenMusicVault?: () => void;
   onOpenHtmlPublish: () => void;
   onOpenCommunityHub: () => void;
 
@@ -614,6 +615,20 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
               <div>
                 <div className="text-slate-100 font-bold">Persona &amp; Plushie Cubbies</div>
                 <div className="text-[10px] text-slate-400">Calm mode, Piplup radar &amp; sanctuary</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => props.onOpenMusicVault && runAction(props.onOpenMusicVault)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-yellow-300 font-semibold transition-colors border border-yellow-500/30 bg-yellow-500/10"
+            >
+              <span>🎵</span>
+              <div>
+                <div className="text-yellow-200 font-bold flex items-center space-x-1">
+                  <span>Music Vault &amp; Mondegreen Deck</span>
+                  <span className="text-[9px] px-1 bg-yellow-400 text-black font-black rounded">NEW</span>
+                </div>
+                <div className="text-[10px] text-slate-300">Synchronized LRC lyrics, WWSGD &amp; tempo pacing</div>
               </div>
             </button>
 

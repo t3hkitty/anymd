@@ -1,6 +1,4 @@
-# CODEOWNERS for Anymd Suite
-# Maintainers review critical workflow definitions and scripts
+# Locks .github/ and scripts/ to maintainer
 
-.github/ @t3hkitty
-scripts/  @t3hkitty
-*.py      @t3hkitty
+.github/  @lorik
+scripts/  @lorik

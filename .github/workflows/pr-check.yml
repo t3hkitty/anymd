@@ -1,0 +1,24 @@
+name: PR Read-Only Submission Validation
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  pr-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        with:
+          persist-credentials: false
+
+      - name: Verify Community Guidelines
+        run: |
+          echo "Validating submission against FOSS license and anti-piracy checkboxes..."
+          # Mock validation: Check that no files in community/ contain banned keys
+          if grep -r -i -E "pirated|copyrighted|nsfw" community/src/ 2>/dev/null; then
+            echo "ERROR: Submissions must not contain reference to copyrighted or explicit content!"
+            exit 1
+          fi
+          echo "Validation passed."

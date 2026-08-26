@@ -8,11 +8,15 @@ import {
 import { DynamicAtmosphericBackground } from '@lorik/shared-kawaii-ui';
 import { MotivationHelperWidget } from './MotivationHelperWidget';
 import { GeminiSparkPluginModal } from './GeminiSparkPluginModal';
+import { PluginManagerModal } from './PluginManagerModal';
+import { AddVaultModal } from './AddVaultModal';
+import { loadSavedPluginState, savePluginState } from '../plugins/themeEnginePlugin';
+import type { PluginState, PluginId } from '../types/plugins';
 
 import { TopHeaderBar } from '../layout/TopHeaderBar';
 import type { ModeType, SyncStatusType } from '../layout/TopHeaderBar';
 import { VaultNavStrip } from '../layout/VaultNavStrip';
-import type { CategoryType } from '../layout/VaultNavStrip';
+import type { CategoryType, VaultItem } from '../layout/VaultNavStrip';
 import { MbbQuickActionZippy } from '../layout/MbbQuickActionZippy';
 import { ViewSwitcherBar } from '../layout/ViewSwitcherBar';
 import type { ViewLayoutType } from '../layout/ViewSwitcherBar';
@@ -36,7 +40,8 @@ import { CommunityShareModal } from '../community/CommunityShareModal';
 import { sidebarBridge } from '../sync/sidebarBridge';
 
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
-type VaultId = 'anymd-main' | 'signalstack-discovery' | 'storycraft-lore';
+type VaultId = string;
+
 
 interface VaultFile {
   name: string;
@@ -99,10 +104,38 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [activeVault, setActiveVault] = useState<VaultId>(() => (localStorage.getItem('anymd_active_vault') as VaultId) || 'anymd-main');
   const [viewLayout, setViewLayout] = useState<ViewLayoutType>('Grid');
 
+  // Dynamic vaults list
+  const [vaultList, setVaultList] = useState<VaultItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('anymd_vault_list_dynamic');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [
+      { id: 'storycraft-lore', name: '📖 StoryCraft Lore', category: 'Books' },
+      { id: 'calibre-local', name: '📚 Calibre Local Library', category: 'Books' },
+      { id: 'anymd-main', name: '🐱 Anymd Primary', category: 'Journal Vaults' },
+      { id: 'daily-bullet', name: '📝 Daily Bullet Journal', category: 'Journal Vaults' },
+      { id: 'signalstack-discovery', name: '📡 SignalStack Discovery', category: 'Blueprints' },
+      { id: 'system-specs', name: '⚙️ System Architect Specs', category: 'Blueprints' },
+      { id: 'memory-sandbox', name: '🏖️ Memory Sandbox', category: 'Sandboxes' },
+      { id: 'draft-playground', name: '🧪 Draft Playground', category: 'Sandboxes' },
+    ];
+  });
+
+  // Save vault list to localStorage
+  useEffect(() => {
+    localStorage.setItem('anymd_vault_list_dynamic', JSON.stringify(vaultList));
+  }, [vaultList]);
+
   // Drawer / Modal states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
+  const [isPluginManagerOpen, setIsPluginManagerOpen] = useState(false);
+  const [isAddVaultOpen, setIsAddVaultOpen] = useState(false);
+
+  // Plugin state
+  const [pluginState, setPluginState] = useState<PluginState>(loadSavedPluginState);
 
   // Sync state
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>('synced');
@@ -114,18 +147,24 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [selectedFileMetadata, setSelectedFileMetadata] = useState<string>('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  const [vaultFolders, setVaultFolders] = useState<Record<VaultId, FileSystemDirectoryHandle | null>>({
-    'anymd-main': null,
-    'signalstack-discovery': null,
-    'storycraft-lore': null
+  const [vaultFolders, setVaultFolders] = useState<Record<string, FileSystemDirectoryHandle | null>>(() => {
+    const initial: Record<string, FileSystemDirectoryHandle | null> = {};
+    // Seed default keys
+    initial['anymd-main'] = null;
+    initial['signalstack-discovery'] = null;
+    initial['storycraft-lore'] = null;
+    return initial;
   });
-  const [vaultFiles, setVaultFiles] = useState<Record<VaultId, VaultFile[]>>({
-    'anymd-main': [],
-    'signalstack-discovery': [],
-    'storycraft-lore': []
+
+  const [vaultFiles, setVaultFiles] = useState<Record<string, VaultFile[]>>(() => {
+    const initial: Record<string, VaultFile[]> = {};
+    initial['anymd-main'] = [];
+    initial['signalstack-discovery'] = [];
+    initial['storycraft-lore'] = [];
+    return initial;
   });
   
-  const [vaultLoadSource, setVaultLoadSource] = useState<Record<VaultId, 'local_picker' | 'n8n_cloud' | 'local_storage'>>(() => {
+  const [vaultLoadSource, setVaultLoadSource] = useState<Record<string, 'local_picker' | 'n8n_cloud' | 'local_storage'>>(() => {
     try {
       const saved = localStorage.getItem('anymd_vault_load_sources');
       if (saved) return JSON.parse(saved);
@@ -136,6 +175,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
       'storycraft-lore': 'local_storage'
     };
   });
+
 
   // Settings
   const [isLightMode, setIsLightMode] = useState(() => localStorage.getItem('anymd_light_mode') === 'true');
@@ -490,6 +530,83 @@ export const VaultWorkspaceLayout: React.FC = () => {
     setStarredFiles(prev => ({ ...prev, [filename]: !prev[filename] }));
   };
 
+  const handleAddVault = (vaultData: {
+    id: string;
+    name: string;
+    category: string;
+    storageType: 'local_storage' | 'local_picker' | 'n8n_cloud';
+    dirHandle: FileSystemDirectoryHandle | null;
+    endpointUrl: string;
+  }) => {
+    const newVaultItem: VaultItem = {
+      id: vaultData.id,
+      name: vaultData.name,
+      category: vaultData.category as CategoryType
+    };
+    setVaultList(prev => [...prev, newVaultItem]);
+
+    setVaultLoadSource(prev => ({
+      ...prev,
+      [vaultData.id]: vaultData.storageType
+    }));
+
+    if (vaultData.dirHandle) {
+      setVaultFolders(prev => ({
+        ...prev,
+        [vaultData.id]: vaultData.dirHandle
+      }));
+    }
+
+    if (vaultData.endpointUrl) {
+      setN8nEndpoint(vaultData.endpointUrl);
+    }
+
+    setActiveCategory(vaultData.category as CategoryType);
+    setActiveVault(vaultData.id);
+
+    setVaultFiles(prev => ({
+      ...prev,
+      [vaultData.id]: []
+    }));
+
+    if (vaultData.storageType === 'local_storage') {
+      loadVaultFromLocalStorage(vaultData.id);
+    } else if (vaultData.storageType === 'local_picker' && vaultData.dirHandle) {
+      setIsRefreshing(true);
+      setSyncStatus('syncing');
+      
+      const scanDir = async () => {
+        try {
+          const files: VaultFile[] = [];
+          for await (const entry of vaultData.dirHandle!.values()) {
+            if (entry.kind === 'file' && (entry.name.endsWith('.md') || entry.name.endsWith('.json') || entry.name.endsWith('.txt'))) {
+              const file = await entry.getFile();
+              const text = await file.text();
+              const snippet = text.slice(0, 100).replace(/[\r\n\t]+/g, ' ') + (text.length > 100 ? '...' : '');
+              const lastModified = new Date(file.lastModified).toLocaleDateString() + ' ' + new Date(file.lastModified).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              files.push({
+                name: entry.name,
+                snippet,
+                lastModified,
+                handle: entry
+              });
+            }
+          }
+          setVaultFiles(prev => ({ ...prev, [vaultData.id]: files }));
+          setSyncStatus('synced');
+        } catch (err) {
+          setSyncStatus('error');
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+      scanDir();
+    } else if (vaultData.storageType === 'n8n_cloud') {
+      loadVaultFromN8n(vaultData.id);
+    }
+  };
+
+
   // Layout stylings
   const rootBg = isLightMode ? 'bg-neutral-100 text-neutral-900' : 'bg-transparent text-neutral-100';
   const headerBg = isLightMode ? 'border-neutral-300 bg-white/80' : 'border-neutral-800 bg-neutral-950/60';
@@ -509,6 +626,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
           setSelectedFile(null);
         }}
         onToggleSettings={() => setIsSettingsOpen(!isSettingsOpen)}
+        onTogglePlugins={() => setIsPluginManagerOpen(true)}
       />
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -528,10 +646,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
           onCategoryChange={setActiveCategory}
           activeVault={activeVault}
           onVaultChange={(vid) => {
-            setActiveVault(vid as VaultId);
+            setActiveVault(vid);
             setSelectedFile(null);
           }}
+          vaults={vaultList}
+          onAddVaultClick={() => setIsAddVaultOpen(true)}
         />
+
 
         {/* MBB quick actions */}
         <MbbQuickActionZippy 
@@ -735,8 +856,60 @@ export const VaultWorkspaceLayout: React.FC = () => {
         vaultLoadSource={vaultLoadSource}
         onVaultLoadSourceChange={(vid, src) => {
           setVaultLoadSource(prev => ({ ...prev, [vid]: src as any }));
+          if (src === 'local_picker') {
+            setTimeout(() => loadVaultFolder(vid), 100);
+          }
         }}
       />
+
+      {/* Plugin Manager Modal */}
+      <PluginManagerModal 
+        isOpen={isPluginManagerOpen}
+        pluginState={pluginState}
+        onClose={() => setIsPluginManagerOpen(false)}
+        onTogglePlugin={(id) => {
+          setPluginState(prev => {
+            const next = {
+              ...prev,
+              enabledPlugins: {
+                ...prev.enabledPlugins,
+                [id]: !prev.enabledPlugins[id]
+              }
+            };
+            savePluginState(next);
+            return next;
+          });
+        }}
+        onUpdateRelLinkRoot={(newRoot) => {
+          setPluginState(prev => {
+            const next = { ...prev, relLinkRoot: newRoot };
+            savePluginState(next);
+            return next;
+          });
+        }}
+        onUpdateLocalAccessMode={(mode) => {
+          setPluginState(prev => {
+            const next = { ...prev, localAccessMode: mode };
+            savePluginState(next);
+            return next;
+          });
+        }}
+        onUpdateConfigStorageLocation={(loc) => {
+          setPluginState(prev => {
+            const next = { ...prev, configStorageLocation: loc };
+            savePluginState(next);
+            return next;
+          });
+        }}
+      />
+
+      {/* Add Vault Modal */}
+      <AddVaultModal 
+        isOpen={isAddVaultOpen}
+        onClose={() => setIsAddVaultOpen(false)}
+        onAddVault={handleAddVault}
+      />
+
 
       {/* File Preview overlay */}
       {selectedFile && (
