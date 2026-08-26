@@ -263,6 +263,15 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     author: 'Anymd Core',
     enabledByDefault: true,
     category: 'reader'
+  },
+  {
+    id: 'plugin-pretentious-leather-journal',
+    name: 'Pretentious Leather Journal & Bujo Bundle',
+    version: '1.0.0',
+    description: 'Pretentious leather-bound bullet journal (Bujo) dashboard with rich Excalidraw sketching/drawing board integration for daily custom layouts and spreads.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'journal'
   }
 ];
 
@@ -291,6 +300,7 @@ export const INITIAL_PLUGIN_STATE: PluginState = {
     'plugin-ocr-transcriber': true,
     'plugin-vault-roomba': true,
     'plugin-kawaii-badges': true,
+    'plugin-pretentious-leather-journal': true,
   },
   relLinkRoot: './Library',
   webdavConfig: {
