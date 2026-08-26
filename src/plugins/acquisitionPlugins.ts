@@ -21,6 +21,50 @@ export const ACQUISITION_PROVIDERS: AcquisitionProviderPlugin[] = [
     }
   },
   {
+    id: 'webnovel-subscriptions',
+    name: 'Webnovel Subscriptions & Patreon Tiers',
+    description: 'Generates subscription, raw chapter, and advanced chapter acquisition links across Wuxiaworld, Royal Road, Webnovel.com, and Patreon.',
+    icon: '✨',
+    generateLinks: (title: string, author: string): AcquisitionLink[] => {
+      const query = encodeURIComponent(title);
+      const authorQuery = encodeURIComponent(author);
+      return [
+        {
+          providerId: 'patreon-subs',
+          providerName: 'Patreon Subscriptions',
+          icon: '🧡',
+          label: 'Search Translator Patreon Tiers',
+          url: `https://www.patreon.com/search?q=${query}+${authorQuery}`,
+          isAppScheme: false
+        },
+        {
+          providerId: 'wuxiaworld',
+          providerName: 'Wuxiaworld VIP & Subscriptions',
+          icon: '🥋',
+          label: 'Find Wuxiaworld Chapters',
+          url: `https://www.wuxiaworld.com/novel/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+          isAppScheme: false
+        },
+        {
+          providerId: 'royalroad',
+          providerName: 'Royal Road Fictions',
+          icon: '🏰',
+          label: 'Find on Royal Road',
+          url: `https://www.royalroad.com/fictions/search?title=${query}`,
+          isAppScheme: false
+        },
+        {
+          providerId: 'webnovel-com',
+          providerName: 'Webnovel Store & Privilege',
+          icon: '📖',
+          label: 'Acquire on Webnovel.com Store',
+          url: `https://www.webnovel.com/search?keywords=${query}`,
+          isAppScheme: false
+        }
+      ];
+    }
+  },
+  {
     id: 'ebay-marketplace',
     name: 'eBay Auctions & Marketplace',
     description: 'Generates live search links for eBay auctions, TCG cards, rare books, artwork, and physical collectibles.',
