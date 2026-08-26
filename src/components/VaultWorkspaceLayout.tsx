@@ -40,6 +40,16 @@ import { CommunityShareModal } from '../community/CommunityShareModal';
 // Sidebar bridge
 import { sidebarBridge } from '../sync/sidebarBridge';
 
+// Core Plugins
+import {
+  renderReadingMode,
+  generateLitanyZettelTemplate,
+  dispatchToN8n,
+  parseTranscribedTextToBlockquote,
+  sweepVaultNote,
+  getKawaiiBadge
+} from '../plugins/anymdCorePlugins';
+
 type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
 type VaultId = string;
 
@@ -146,6 +156,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [selectedFileContent, setSelectedFileContent] = useState<string>('');
   const [selectedFileMetadata, setSelectedFileMetadata] = useState<string>('');
+  const [isEditingMode, setIsEditingMode] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const [vaultFolders, setVaultFolders] = useState<Record<string, FileSystemDirectoryHandle | null>>(() => {
@@ -528,6 +539,68 @@ export const VaultWorkspaceLayout: React.FC = () => {
     alert('🚀 Initiating automated deploy sequence to Google Antigravity (AGV) sidecar relay...');
   };
 
+  const handleCreateNewLitanyNote = () => {
+    const title = prompt('Enter note title:', 'New Litany Note');
+    if (!title) return;
+    const cleanName = `${title.replace(/[^a-zA-Z0-9_\-]/g, '_')}.md`;
+    const template = generateLitanyZettelTemplate(title, activeVault);
+    localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, template);
+    if (vaultLoadSource[activeVault] === 'local_storage') {
+      loadVaultFromLocalStorage(activeVault);
+    } else {
+      alert('Note template initialized in local cache buffer! Mount local storage to write to disk.');
+    }
+  };
+
+  const handleSweepNote = () => {
+    const fullText = `---\n${selectedFileMetadata}\n---\n${selectedFileContent}`;
+    const result = sweepVaultNote(fullText);
+    const fmMatch = result.cleanedContent.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (fmMatch) {
+      const newMeta = fmMatch[1].trim();
+      const newBody = result.cleanedContent.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim();
+      setSelectedFileMetadata(newMeta);
+      setSelectedFileContent(newBody);
+      if (result.changesMade.length > 0) {
+        alert(`🧹 Roomba Swept Note:\n- ${result.changesMade.join('\n- ')}`);
+      } else {
+        alert('🧹 Roomba: Note is already clean!');
+      }
+    }
+  };
+
+  const handleSendToWebhook = async () => {
+    const metaObj: Record<string, string> = {};
+    selectedFileMetadata.split('\n').forEach(line => {
+      const parts = line.split(':');
+      if (parts.length >= 2) {
+        metaObj[parts[0].trim()] = parts.slice(1).join(':').trim();
+      }
+    });
+
+    const success = await dispatchToN8n(metaObj, selectedFileContent);
+    if (success) {
+      alert('🔮 Webhook dispatched successfully to n8n!');
+    } else {
+      alert('❌ Failed to dispatch webhook to n8n. Defaulting to: ' + getN8nWebhookEndpoint());
+    }
+  };
+
+  const handleSaveFileContent = async (newMetadata: string, newBody: string) => {
+    if (!selectedFile) return;
+    const fullText = `---\n${newMetadata}\n---\n${newBody}`;
+    if (vaultLoadSource[activeVault] === 'local_storage') {
+      localStorage.setItem(`anymd_file_${activeVault}_${selectedFile}`, fullText);
+      setSelectedFileMetadata(newMetadata);
+      setSelectedFileContent(newBody);
+      loadVaultFromLocalStorage(activeVault);
+      alert('✓ Note saved successfully!');
+    } else {
+      // Fallback
+      alert('✓ Written to cache buffer. Please commit to Git or sync with n8n.');
+    }
+  };
+
   const handleToggleStar = (filename: string) => {
     setStarredFiles(prev => ({ ...prev, [filename]: !prev[filename] }));
   };
@@ -707,11 +780,19 @@ export const VaultWorkspaceLayout: React.FC = () => {
           {activeTab === 'vaults' && (
             <div className={`h-full flex flex-col border overflow-hidden ${panelBg}`}>
               {/* View Switcher bar */}
-              <ViewSwitcherBar 
-                activeLayout={viewLayout}
-                onLayoutChange={setViewLayout}
-                noteCount={vaultFiles[activeVault].length}
-              />
+              <div className="flex justify-between items-center bg-neutral-900/40 border-b border-neutral-800 pr-4">
+                <ViewSwitcherBar 
+                  activeLayout={viewLayout}
+                  onLayoutChange={setViewLayout}
+                  noteCount={vaultFiles[activeVault].length}
+                />
+                <button
+                  onClick={handleCreateNewLitanyNote}
+                  className="px-3 py-1 bg-purple-900/50 hover:bg-purple-800 border border-purple-500/30 rounded-lg text-[10px] font-mono text-purple-200 transition-all flex items-center space-x-1"
+                >
+                  <span>🌸 + New Litany Note</span>
+                </button>
+              </div>
 
               {/* Central Viewport */}
               <div className="flex-1 overflow-y-auto">
@@ -950,38 +1031,193 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
 
       {/* File Preview overlay */}
-      {selectedFile && (
-        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-12 animate-in fade-in zoom-in-95 duration-200">
-          <div className={`w-full max-w-5xl h-full flex flex-col shadow-2xl overflow-hidden border ${isLightMode ? 'bg-white border-neutral-300' : 'bg-neutral-950 border-neutral-700'}`}>
-            <header className={`p-4 border-b flex justify-between items-center ${isLightMode ? 'border-neutral-200 bg-neutral-100' : 'border-neutral-800 bg-neutral-900'}`}>
-              <div className="flex items-center">
-                <FileText className={`text-${accentColor} mr-3`} size={20} />
-                <h3 className="font-bold font-mono">{selectedFile}</h3>
-              </div>
-              <button 
-                onClick={() => { setSelectedFile(null); setSelectedFileContent(''); }} 
-                className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </header>
-            <div className={`flex-1 p-8 overflow-auto font-serif text-lg leading-loose ${isLightMode ? 'text-neutral-800' : 'text-neutral-300'}`}>
-              <h1 className="text-3xl font-bold mb-6 border-b border-neutral-500/30 pb-4"># {selectedFile.replace('.md', '').replace(/_/g, ' ')}</h1>
-              <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed mb-8">
-                {selectedFileContent}
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setIsShareOpen(true)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
-                >
-                  Publish to Community
-                </button>
+      {selectedFile && (() => {
+        // Parse frontmatter tags and status for Kawaii Decorator
+        const tagsMatch = selectedFileMetadata.match(/tags:\s*\[(.*?)\]/i);
+        const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.replace(/[\[\]"']/g, '').trim()) : [];
+        const statusMatch = selectedFileMetadata.match(/status:\s*(.*)$/m);
+        const status = statusMatch ? statusMatch[1].trim() : 'ready';
+        const typeMatch = selectedFileMetadata.match(/type:\s*(.*)$/m);
+        const type = typeMatch ? typeMatch[1].trim() : 'reading_note';
+
+        const rendered = renderReadingMode(selectedFileContent);
+
+        return (
+          <div className="absolute inset-0 z-50 bg-[#0A0A10]/95 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-6xl h-full flex flex-col shadow-2xl overflow-hidden border border-[#2E1A47] bg-[#1E1E2E]">
+              {/* Header */}
+              <header className="p-4 border-b border-[#2E1A47] bg-[#0E0E1B] flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  <FileText className="text-[#E6E6FA] animate-pulse" size={20} />
+                  <div>
+                    <h3 className="font-bold font-mono text-xs text-[#E6E6FA]">{selectedFile}</h3>
+                    <div className="flex gap-1.5 mt-1">
+                      {/* Kawaii Badge status indicators */}
+                      {(() => {
+                        const badge = getKawaiiBadge(status, type);
+                        return (
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-mono border flex items-center gap-1 ${badge.style}`}>
+                            <span>{badge.emoji}</span>
+                            <span>{badge.label}</span>
+                          </span>
+                        );
+                      })()}
+                      {tags.map(t => {
+                        const tagBadge = getKawaiiBadge('', t);
+                        return (
+                          <span key={t} className={`px-2 py-0.5 rounded text-[10px] font-mono border ${tagBadge.style}`}>
+                            {tagBadge.emoji} #{t}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Edit / Read Mode Toggles */}
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setIsEditingMode(false)}
+                    className={`px-3 py-1 font-mono text-xs rounded transition-all border ${
+                      !isEditingMode
+                        ? 'bg-[#2E1A47] text-[#E6E6FA] border-[#2E1A47]'
+                        : 'border-[#2E1A47] text-neutral-500 hover:text-neutral-300'
+                    }`}
+                  >
+                    📖 Reading Mode
+                  </button>
+                  <button
+                    onClick={() => setIsEditingMode(true)}
+                    className={`px-3 py-1 font-mono text-xs rounded transition-all border ${
+                      isEditingMode
+                        ? 'bg-[#2E1A47] text-[#E6E6FA] border-[#2E1A47]'
+                        : 'border-[#2E1A47] text-neutral-500 hover:text-neutral-300'
+                    }`}
+                  >
+                    ✍️ Edit Mode
+                  </button>
+                  <button 
+                    onClick={() => { setSelectedFile(null); setSelectedFileContent(''); setIsEditingMode(false); }} 
+                    className="p-1.5 hover:bg-rose-950/40 text-rose-400 rounded transition-colors cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </header>
+
+              {/* Main Content Area */}
+              <div className="flex-1 flex overflow-hidden">
+                {isEditingMode ? (
+                  /* EDIT MODE */
+                  <div className="flex-1 flex flex-col p-6 space-y-4">
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Metadata Editor */}
+                      <div className="flex flex-col space-y-2 border border-[#2E1A47] p-4 rounded bg-[#0E0E1B]">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#E6E6FA] block">YAML Frontmatter</label>
+                        <textarea
+                          id="edit-metadata-area"
+                          className="flex-1 w-full bg-neutral-950 p-3 font-mono text-[11px] text-[#E6E6FA] rounded border border-neutral-800 focus:border-[#2E1A47] focus:outline-none resize-none"
+                          defaultValue={selectedFileMetadata}
+                        />
+                      </div>
+                      {/* Body Editor */}
+                      <div className="md:col-span-2 flex flex-col space-y-2 border border-[#2E1A47] p-4 rounded bg-[#0E0E1B]">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#E6E6FA] block">Markdown Body</label>
+                        <textarea
+                          id="edit-content-area"
+                          className="flex-1 w-full bg-neutral-950 p-3 font-mono text-[11px] text-[#E6E6FA] rounded border border-neutral-800 focus:border-[#2E1A47] focus:outline-none resize-none"
+                          defaultValue={selectedFileContent}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Editor Toolbar */}
+                    <div className="flex justify-between items-center bg-[#0E0E1B] p-3 border border-[#2E1A47] rounded">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={handleSweepNote}
+                          className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-[#E6E6FA] font-mono text-[10px] rounded transition-all"
+                          title="Format metadata and clean note"
+                        >
+                          🍙 Roomba Sweep
+                        </button>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            const meta = (document.getElementById('edit-metadata-area') as HTMLTextAreaElement)?.value || '';
+                            const body = (document.getElementById('edit-content-area') as HTMLTextAreaElement)?.value || '';
+                            handleSaveFileContent(meta, body);
+                          }}
+                          className="px-4 py-1.5 bg-[#2E1A47] hover:bg-indigo-900 text-[#E6E6FA] font-mono text-[10px] rounded border border-[#2E1A47] transition-all"
+                        >
+                          💾 Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* READING/LEARNING MODE */
+                  <div className="flex-1 flex overflow-hidden">
+                    {/* Left Sidebar Table of Contents */}
+                    {rendered.toc.length > 0 && (
+                      <aside className="w-64 border-r border-[#2E1A47] bg-[#0E0E1B] p-4 overflow-y-auto hidden md:block">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#E6E6FA] mb-3 border-b border-neutral-800 pb-1.5">Table of Contents</h4>
+                        <ul className="space-y-1">
+                          {rendered.toc.map((item, idx) => (
+                            <li key={idx} style={{ paddingLeft: `${(item.level - 1) * 8}px` }}>
+                              <a
+                                href={`#${item.id}`}
+                                className="text-[11px] font-mono text-neutral-400 hover:text-[#E6E6FA] transition-colors truncate block"
+                              >
+                                {item.text}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </aside>
+                    )}
+
+                    {/* Reading Canvas */}
+                    <div className="flex-1 overflow-y-auto p-8 max-w-4xl mx-auto space-y-6">
+                      <h1 className="text-3xl font-extrabold text-[#E6E6FA] mb-6 border-b border-[#2E1A47] pb-4">
+                        {selectedFile.replace('.md', '').replace(/_/g, ' ')}
+                      </h1>
+                      
+                      {/* Rendered HTML */}
+                      <div 
+                        className="reading-mode-content prose prose-invert font-sans text-sm text-neutral-200 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: rendered.html }}
+                      />
+
+                      {/* Interactive Litany Action Bar */}
+                      <div className="pt-6 border-t border-[#2E1A47] flex justify-between items-center">
+                        <span className="text-[10px] font-mono text-neutral-500">
+                          Reading via plugin-reading-mode
+                        </span>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={handleSendToWebhook}
+                            className="px-3 py-1.5 bg-[#2E1A47] hover:bg-indigo-900 border border-[#2E1A47] text-[#E6E6FA] font-mono text-[10px] rounded transition-all flex items-center space-x-1.5"
+                          >
+                            <span>🔮 Dispatch to n8n Webhook</span>
+                          </button>
+                          <button
+                            onClick={() => setIsShareOpen(true)}
+                            className="px-3 py-1.5 bg-[#2E1A47] hover:bg-indigo-900 border border-[#2E1A47] text-[#E6E6FA] font-mono text-[10px] rounded transition-all"
+                          >
+                            Publish to Community
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Community Share Modal */}
       <CommunityShareModal 

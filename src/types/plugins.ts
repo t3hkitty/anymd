@@ -15,7 +15,13 @@ export type PluginId =
   | 'webnovel-reader'
   | 'webdav-indexer'
   | 'theme-engine'
-  | 'custom-monetizer-plugin';
+  | 'custom-monetizer-plugin'
+  | 'plugin-reading-mode'
+  | 'plugin-litany-formatter'
+  | 'plugin-n8n-bridge'
+  | 'plugin-ocr-transcriber'
+  | 'plugin-vault-roomba'
+  | 'plugin-kawaii-badges';
 
 export interface PluginManifest {
   id: PluginId;

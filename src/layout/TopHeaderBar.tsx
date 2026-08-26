@@ -1,7 +1,7 @@
 import React from 'react';
 import { Settings, RefreshCw } from 'lucide-react';
 
-export type ModeType = 'WORK' | 'PLAY' | 'PERSONAL';
+export type ModeType = 'WORK' | 'PLAY' | 'PERSONAL' | 'STUDENT';
 export type SyncStatusType = 'synced' | 'syncing' | 'local_only' | 'error';
 
 interface TopHeaderBarProps {
@@ -57,7 +57,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
           🐱 anymd
         </h1>
         <div className="flex bg-neutral-900 border border-neutral-800 rounded-lg p-0.5 space-x-1">
-          {(['WORK', 'PLAY', 'PERSONAL'] as ModeType[]).map((mode) => (
+          {(['WORK', 'PLAY', 'PERSONAL', 'STUDENT'] as ModeType[]).map((mode) => (
             <button
               key={mode}
               onClick={() => onModeChange(mode)}

@@ -42,5 +42,14 @@ Even when GitHub Pages builds and publishes new updates to your repository, your
 - **💾 Sync Directory Picker Gesture Fix**: Resolves browser permission blockages by calling `window.showDirectoryPicker()` synchronously inside the user-gesture click and change event handlers in settings and modals.
 - **⚙️ Dynamic Plugins inside Settings Drawer**: Renders checkboxes dynamically for all active plugins from the anymd registry repository, allowing immediate toggle control.
 - **🔄 Old LC_MD Vault Import & Migration**: Adds options inside the "Create New Vault" storage picker to import and convert old local-storage based `lc_md_` vaults (Personal or Sandbox) into modern companion Markdown (.md) structures.
+- **🎵 Music Vault & Mondegreen Synchronized Lyrics Engine**: Local-first audio player with precision timecoded LRC synchronizer, 3-tier phonetic mishearing dial (`Canonical`, `Mondegreen`, `WWSGD`), ASCII audio spectrum analyzer, and AuDHD speed gears (`0.75x` - `1.25x`).
+
+```text
+      |\      _,,,---,,_
+ZZZzz /,`.-'`'    -.  ;-;;,_
+     |,4-  ) )-,_. ,\ (  `'-'
+    '---''(_/--'  `-'\_)  [ Audio Vault & Mondegreen Engine: ONLINE ]
+```
+
 
 

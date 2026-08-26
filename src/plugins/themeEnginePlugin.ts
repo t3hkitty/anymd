@@ -209,6 +209,60 @@ export const DEFAULT_PLUGINS: (PluginManifest & { version: string })[] = [
     author: 'Community / Custom Plugin',
     enabledByDefault: false,
     category: 'export'
+  },
+  {
+    id: 'plugin-reading-mode',
+    name: 'Reader & Learning View',
+    version: '1.0.0',
+    description: 'Toggles sanitized rendered reading mode with auto-table of contents and font adjustments.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'reader'
+  },
+  {
+    id: 'plugin-litany-formatter',
+    name: 'Litany / Zettel Template',
+    version: '1.0.0',
+    description: 'Generates Pacific Time YYYYMMDD-HHMM Zettelkasten scaffolding and normalizes metadata tags.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'metadata'
+  },
+  {
+    id: 'plugin-n8n-bridge',
+    name: 'Webhook Dispatcher',
+    version: '1.0.0',
+    description: 'Dispatches note frontmatter and task payloads directly to remote https://n8n.lorik.me/webhook/...',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'storage'
+  },
+  {
+    id: 'plugin-ocr-transcriber',
+    name: 'OCR & Snippet Collector',
+    version: '1.0.0',
+    description: 'Ingests transcribed text/screenshots and parses them into raw blockquote nodes.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'metadata'
+  },
+  {
+    id: 'plugin-vault-roomba',
+    name: 'Vault Sweeper / Cleaner',
+    version: '1.0.0',
+    description: 'Identifies orphan notes, deduplicates frontmatter properties, and reorganizes inbox notes.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'metadata'
+  },
+  {
+    id: 'plugin-kawaii-badges',
+    name: 'Emoji Status Decorator',
+    version: '1.0.0',
+    description: 'Injects visual badges and status indicators into the UI based on YAML frontmatter state.',
+    author: 'Anymd Core',
+    enabledByDefault: true,
+    category: 'reader'
   }
 ];
 
@@ -231,6 +285,12 @@ export const INITIAL_PLUGIN_STATE: PluginState = {
     'webdav-indexer': true,
     'theme-engine': true,
     'custom-monetizer-plugin': false,
+    'plugin-reading-mode': true,
+    'plugin-litany-formatter': true,
+    'plugin-n8n-bridge': true,
+    'plugin-ocr-transcriber': true,
+    'plugin-vault-roomba': true,
+    'plugin-kawaii-badges': true,
   },
   relLinkRoot: './Library',
   webdavConfig: {

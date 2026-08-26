@@ -23,7 +23,19 @@ This codebase was pair-programmed with **Google Antigravity AI** to build a **10
    - 🎶 **Music & Vinyl** (`#first-pressing`, `#audiophile`, `#picture-disc`)
    - 🎮 **Retro Video Games** (`#sealed-cib`, `#retrogaming`, `#wata-9.8`)
 
-4. **Multi-Host Deployment**:
+4. **Music Vault & Mondegreen Cognitive Engine**:
+   - **Timecode Drift Synchronizer**: Zero-lag sync with `requestAnimationFrame` + `AudioContext.currentTime`.
+   - **3-Tier Lyric Teleprompter**: Canonical official lyrics, phonetic mondegreens, and WWSGD (What Would Silly Goose Do) humor gloss.
+   - **ASCII Spectrum Analyzer**: Real-time 8-band audio visualization meter in pure monospace.
+   - **Sidecars**: Atomic `.music.md` and `.mondegreen.md` metadata linking Zettelkasten knowledge graphs.
+
+```text
+    /\_/\
+   ( o.o )  nya! [ Music Vault & Lyric Teleprompter Engine ]
+    > ^ <
+```
+
+5. **Multi-Host Deployment**:
    - **Midphase Server**: Apache `.htaccess` rewrite rules generator + Google OAuth 2.0 family access whitelist.
    - **StackCP Server**: `deploy_meow.sh` FTP auto-deployment for `meow.artkitty.net`.
 
