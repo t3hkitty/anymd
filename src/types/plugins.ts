@@ -21,7 +21,8 @@ export type PluginId =
   | 'plugin-n8n-bridge'
   | 'plugin-ocr-transcriber'
   | 'plugin-vault-roomba'
-  | 'plugin-kawaii-badges';
+  | 'plugin-kawaii-badges'
+  | 'plugin-pretentious-leather-journal';
 
 export interface PluginManifest {
   id: PluginId;
@@ -30,7 +31,7 @@ export interface PluginManifest {
   description: string;
   author: string;
   enabledByDefault: boolean;
-  category: 'metadata' | 'reader' | 'storage' | 'export' | 'social';
+  category: 'metadata' | 'reader' | 'storage' | 'export' | 'social' | 'journal';
 }
 
 export interface WebDAVConfig {
