@@ -193,6 +193,8 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [isLightMode, setIsLightMode] = useState(() => localStorage.getItem('anymd_light_mode') === 'true');
   const [accentColor, setAccentColor] = useState(() => localStorage.getItem('anymd_accent_color') || 'sky-500');
   const [themeStyleSet, setThemeStyleSet] = useState(() => localStorage.getItem('anymd_theme_style_set') || 'classic');
+  const [webhookType, setWebhookType] = useState<'anymd' | 'n8n'>(() => (localStorage.getItem('anymd_webhook_type') as 'anymd' | 'n8n') || 'anymd');
+  const [anymdWebhookEndpoint, setAnymdWebhookEndpoint] = useState(() => localStorage.getItem('anymd_webhook_endpoint') || 'http://localhost:3050');
   const [n8nEndpoint, setN8nEndpoint] = useState(() => localStorage.getItem('anymd_n8n_endpoint') || 'http://localhost:5678/webhook/anymd-action');
   const [mobileLocalhostEnabled, setMobileLocalhostEnabled] = useState(() => localStorage.getItem('anymd_mobile_localhost_enabled') === 'true');
   const [geminiApiKey, setGeminiApiKey] = useState(() => localStorage.getItem('anymd_gemini_api_key') || '');
@@ -257,6 +259,12 @@ export const VaultWorkspaceLayout: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('anymd_vault_load_sources', JSON.stringify(vaultLoadSource));
   }, [vaultLoadSource]);
+  useEffect(() => {
+    localStorage.setItem('anymd_webhook_type', webhookType);
+  }, [webhookType]);
+  useEffect(() => {
+    localStorage.setItem('anymd_webhook_endpoint', anymdWebhookEndpoint);
+  }, [anymdWebhookEndpoint]);
   useEffect(() => {
     localStorage.setItem('anymd_n8n_endpoint', n8nEndpoint);
   }, [n8nEndpoint]);
@@ -570,19 +578,42 @@ export const VaultWorkspaceLayout: React.FC = () => {
   };
 
   const handleSendToWebhook = async () => {
-    const metaObj: Record<string, string> = {};
-    selectedFileMetadata.split('\n').forEach(line => {
-      const parts = line.split(':');
-      if (parts.length >= 2) {
-        metaObj[parts[0].trim()] = parts.slice(1).join(':').trim();
-      }
-    });
+    if (!selectedFile) return;
 
-    const success = await dispatchToN8n(metaObj, selectedFileContent);
-    if (success) {
-      alert('🔮 Webhook dispatched successfully to n8n!');
+    if (webhookType === 'anymd') {
+      const fullText = `---\n${selectedFileMetadata}\n---\n${selectedFileContent}`;
+      try {
+        const url = `${anymdWebhookEndpoint.endsWith('/') ? anymdWebhookEndpoint.slice(0, -1) : anymdWebhookEndpoint}/webhook/${encodeURIComponent(activeVault)}?filename=${encodeURIComponent(selectedFile)}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content: fullText, append: false })
+        });
+        if (response.ok) {
+          alert('🔮 Webhook dispatched successfully to anymd local server!');
+        } else {
+          alert('❌ Failed to dispatch to anymd webhook. Server returned ' + response.status);
+        }
+      } catch (err: any) {
+        alert('❌ Failed to dispatch to anymd webhook: ' + err.message);
+      }
     } else {
-      alert('❌ Failed to dispatch webhook to n8n. Defaulting to: ' + getN8nWebhookEndpoint());
+      const metaObj: Record<string, string> = {};
+      selectedFileMetadata.split('\n').forEach(line => {
+        const parts = line.split(':');
+        if (parts.length >= 2) {
+          metaObj[parts[0].trim()] = parts.slice(1).join(':').trim();
+        }
+      });
+
+      const success = await dispatchToN8n(metaObj, selectedFileContent);
+      if (success) {
+        alert('🔮 Webhook dispatched successfully to n8n!');
+      } else {
+        alert('❌ Failed to dispatch webhook to n8n. Defaulting to: ' + getN8nWebhookEndpoint());
+      }
     }
   };
 
@@ -949,6 +980,10 @@ export const VaultWorkspaceLayout: React.FC = () => {
         onGeminiApiKeyChange={setGeminiApiKey}
         n8nEndpoint={n8nEndpoint}
         onN8nEndpointChange={setN8nEndpoint}
+        webhookType={webhookType}
+        onWebhookTypeChange={setWebhookType}
+        anymdWebhookEndpoint={anymdWebhookEndpoint}
+        onAnymdWebhookEndpointChange={setAnymdWebhookEndpoint}
         uiGuardEnabled={uiGuardEnabled}
         onUiGuardEnabledChange={(val) => {
           setUiGuardEnabled(val);

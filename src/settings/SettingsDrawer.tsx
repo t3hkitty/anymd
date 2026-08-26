@@ -48,6 +48,10 @@ interface SettingsDrawerProps {
   onGeminiApiKeyChange: (key: string) => void;
   n8nEndpoint: string;
   onN8nEndpointChange: (url: string) => void;
+  webhookType: 'anymd' | 'n8n';
+  onWebhookTypeChange: (type: 'anymd' | 'n8n') => void;
+  anymdWebhookEndpoint: string;
+  onAnymdWebhookEndpointChange: (url: string) => void;
 
   // Vault Security Settings
   uiGuardEnabled: boolean;
@@ -81,6 +85,10 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
   onGeminiApiKeyChange,
   n8nEndpoint,
   onN8nEndpointChange,
+  webhookType,
+  onWebhookTypeChange,
+  anymdWebhookEndpoint,
+  onAnymdWebhookEndpointChange,
 
   uiGuardEnabled,
   onUiGuardEnabledChange,
@@ -256,14 +264,37 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
               />
             </div>
             <div>
-              <span className="block mb-1">n8n Endpoint URL</span>
-              <input
-                type="text"
-                value={n8nEndpoint}
-                onChange={(e) => onN8nEndpointChange(e.target.value)}
+              <span className="block mb-1">Webhook Dispatch Target</span>
+              <select
+                value={webhookType}
+                onChange={(e) => onWebhookTypeChange(e.target.value as 'anymd' | 'n8n')}
                 className="w-full bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none"
-              />
+              >
+                <option value="anymd">anymd Local Webhook (Port 3050)</option>
+                <option value="n8n">n8n Webhook</option>
+              </select>
             </div>
+            {webhookType === 'anymd' ? (
+              <div>
+                <span className="block mb-1">anymd Webhook Endpoint URL</span>
+                <input
+                  type="text"
+                  value={anymdWebhookEndpoint}
+                  onChange={(e) => onAnymdWebhookEndpointChange(e.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none"
+                />
+              </div>
+            ) : (
+              <div>
+                <span className="block mb-1">n8n Endpoint URL</span>
+                <input
+                  type="text"
+                  value={n8nEndpoint}
+                  onChange={(e) => onN8nEndpointChange(e.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none"
+                />
+              </div>
+            )}
           </div>
         </section>
 
