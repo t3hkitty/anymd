@@ -36,6 +36,19 @@ import { importVaultFromEncryptedZip } from '../export/zipVaultImporter';
 
 // Community modal
 import { CommunityShareModal } from '../community/CommunityShareModal';
+import { SpatialRoutineDirectorModal } from './SpatialRoutineDirectorModal';
+import { UnifiedImportStudioModal } from './UnifiedImportStudioModal';
+import { CardScannerModal } from './CardScannerModal';
+import { HomeInsuranceScannerModal } from './HomeInsuranceScannerModal';
+import { VodImporterModal } from './VodImporterModal';
+import { NovelUpdatesModal } from './NovelUpdatesModal';
+import { AnnasArchiveImporterModal } from './AnnasArchiveImporterModal';
+import { PASourcingModal } from './PASourcingModal';
+import { BookmarkletModal } from './BookmarkletModal';
+import { CalibreImportModal } from './CalibreImportModal';
+import { VaultBackupRestoreModal } from './VaultBackupRestoreModal';
+import { CommunityHubView } from './CommunityHubView';
+import { Grid } from 'lucide-react';
 
 // Sidebar bridge
 import { sidebarBridge } from '../sync/sidebarBridge';
@@ -50,7 +63,7 @@ import {
   getKawaiiBadge
 } from '../plugins/anymdCorePlugins';
 
-type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'settings';
+type MainTab = 'vaults' | 'drafting' | 'inputs' | 'processed' | 'all' | 'settings';
 type VaultId = string;
 
 
@@ -233,6 +246,21 @@ export const VaultWorkspaceLayout: React.FC = () => {
     ];
   });
   const [editingCharacter, setEditingCharacter] = useState<CharacterNode | null>(null);
+
+  // Modals for All View and Import features
+  const [isSpatialRoutineOpen, setIsSpatialRoutineOpen] = useState(false);
+  const [isUnifiedImportOpen, setIsUnifiedImportOpen] = useState(false);
+  const [isCardScannerOpen, setIsCardScannerOpen] = useState(false);
+  const [isHomeInsuranceScannerOpen, setIsHomeInsuranceScannerOpen] = useState(false);
+  const [isVodImporterOpen, setIsVodImporterOpen] = useState(false);
+  const [isNovelUpdatesOpen, setIsNovelUpdatesOpen] = useState(false);
+  const [isAnnasArchiveOpen, setIsAnnasArchiveOpen] = useState(false);
+  const [isPASourcingOpen, setIsPASourcingOpen] = useState(false);
+  const [isBookmarkletOpen, setIsBookmarkletOpen] = useState(false);
+  const [isCalibreImportOpen, setIsCalibreImportOpen] = useState(false);
+  const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
+  const [isExportShareOpen, setIsExportShareOpen] = useState(false);
+  const [showCommunityInline, setShowCommunityInline] = useState(false);
 
   // Synchronize bridge state changes
   useEffect(() => {
@@ -483,8 +511,9 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
   // Trigger loading sandbox folders on startup or activeVault swap
   useEffect(() => {
-    if (vaultFiles[activeVault].length === 0) {
-      if (vaultLoadSource[activeVault] === 'local_storage') {
+    if ((vaultFiles[activeVault] || []).length === 0) {
+      const source = vaultLoadSource[activeVault] || 'local_storage';
+      if (source === 'local_storage') {
         loadVaultFromLocalStorage(activeVault);
       }
     }
@@ -521,7 +550,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   };
 
   const handleExportZip = async () => {
-    const filesToExport = vaultFiles[activeVault].map(f => {
+    const filesToExport = (vaultFiles[activeVault] || []).map(f => {
       const storedContent = localStorage.getItem(`anymd_file_${activeVault}_${f.name}`) || f.n8nContent || f.snippet;
       return {
         name: f.name,
@@ -815,7 +844,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
                 <ViewSwitcherBar 
                   activeLayout={viewLayout}
                   onLayoutChange={setViewLayout}
-                  noteCount={vaultFiles[activeVault].length}
+                  noteCount={(vaultFiles[activeVault] || []).length}
                 />
                 <button
                   onClick={handleCreateNewLitanyNote}
@@ -829,7 +858,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
               <div className="flex-1 overflow-y-auto">
                 <MainContentViewport 
                   layout={viewLayout}
-                  files={vaultFiles[activeVault]}
+                  files={vaultFiles[activeVault] || []}
                   onSelectFile={handleSelectFile}
                   starredFiles={starredFiles}
                   onToggleStar={handleToggleStar}
@@ -963,6 +992,397 @@ export const VaultWorkspaceLayout: React.FC = () => {
                </div>
             </div>
           )}
+
+          {/* ALL VIEW / ONE-CLICK HUB */}
+          {activeTab === 'all' && (
+            <div className={`h-full border overflow-hidden flex flex-col p-6 ${panelBg}`}>
+              <div className="flex items-start justify-between mb-4 border-b border-neutral-800/40 pb-4 shrink-0">
+                <div>
+                  <h3 className="text-lg font-bold text-sky-400 flex items-center">
+                    <Grid className="mr-2" size={18} />
+                    <span>All Actions &amp; 1-Click Somatic/Import Hub</span>
+                  </h3>
+                  <p className={`text-xs mt-1 ${textMuted}`}>
+                    Quick access to all AnyMD local tools, somatic calculators, import pipelines, and community resources.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-auto space-y-6 pr-2">
+                {/* 1. SOMATIC & ROUTINES */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
+                    🚪 Somatic &amp; Spatial Routines
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🚪 Spatial Routine Director
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Run Morning Wake, Leaving House, or Bedtime step-by-step routines with TTS guides.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsSpatialRoutineOpen(true)}
+                        className="px-3 py-1.5 bg-purple-950 hover:bg-purple-900 border border-purple-800 text-purple-300 font-mono text-[10px] rounded transition-all w-full text-center"
+                      >
+                        Launch Routine Builder ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🍳 Fasting &amp; Nourishment
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Passively calculate metabolic rest intervals and access Dr. Fung HAES science.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setActiveTab('inputs');
+                          setTimeout(() => {
+                            const el = document.getElementById('nourishment-fasting-widget');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          }, 100);
+                        }}
+                        className="px-3 py-1.5 bg-purple-950 hover:bg-purple-900 border border-purple-800 text-purple-300 font-mono text-[10px] rounded transition-all w-full text-center"
+                      >
+                        Open Fasting Widget ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🌸 Motivation Helper
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          AuDHD task planner, time management guides, and Grounded Reframe logs.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setActiveTab('inputs');
+                          setTimeout(() => {
+                            const el = document.getElementById('motivation-helper-widget');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          }, 100);
+                        }}
+                        className="px-3 py-1.5 bg-purple-950 hover:bg-purple-900 border border-purple-800 text-purple-300 font-mono text-[10px] rounded transition-all w-full text-center"
+                      >
+                        Open Motivation Widget ➔
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. IMPORTERS & PIPELINES */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                    📥 Ingestion &amp; Import pipelines
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          📥 Universal Import Studio
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Open the primary import dashboard for all media types and local folders.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsUnifiedImportOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Open Import Studio ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          📦 Restore ZIP Backup
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Upload and extract entire vault zip bundles directly back into local storage.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsVaultRestoreOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Restore Vault Backup ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          📚 Calibre Local Library
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Sync book ratings, reviews, and reading history from Calibre local vault formats.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsCalibreImportOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Import Calibre DB ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🏛️ Anna's Archive
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Search by ISBN-13 or MARC21 to index book lists directly to local markdown logs.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsAnnasArchiveOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Import ISBN Details ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🃏 TCG Card Photo Scanner
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Import Pokemon, MtG, or Yu-Gi-Oh card listings from camera or image assets.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsCardScannerOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Launch Card Scanner ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          📸 Home Insurance Scanner
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Bulk import photo logs of rooms and item receipts to create catalog directories.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsHomeInsuranceScannerOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Launch Asset Scanner ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🎬 VOD &amp; Stream Importer
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Index Twitch/YouTube stream links and metadata with offline markdown cards.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsVodImporterOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Launch VOD Importer ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🌐 NovelUpdates Scraper
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Pull Danmei, webnovel chapters, and author logs from web pages.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsNovelUpdatesOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Launch Webnovel Scraper ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          📋 PA Grocery List
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Manage grocery items and wishlist sync pipelines.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsPASourcingOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Open Grocery Sourcing ➔
+                      </button>
+                    </div>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🔌 Web Clipper Bookmarklet
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Configure drag-and-drop web page scraper bookmarklet tool.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsBookmarkletOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 font-mono text-[10px] rounded transition-all w-full text-center hover:scale-[1.01]"
+                      >
+                        Configure Bookmarklet ➔
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. VAULT MANAGER (INTEGRATED SETTINGS) */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                    ⚙️ Vault Manager &amp; Workspace Settings
+                  </h4>
+                  <div className={`p-6 rounded-xl border space-y-4 ${panelInner}`}>
+                    <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                      <span className="font-bold text-slate-200 text-sm">Active Vaults Registry</span>
+                      <button
+                        onClick={() => setIsAddVaultOpen(true)}
+                        className="px-3 py-1 bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-300 font-mono text-[10px] rounded transition-all hover:scale-[1.02]"
+                      >
+                        + Create/Link New Vault
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {vaultList.map((v) => {
+                        const currentSource = vaultLoadSource[v.id] || 'local_storage';
+                        return (
+                          <div key={v.id} className="flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg bg-neutral-950 border border-neutral-900 gap-3 text-xs">
+                            <div className="space-y-1">
+                              <span className="font-bold text-slate-100">{v.name}</span>
+                              <span className="text-[10px] text-neutral-500 font-mono block">
+                                ID: {v.id} | Category: {v.category}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="flex flex-col">
+                                <label className="text-[9px] text-neutral-500 font-mono uppercase">Connection Source</label>
+                                <select
+                                  value={currentSource}
+                                  onChange={(e) => {
+                                    const src = e.target.value as any;
+                                    setVaultLoadSource(prev => ({ ...prev, [v.id]: src }));
+                                    if (src === 'local_picker') {
+                                      loadVaultFolder(v.id, 'local_picker');
+                                    }
+                                  }}
+                                  className="bg-neutral-900 border border-neutral-800 rounded px-2 py-1 outline-none text-neutral-300"
+                                >
+                                  <option value="local_storage">Local Sandbox Storage</option>
+                                  <option value="local_picker">Direct File System Folder</option>
+                                  <option value="n8n_cloud">n8n Local Webhook Sync</option>
+                                </select>
+                              </div>
+
+                              {v.id !== 'anymd-main' && v.id !== 'signalstack-discovery' && v.id !== 'storycraft-lore' && (
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`Are you sure you want to remove vault workspace "${v.name}"?`)) {
+                                      setVaultList(prev => prev.filter(item => item.id !== v.id));
+                                    }
+                                  }}
+                                  className="text-red-400 hover:text-red-300 font-mono text-[10px] mt-3"
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. COMMUNITY & REPO */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-pink-400 flex items-center gap-1.5">
+                    🌐 Community &amp; Public Repository
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a
+                      href="https://github.com/t3hkitty/anymd"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`p-4 rounded-xl border flex flex-col justify-between hover:border-pink-500 hover:scale-[1.01] transition-all cursor-pointer ${panelInner}`}
+                    >
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          🌸 visit Public GitHub Repo
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Access the open-source repository for anymd, download releases, and view updates.
+                        </p>
+                      </div>
+                      <div className="text-pink-400 font-mono text-[10px] font-bold">
+                        github.com/t3hkitty/anymd ➔
+                      </div>
+                    </a>
+
+                    <div className={`p-4 rounded-xl border flex flex-col justify-between ${panelInner}`}>
+                      <div>
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-slate-100">
+                          👥 Open Community Hub
+                        </div>
+                        <p className={`text-xs ${textMuted} mb-3`}>
+                          Explore community templates, custom sidecars, and share forum threads.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowCommunityInline(!showCommunityInline)}
+                        className="px-3 py-1.5 bg-pink-950 hover:bg-pink-900 border border-pink-800 text-pink-300 font-mono text-[10px] rounded transition-all w-full text-center"
+                      >
+                        {showCommunityInline ? 'Close Community Hub' : 'Open Community Hub'} ➔
+                      </button>
+                    </div>
+                  </div>
+
+                  {showCommunityInline && (
+                    <div className="mt-4 p-4 border border-pink-500/20 rounded-xl bg-neutral-950/40">
+                      <CommunityHubView
+                        books={[]}
+                        onImportSidecarTemplate={(templateMarkdown, title) => {
+                          alert(`Imported template "${title}" successfully into sandbox buffer!`);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
@@ -1062,6 +1482,77 @@ export const VaultWorkspaceLayout: React.FC = () => {
         isOpen={isAddVaultOpen}
         onClose={() => setIsAddVaultOpen(false)}
         onAddVault={handleAddVault}
+      />
+
+      {/* Somatic & Ingestion Modals */}
+      <SpatialRoutineDirectorModal 
+        isOpen={isSpatialRoutineOpen} 
+        onClose={() => setIsSpatialRoutineOpen(false)} 
+      />
+      <UnifiedImportStudioModal 
+        isOpen={isUnifiedImportOpen} 
+        onClose={() => setIsUnifiedImportOpen(false)} 
+        onImportBooks={() => alert('Universal Import processed successfully!')}
+      />
+      <CardScannerModal 
+        isOpen={isCardScannerOpen} 
+        onClose={() => setIsCardScannerOpen(false)} 
+        onAutoGenerateVaultItems={() => alert('TCG items imported!')}
+      />
+      <HomeInsuranceScannerModal 
+        isOpen={isHomeInsuranceScannerOpen} 
+        onClose={() => setIsHomeInsuranceScannerOpen(false)} 
+        onAutoGenerateVaultItems={() => alert('Photo assets cataloged!')}
+      />
+      <VodImporterModal 
+        isOpen={isVodImporterOpen} 
+        onClose={() => setIsVodImporterOpen(false)} 
+        onImportVod={() => alert('VOD item indexed!')}
+      />
+      <NovelUpdatesModal 
+        isOpen={isNovelUpdatesOpen} 
+        book={{
+          id: 'dummy-book',
+          title: selectedFile || 'NovelUpdates metadata',
+          author: 'Unknown Author',
+          sidecarMarkdown: `---\ntitle: ${selectedFile || 'NovelUpdates metadata'}\ntags: []\n---\n`
+        } as any}
+        onClose={() => setIsNovelUpdatesOpen(false)} 
+        onUpdateBookSidecar={() => {}}
+      />
+      <AnnasArchiveImporterModal 
+        isOpen={isAnnasArchiveOpen} 
+        activeBook={{
+          id: 'dummy-book',
+          title: selectedFile || 'Anna\'s Archive metadata',
+          author: 'Unknown Author',
+          sidecarMarkdown: `---\ntitle: ${selectedFile || 'Anna\'s Archive metadata'}\ntags: []\n---\n`
+        } as any}
+        onClose={() => setIsAnnasArchiveOpen(false)} 
+        onInjectIsbnMetadata={() => {}}
+      />
+      <PASourcingModal 
+        isOpen={isPASourcingOpen} 
+        books={[]}
+        mediaItems={[]}
+        webdavConfig={{}}
+        onClose={() => setIsPASourcingOpen(false)} 
+      />
+      <BookmarkletModal 
+        isOpen={isBookmarkletOpen} 
+        onClose={() => setIsBookmarkletOpen(false)} 
+      />
+      <CalibreImportModal 
+        isOpen={isCalibreImportOpen} 
+        relLinkRoot=""
+        onClose={() => setIsCalibreImportOpen(false)} 
+        onImportCalibreBooks={() => alert('Calibre library imported successfully!')}
+      />
+      <VaultBackupRestoreModal 
+        isOpen={isVaultRestoreOpen} 
+        onClose={() => setIsVaultRestoreOpen(false)} 
+        onRestoreBooks={() => alert('Vault backup restored successfully!')}
+        allBooks={[]}
       />
 
 

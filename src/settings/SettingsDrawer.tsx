@@ -283,6 +283,9 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                   onChange={(e) => onAnymdWebhookEndpointChange(e.target.value)}
                   className="w-full bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none"
                 />
+                <span className="text-[10px] text-neutral-500 mt-1 block font-mono">
+                  Use http://localhost:3050 for local, or http://&lt;lan-ip&gt;:3050 for mobile client access.
+                </span>
               </div>
             ) : (
               <div>

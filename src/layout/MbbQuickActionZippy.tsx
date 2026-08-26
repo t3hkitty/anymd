@@ -23,7 +23,7 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
         className="w-full flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800 text-xs font-mono text-neutral-300 hover:text-neutral-100 transition-colors"
       >
         <span className="flex items-center space-x-2">
-          <span>🐾 MBB Quick Action Suite</span>
+          <span>🐾 MBB (My Black Box) Micrologging Suite</span>
         </span>
         {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
@@ -33,7 +33,7 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
           <div className="text-[10px] text-neutral-500 font-mono hidden md:block">
             <pre className="leading-tight text-neutral-600">
 {`   /\\_/\\
-  ( o.o )  MBB Engine
+  ( o.o )  My Black Box (MBB) Engine
    > ^ <   Active`}
             </pre>
           </div>
@@ -43,7 +43,7 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
               className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-emerald-950/30 hover:text-emerald-400 border border-neutral-800 hover:border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-mono text-neutral-300 transition-all cursor-pointer"
             >
               <Plus size={12} />
-              <span>+ Samples ($0.01)</span>
+              <span>+ Microlog Samples</span>
             </button>
             <button
               onClick={onPurgeAll}
