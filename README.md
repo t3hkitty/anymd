@@ -23,6 +23,7 @@
 
 - **Grand Bookcase & Multi-View Studio**: 3D bookshelf UI, realistic mahogany spines, wardrobe closet hangers, list view, and interactive 3D carousel showcase.
 - **🧪 Dedicated Sandbox Demo Vault**: Isolated non-sensitive sandbox playground to safely test bulk edits, batch tag replacements, bulk deletions, and ZIP exports, with 1-click restore.
+- **🎵 Music Vault, Synchronized Lyrics & Mondegreen Engine**: High-density Kawaii Brutalist audio deck (`/vault/music/`), precision zero-drift LRC / syllable karaoke teleprompter, multi-tier Mondegreen dial (`[🎧 Canonical]`, `[👂 Mondegreen]`, `[🐱 WWSGD / Silly Goose]`), 8-band ASCII spectrum analyzer, and AuDHD tempo pacing (`0.75x` - `1.25x`). (=^.^=)
 - **🎸 Music Album & Track-Linked Sidecars**: Full rock opera concept albums (e.g. Green Day's *American Idiot*) linking to individual song sidecars (*Boulevard of Broken Dreams*, *Holiday*, etc.) with nested Zettelkasten wikilinks.
 - **🚪 Spatial-Chained Routine Registry & TTS Director**: Dual-channel (TTS podcast-style audio cadence + visual cards) for 4 daily protocols: `[Leaving the House]`, `[Morning Wake & Prep]`, `[Morning Sustenance]`, and `[Bedtime Closure]`.
 - **🛡️ "No Bad Days" Script Engine**: Goblin Tools-style shame-free task deconstructor that automatically chunks unfinished tasks into atomic 2-minute steps.
@@ -253,3 +254,28 @@ Select **n8n Local Webhook Sync (Cloud Folders)** as your vault source to bypass
 
 ### 2. Mobile Localhost Web Access
 Toggle **Localhost Server Web Access** inside the settings dashboard to start/advertise the local webhook receiver on port `3050`. Other devices on the same local network can connect to synchronize logs directly to the mobile vault.
+
+### 3. GitHubOnly n8n Database Service
+Provides a serverless n8n workflow template to run a GitHub-only AnyMD database. Incoming webhook payloads (e.g. POST `/webhook/anymd-db`) are compiled into markdown files with structured YAML frontmatter and committed directly to a GitHub repository, bypassing local filesystem dependencies. See [`01_applications_and_tools/n8n-githubonly-anymd/README.md`](01_applications_and_tools/n8n-githubonly-anymd/README.md) for details.
+
+---
+
+## 📑 System Blueprints & Technical Specifications
+
+```text
+       /\_/\  
+      ( o.o )  [ Anymd Core Blueprints & Audio Deck: ACTIVE ]
+      /  =  \  (=^.^=)
+     ( |   | )
+    +---m-m---+----------------------------------------------+
+```
+
+Core technical blueprints are maintained under `02_system_blueprints_and_specs/`:
+
+- **[Blueprint Addendum [20260825-1053]: Music Vault, Synchronized Lyrics & Mondegreen Integration](02_system_blueprints_and_specs/Blueprint_Addendum_Music_Vault_Synchronized_Lyrics_Mondegreen.md)**: Decentralized local-first audio architecture, multi-tier phonological Mondegreen engine (`[CANONICAL]`, `[MONDEGREEN]`, `[WWSGD]`), atomic `.music.md` sidecars, zero-drift LRC sync, and AuDHD dopaminergic pacing.
+- **[Blueprint 01: Standalone Native Android APK Architecture](02_system_blueprints_and_specs/Blueprint_01_Standalone_Android_APK_Architecture.md)**: Shizuku keep-alive protection, hardware/OS telemetry streaming into `device-vault/`, joint n8n config/vault hydration, and 3-path onboarding.
+- **[Unified System Integration Blueprint](02_system_blueprints_and_specs/Antigravity_Anymd_Unified_System_Integration_Blueprint.md)**: Core navigation shell, High-Density Kawaii Brutalism, and AuDHD cognitive phenotype alignment.
+- **[BlackBox Baseline GUI Standards](02_system_blueprints_and_specs/Anymd_BlackBox_Baseline_GUI_Standards.md)**: 0px border radius, high information density, and low-cognitive-load widget guidelines.
+- **[Project .mask Architecture Manual](02_system_blueprints_and_specs/Project_Mask_Meow_Architecture_Manual.md)**: Plaintext atomic memory files, voluntary security theater, and Kitsune engine.
+
+
