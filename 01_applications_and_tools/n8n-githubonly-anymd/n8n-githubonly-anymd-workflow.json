@@ -1,91 +1,62 @@
 {
-  "name": "GitHubOnly AnyMD Database Sync Service",
+  "name": "AnyMD GitHub Pages Synchronizer",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "anymd-db",
-        "responseMode": "responseNode",
+        "path": "anymd-git-sync",
         "options": {}
       },
-      "id": "webhook-trigger",
-      "name": "Webhook Ingestion",
+      "id": "e96d74cf-ea7f-442c-bdbe-1eb31a19f2a9",
+      "name": "Webhook Receiver",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
         250,
-        300
+        360
       ]
     },
     {
       "parameters": {
-        "jsCode": "const body = $input.item.json.body || {};\nconst vault = body.vault || 'default_vault';\nconst filename = body.filename || `Zettel_${Date.now()}.md`;\nconst frontmatter = body.frontmatter || {};\nconst content = body.content || '';\n\n// Generate YAML Frontmatter\nlet fmString = '---\\n';\nfor (const [key, val] of Object.entries(frontmatter)) {\n  if (Array.isArray(val)) {\n    fmString += `${key}:\\n`;\n    val.forEach(item => {\n      fmString += `  - \"${item.replace(/\"/g, '\\\"')}\"\\n`;\n    });\n  } else if (typeof val === 'object' && val !== null) {\n    fmString += `${key}:\\n`;\n    for (const [subKey, subVal] of Object.entries(val)) {\n      fmString += `  ${subKey}: \"${String(subVal).replace(/\"/g, '\\\"')}\"\\n`;\n    }\n  } else {\n    fmString += `${key}: \"${String(val).replace(/\"/g, '\\\"')}\"\\n`;\n  }\n}\nfmString += '---\\n';\n\nconst fullMarkdown = `${fmString}${content}`;\nconst repoPath = `vaults/${vault}/${filename}`;\n\nreturn {\n  json: {\n    vault,\n    filename,\n    repoPath,\n    fullMarkdown,\n    base64Content: Buffer.from(fullMarkdown).toString('base64'),\n    commitMessage: `chore(db): update ${filename} in ${vault}`\n  }\n};"
+        "jsCode": "const payload = $input.item.json.body;\nconst timestamp = new Date().toISOString();\nconst slug = (payload.title || 'quick-note-' + Date.now())\n  .toLowerCase()\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/(^-|-$)/g, '');\n\nconst markdownContent = `---\ntitle: \"${payload.title || 'Untitled Quick Note'}\"\ndate: \"${timestamp}\"\nsource_url: \"${payload.sourceUrl || ''}\"\ncategory: \"${payload.category || 'quick_note'}\"\ntags:\n  - \"inbox\"\n  - \"n8n-sync\"\n---\n\n# ${payload.title || 'Quick Note'}\n\n${payload.content || ''}\n\n---\n*Synced dynamically via n8n on ${timestamp}*`;\n\nreturn {\n  json: {\n    slug: slug,\n    filename: `Sidecars/${slug}.md`,\n    contentBase64: Buffer.from(markdownContent).toString('base64')\n  }\n};"
       },
-      "id": "compile-anymd",
-      "name": "Compile AnyMD File",
+      "id": "c62d854a-bbdf-44be-9040-3b0cf6fa76bf",
+      "name": "Parse & Format Markdown",
       "type": "n8n-nodes-base.code",
-      "typeVersion": 1,
+      "typeVersion": 2,
       "position": [
-        450,
-        300
+        470,
+        360
       ]
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "owner": "={{$node[\"Webhook Ingestion\"].json.body.owner}}",
-        "repository": "={{$node[\"Webhook Ingestion\"].json.body.repository}}",
-        "filePath": "={{$json.repoPath}}",
-        "fileContent": "={{$json.base64Content}}",
-        "commitMessage": "={{$json.commitMessage}}",
-        "binaryData": false,
-        "encoding": "base64",
-        "additionalParameters": {}
-      },
-      "id": "github-upload",
+        "method": "PUT",
+        "url": "https://api.github.com/repos/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/contents/={{$json.filename}}",
+        "authentication": "genericCredentialType",\n        "genericAuthType": "httpHeaderAuth",\n        "sendBody": true,\n        "specifyBody": "json",\n        "jsonBody": "={\n  \"message\": \"Sync: Added note \" + $json.slug,\n  \"content\": \"\" + $json.contentBase64 + \"\"\n}",\n        "options": {}\n      },
+      "id": "fc4d97cb-aa12-4411-bba2-ccfc99ffbb32",
       "name": "Push to GitHub Repo",
-      "type": "n8n-nodes-base.github",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
       "position": [
-        680,
-        300
-      ],
-      "credentials": {
-        "githubOAuth2Api": {
-          "id": "github-oauth-creds",
-          "name": "GitHub Account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Document written to GitHub-only AnyMD database\",\n  \"vault\": \"{{$node[\"Compile AnyMD File\"].json.vault}}\",\n  \"file\": \"{{$node[\"Compile AnyMD File\"].json.filename}}\",\n  \"repo_path\": \"{{$node[\"Compile AnyMD File\"].json.repoPath}}\",\n  \"github_html_url\": \"{{$json.html_url || ''}}\"\n}",
-        "options": {}
-      },
-      "id": "respond-webhook",
-      "name": "Respond to Caller",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1,
-      "position": [
-        900,
-        300
+        690,
+        360
       ]
     }
   ],
   "connections": {
-    "Webhook Ingestion": {
+    "Webhook Receiver": {
       "main": [
         [
           {
-            "node": "Compile AnyMD File",
+            "node": "Parse & Format Markdown",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Compile AnyMD File": {
+    "Parse & Format Markdown": {
       "main": [
         [
           {
@@ -95,21 +66,9 @@
           }
         ]
       ]
-    },
-    "Push to GitHub Repo": {
-      "main": [
-        [
-          {
-            "node": "Respond to Caller",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "active": false,
-  "settings": {
-    "executionOrder": "v1"
-  }
+  "settings": {},
+  "id": "anymd-github-pages-sync"
 }
