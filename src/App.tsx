@@ -131,7 +131,7 @@ export function App() {
     const hasJournal = loaded.some(b => b.id === todayJournal.id);
     return hasJournal ? loaded : [todayJournal, ...loaded];
   });
-  const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
+  const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || '');
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox' | 'workshop' | 'artist-alley'>('dashboard');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
 
@@ -902,14 +902,14 @@ date_cataloged: "${new Date().toISOString()}"
             <div>
               <h1 className="font-extrabold text-lg leading-tight tracking-tight flex items-center space-x-2">
                 <span className="bg-gradient-to-r from-amber-200 via-rose-300 to-indigo-300 bg-clip-text text-transparent">
-                  Library Companion MD
+                  Kawaiian Library MD
                 </span>
                 <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center space-x-1">
                   {pluginState.localAccessMode === 'read-only' && <Lock className="w-2.5 h-2.5 text-amber-400" />}
                   <span>v3.8 Meow</span>
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-400 font-mono font-medium">Beauty & The Beast Grand Bookcase Library</p>
+              <p className="text-[11px] text-slate-400 font-mono font-medium">Meow Grand Bookcase &amp; Vault Companion</p>
             </div>
           </div>
 
@@ -1178,6 +1178,19 @@ date_cataloged: "${new Date().toISOString()}"
                 onCreateNote={handleCreateNote}
                 onCreateLitanyNote={handleCreateLitanyNote}
                 onOpenVaultConfig={() => setIsVaultConfigOpen(true)}
+                onDeleteNote={(noteId) => {
+                  handleDeleteSelectedBooks([noteId]);
+                  setSelectedFiles(prev => {
+                    const next = new Set(prev);
+                    next.delete(noteId);
+                    return next;
+                  });
+                }}
+                onBatchDeleteNotes={(selected) => {
+                  const ids = selected instanceof Set ? Array.from(selected) : selected;
+                  handleDeleteSelectedBooks(ids);
+                  setSelectedFiles(new Set());
+                }}
                 onSelectNote={(note) => {
                   if (note && note.id) {
                     setActiveBookId(note.id);
