@@ -2406,8 +2406,16 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
         const rendered = renderReadingMode(selectedFileContent);
 
-        return (
-          <div className="absolute inset-0 z-50 bg-[#0A0A10]/95 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in zoom-in-95 duration-200">
+          <div 
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setSelectedFile(null);
+                setSelectedFileContent('');
+                setIsEditingMode(false);
+              }
+            }}
+            className="absolute inset-0 z-50 bg-[#0A0A10]/95 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in zoom-in-95 duration-200"
+          >
             <div className="w-full max-w-6xl h-full flex flex-col shadow-2xl overflow-hidden border border-[#2E1A47] bg-[#1E1E2E]">
               {/* Header */}
               <header className="p-4 border-b border-[#2E1A47] bg-[#0E0E1B] flex justify-between items-center">
@@ -2462,9 +2470,11 @@ export const VaultWorkspaceLayout: React.FC = () => {
                   </button>
                   <button 
                     onClick={() => { setSelectedFile(null); setSelectedFileContent(''); setIsEditingMode(false); }} 
-                    className="p-1.5 hover:bg-rose-950/40 text-rose-400 rounded transition-colors cursor-pointer"
+                    className="p-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/50 text-rose-300 rounded transition-all cursor-pointer flex items-center gap-1 text-xs font-mono font-bold px-2.5"
+                    title="Close Reading Overlay (Esc)"
                   >
-                    <X size={18} />
+                    <X size={16} />
+                    <span>Close</span>
                   </button>
                 </div>
               </header>
@@ -2565,6 +2575,12 @@ export const VaultWorkspaceLayout: React.FC = () => {
                             className="px-3 py-1.5 bg-[#2E1A47] hover:bg-indigo-900 border border-[#2E1A47] text-[#E6E6FA] font-mono text-[10px] rounded transition-all flex items-center space-x-1.5"
                           >
                             <span>🔮 Dispatch to n8n Webhook</span>
+                          </button>
+                          <button
+                            onClick={() => { setSelectedFile(null); setSelectedFileContent(''); setIsEditingMode(false); }}
+                            className="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-200 font-mono text-[10px] rounded transition-all flex items-center space-x-1"
+                          >
+                            <span>✕ Close Note</span>
                           </button>
                         </div>
                       </div>
