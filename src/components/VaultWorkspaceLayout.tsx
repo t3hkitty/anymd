@@ -2401,12 +2401,6 @@ export const VaultWorkspaceLayout: React.FC = () => {
                           >
                             <span>🔮 Dispatch to n8n Webhook</span>
                           </button>
-                          <button
-                            onClick={() => setIsShareOpen(true)}
-                            className="px-3 py-1.5 bg-[#2E1A47] hover:bg-indigo-900 border border-[#2E1A47] text-[#E6E6FA] font-mono text-[10px] rounded transition-all"
-                          >
-                            Publish to Community
-                          </button>
                         </div>
                       </div>
                     </div>

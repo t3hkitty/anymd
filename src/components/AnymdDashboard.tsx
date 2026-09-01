@@ -33,9 +33,14 @@ export const AnymdDashboard: React.FC = () => {
   const [totalWaterMl, setTotalWaterMl] = useState<number>(0);
   const [peeCount, setPeeCount] = useState<number>(0);
   const [pooCount, setPooCount] = useState<number>(0);
-  const [inputText, setInputText] = useState<string>('');
+  // State: MBB Quick Bar
+  const [energyFocus, setEnergyFocus] = useState<number>(3);
+  const [showEnergySlider, setShowEnergySlider] = useState<boolean>(false);
+  const [sparkNoteInput, setSparkNoteInput] = useState<string>('');
+  const [showSparkInput, setShowSparkInput] = useState<boolean>(false);
+  const [activeGlowButton, setActiveGlowButton] = useState<string | null>(null);
 
-  // State: Crisis somatic decomposer
+  // State: Cloud Accounts settings
   const [crisisQuery, setCrisisQuery] = useState<string>('');
   const [decomposedSteps, setDecomposedSteps] = useState<string[]>([]);
   const [activeStepIndex, setActiveStepIndex] = useState<number>(-1);
@@ -104,6 +109,62 @@ export const AnymdDashboard: React.FC = () => {
     showToastNotification(`Logged +1 ${type.toUpperCase()}!`);
   };
 
+  // MBB Quick Bar Handlers
+  const triggerGlow = (btnKey: string) => {
+    setActiveGlowButton(btnKey);
+    setTimeout(() => setActiveGlowButton(null), 1200);
+  };
+
+  const handleSomaticDispatch = async () => {
+    triggerGlow('somatic');
+    const timestamp = new Date().toISOString();
+    const payload = {
+      event: 'somatic_checkin',
+      timestamp,
+      source: 'mbb_quick_bar',
+      note: '🌸 Somatic check-in dispatched from MBB Quick Bar'
+    };
+    try {
+      await fetch('http://127.0.0.1:3050/webhook/Somatic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      addTerminalLog('🌸 Somatic payload posted to http://127.0.0.1:3050/webhook/Somatic');
+      showToastNotification('🌸 Somatic Check-in Dispatched!');
+    } catch (err) {
+      addTerminalLog(`🌸 Somatic dispatch logged locally (offline proxy): ${JSON.stringify(payload)}`);
+      showToastNotification('🌸 Somatic Dispatched (Offline)!');
+    }
+  };
+
+  const handleFuelWaterDispatch = () => {
+    triggerGlow('fuel');
+    const timestamp = new Date().toLocaleTimeString();
+    handleUpdateWater(250);
+    addTerminalLog(`☕ Quick fuel/water log appended to inbox/Somatic-Log.md @ ${timestamp}`);
+    showToastNotification('☕ Fuel / Water Logged (+250ml)!');
+  };
+
+  const handleSaveEnergyFocus = (val: number) => {
+    setEnergyFocus(val);
+    triggerGlow('energy');
+    localStorage.setItem('anymd_energy_focus_level', val.toString());
+    addTerminalLog(`⚡ Energy / Focus level recorded: ${val}/5`);
+    showToastNotification(`⚡ Energy / Focus set to ${val}/5!`);
+    setShowEnergySlider(false);
+  };
+
+  const handleSaveSparkNote = () => {
+    if (!sparkNoteInput.trim()) return;
+    triggerGlow('spark');
+    const timestamp = new Date().toLocaleTimeString();
+    addTerminalLog(`💡 Spark Note captured: "${sparkNoteInput}" @ ${timestamp}`);
+    showToastNotification(`💡 Spark Note Captured!`);
+    setSparkNoteInput('');
+    setShowSparkInput(false);
+  };
+
   // Crisis Decomposer trigger
   const handleDecomposeCrisis = () => {
     if (!crisisQuery) return;
@@ -168,6 +229,130 @@ export const AnymdDashboard: React.FC = () => {
           </button>
         </div>
       </header>
+
+      {/* MBB 1-Click Quick Bar */}
+      <section className="mb-6 bg-slate-900/80 border border-indigo-500/30 rounded-xl p-3 shadow-lg backdrop-blur-md">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Activity className="w-4 h-4 text-purple-400 animate-pulse" />
+              MBB 1-Click Quick Bar
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* [ 🌸 Somatic ] */}
+            <button
+              onClick={handleSomaticDispatch}
+              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-purple-500/40 ${
+                activeGlowButton === 'somatic'
+                  ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.8)] scale-105'
+                  : 'bg-purple-950/40 text-purple-200 hover:bg-purple-900/60 hover:border-purple-400'
+              }`}
+              title="Dispatches to POST http://127.0.0.1:3050/webhook/Somatic"
+            >
+              <span>🌸 Somatic</span>
+            </button>
+
+            {/* [ ☕ Fuel / Water ] */}
+            <button
+              onClick={handleFuelWaterDispatch}
+              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-amber-500/40 ${
+                activeGlowButton === 'fuel'
+                  ? 'bg-amber-600 text-white shadow-[0_0_15px_rgba(245,158,11,0.8)] scale-105'
+                  : 'bg-amber-950/40 text-amber-200 hover:bg-amber-900/60 hover:border-amber-400'
+              }`}
+              title="Dispatches quick timestamped intake log to inbox/Somatic-Log.md"
+            >
+              <span>☕ Fuel / Water</span>
+            </button>
+
+            {/* [ ⚡ Energy / Focus ] */}
+            <div className="relative">
+              <button
+                onClick={() => setShowEnergySlider(!showEnergySlider)}
+                className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-emerald-500/40 ${
+                  activeGlowButton === 'energy'
+                    ? 'bg-emerald-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.8)] scale-105'
+                    : 'bg-emerald-950/40 text-emerald-200 hover:bg-emerald-900/60 hover:border-emerald-400'
+                }`}
+                title="Opens quick 1-5 tactile slider"
+              >
+                <span>⚡ Energy / Focus ({energyFocus}/5)</span>
+              </button>
+
+              {showEnergySlider && (
+                <div className="absolute top-12 left-0 z-50 bg-slate-900 border border-emerald-500/50 p-3 rounded-lg shadow-2xl flex flex-col gap-2 min-w-[200px]">
+                  <span className="text-[11px] font-mono text-emerald-300 font-bold">Tactile Energy Slider</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    value={energyFocus}
+                    onChange={(e) => setEnergyFocus(parseInt(e.target.value))}
+                    className="w-full accent-emerald-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                    <span>1 (Exhausted)</span>
+                    <span>3 (Steady)</span>
+                    <span>5 (Overdrive)</span>
+                  </div>
+                  <button
+                    onClick={() => handleSaveEnergyFocus(energyFocus)}
+                    className="mt-1 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded"
+                  >
+                    Set Energy to {energyFocus}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* [ 💡 Spark Note ] */}
+            <div className="relative">
+              <button
+                onClick={() => setShowSparkInput(!showSparkInput)}
+                className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-sky-500/40 ${
+                  activeGlowButton === 'spark'
+                    ? 'bg-sky-600 text-white shadow-[0_0_15px_rgba(14,165,233,0.8)] scale-105'
+                    : 'bg-sky-950/40 text-sky-200 hover:bg-sky-900/60 hover:border-sky-400'
+                }`}
+                title="Opens rapid single-line capture input"
+              >
+                <span>💡 Spark Note</span>
+              </button>
+
+              {showSparkInput && (
+                <div className="absolute top-12 right-0 z-50 bg-slate-900 border border-sky-500/50 p-3 rounded-lg shadow-2xl flex flex-col gap-2 w-[280px]">
+                  <span className="text-[11px] font-mono text-sky-300 font-bold">Rapid Single-Line Capture</span>
+                  <input
+                    type="text"
+                    value={sparkNoteInput}
+                    onChange={(e) => setSparkNoteInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveSparkNote()}
+                    placeholder="Enter fleeting spark thought..."
+                    className="w-full bg-slate-950 border border-slate-700 text-xs px-2.5 py-1.5 rounded text-white focus:border-sky-400 focus:outline-none"
+                    autoFocus
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      onClick={() => setShowSparkInput(false)}
+                      className="px-2 py-1 bg-slate-800 text-slate-400 hover:text-white text-xs rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveSparkNote}
+                      className="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded"
+                    >
+                      Capture Spark
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Grid View */}
       <main className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">

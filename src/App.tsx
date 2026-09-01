@@ -48,6 +48,7 @@ import { GiftTrackerModal } from './components/GiftTrackerModal';
 import { MeowPrivacyShieldModal } from './components/MeowPrivacyShieldModal';
 import { BlackBoxModal } from './components/BlackBoxModal';
 import { MyBlackBoxView } from './components/MyBlackBoxView';
+import { AnymdDashboard } from './components/AnymdDashboard';
 import { CommunityHubView } from './components/CommunityHubView';
 import { StackcpDeployModal } from './components/StackcpDeployModal';
 import { AntigravitySetupModal } from './components/AntigravitySetupModal';
@@ -126,7 +127,7 @@ export function App() {
     return hasJournal ? loaded : [todayJournal, ...loaded];
   });
   const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
-  const [activeView, setActiveView] = useState<'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox'>('split');
+  const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox'>('dashboard');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
 
   // Switch between Sandbox Demo Vault and Personal Private Vault
@@ -815,6 +816,7 @@ date_cataloged: "${new Date().toISOString()}"
         <div className="px-4 py-1 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
           <div className="flex items-center space-x-3">
             <span className="font-bold text-amber-300">🐾 Meow Library</span>
+            <button onClick={() => setActiveView('dashboard')} className={`px-2 py-0.5 rounded ${activeView === 'dashboard' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>⚡ Dashboard</button>
             <button onClick={() => setActiveView('library')} className={`px-2 py-0.5 rounded ${activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400'}`}>📚 Library</button>
             <button onClick={() => setActiveView('blackbox')} className={`px-2 py-0.5 rounded ${activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>⬛ myBlackbox</button>
             <button onClick={() => setActiveView('reader')} className={`px-2 py-0.5 rounded ${activeView === 'reader' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>📖 Reader</button>
@@ -991,6 +993,17 @@ date_cataloged: "${new Date().toISOString()}"
           {/* View Switcher */}
           <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center space-x-1 text-xs">
             <button
+              onClick={() => setActiveView('dashboard')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
+                activeView === 'dashboard' ? 'bg-indigo-600 text-white font-bold' : 'text-indigo-300 hover:text-indigo-200'
+              }`}
+              title="MBB Dashboard & Telemetry Hub"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Dashboard</span>
+            </button>
+
+            <button
               onClick={() => setActiveView('library')}
               className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
                 activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-300 hover:text-amber-200'
@@ -1065,6 +1078,12 @@ date_cataloged: "${new Date().toISOString()}"
 
       {/* Main Content Workspace Layout */}
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
+        {activeView === 'dashboard' && (
+          <div className="h-[calc(100vh-120px)] overflow-y-auto">
+            <AnymdDashboard />
+          </div>
+        )}
+
         {activeView === 'library' && (
           <div className="h-[calc(100vh-120px)] max-w-6xl mx-auto">
             <LibraryGridPluginView
