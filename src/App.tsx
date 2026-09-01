@@ -820,21 +820,21 @@ date_cataloged: "${new Date().toISOString()}"
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
       
-      {/* Master Top Navigation Bar: Meow Library <-> User Account Profile <-> MyBlackBox */}
+      {/* Master Top Navigation Bar: anymd Library <-> User Account Profile <-> MBB Telemetry Engine */}
       <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
         
-        {/* Left: 📚 Meow Library Tab */}
+        {/* Left: 📚 anymd Library Tab */}
         <button
           onClick={() => setActiveView('library')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
             activeView !== 'blackbox'
-              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20 ring-2 ring-amber-400/40'
-              : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
+              ? 'bg-indigo-600 text-white shadow-indigo-500/20 ring-2 ring-indigo-400/40'
+              : 'bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-indigo-500/30'
           }`}
-          title="Switch to Meow Grand Library & Bookshelf"
+          title="Switch to anymd Library & Bookshelf"
         >
           <BookcaseIcon className="w-4 h-4" />
-          <span>📚 Meow Library</span>
+          <span>📚 anymd Library</span>
         </button>
 
         {/* Center: 👤 Account & Profile Manager Button */}
@@ -848,7 +848,7 @@ date_cataloged: "${new Date().toISOString()}"
           <span className="px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 text-[10px] font-mono font-bold">Account</span>
         </button>
 
-        {/* Right: ⬛ MyBlackBox & WYD Timers Tab */}
+        {/* Right: ⬛ MBB (MyBlackBox Telemetry Engine) Tab */}
         <button
           onClick={() => setActiveView('blackbox')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
@@ -856,10 +856,10 @@ date_cataloged: "${new Date().toISOString()}"
               ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30 ring-2 ring-emerald-400/50 font-black'
               : 'bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300'
           }`}
-          title="Open Meow Black Box Dashboard, Litany Pulse & WYD Timers"
+          title="Open MBB (MyBlackBox Telemetry Engine), Litany Pulse & WYD Timers"
         >
           <span className="font-mono text-sm">⬛</span>
-          <span>MyBlackBox &amp; WYD</span>
+          <span>MBB Telemetry &amp; WYD</span>
           {loadRunningLitany().length > 0 && (
             <span className="px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-950 text-[10px] font-black shadow-sm">
               {loadRunningLitany().length}
@@ -872,15 +872,15 @@ date_cataloged: "${new Date().toISOString()}"
       {isHeaderCollapsed ? (
         <div className="px-4 py-1 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
           <div className="flex items-center space-x-3">
-            <span className="font-bold text-amber-300">🐾 Meow Library</span>
+            <span className="font-bold text-indigo-400">🐾 anymd + MBB</span>
             <button onClick={() => setActiveView('dashboard')} className={`px-2 py-0.5 rounded ${activeView === 'dashboard' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>⚡ Dashboard</button>
             <button onClick={() => setActiveView('library')} className={`px-2 py-0.5 rounded ${activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400'}`}>📚 Library</button>
-            <button onClick={() => setActiveView('blackbox')} className={`px-2 py-0.5 rounded ${activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>⬛ myBlackbox</button>
+            <button onClick={() => setActiveView('blackbox')} className={`px-2 py-0.5 rounded ${activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>⬛ MBB Engine</button>
             <button onClick={() => setActiveView('reader')} className={`px-2 py-0.5 rounded ${activeView === 'reader' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}>📖 Reader</button>
           </div>
           <button
             onClick={() => setIsHeaderCollapsed(false)}
-            className="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-[11px] transition-colors flex items-center space-x-1"
+            className="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-bold text-[11px] transition-colors flex items-center space-x-1"
             title="Expand Full Header Toolbar"
           >
             <span>▼ Expand Header Toolbar</span>
@@ -890,26 +890,26 @@ date_cataloged: "${new Date().toISOString()}"
         <header className="px-6 py-2 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-[49px] z-40 flex items-center justify-between shadow-md flex-wrap gap-y-2">
           <div className="flex items-center space-x-4">
           
-          {/* Ornate Grand Bookcase Logo & Title */}
+          {/* anymd Logo & Title */}
           <div
             onClick={() => setActiveView('library')}
             className="flex items-center space-x-3 cursor-pointer group"
-            title="Click to view Meow Grand Library Bookshelf"
+            title="Click to view anymd Library"
           >
-            <div className="p-2 rounded-2xl bg-gradient-to-br from-amber-900 via-amber-950 to-slate-950 border border-amber-500/40 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-2xl bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-950 border border-indigo-500/40 shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <BookcaseIcon className="w-6 h-6" />
             </div>
             <div>
               <h1 className="font-extrabold text-lg leading-tight tracking-tight flex items-center space-x-2">
-                <span className="bg-gradient-to-r from-amber-200 via-rose-300 to-indigo-300 bg-clip-text text-transparent">
-                  Kawaiian Library MD
+                <span className="bg-gradient-to-r from-indigo-200 via-purple-300 to-amber-200 bg-clip-text text-transparent">
+                  anymd
                 </span>
-                <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center space-x-1">
+                <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center space-x-1">
                   {pluginState.localAccessMode === 'read-only' && <Lock className="w-2.5 h-2.5 text-amber-400" />}
-                  <span>v3.8 Meow</span>
+                  <span>v3.8.1 MBB</span>
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-400 font-mono font-medium">Meow Grand Bookcase &amp; Vault Companion</p>
+              <p className="text-[11px] text-slate-400 font-mono font-medium">sovereign markdown workspace &amp; MBB engine</p>
             </div>
           </div>
 
@@ -971,6 +971,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenSuggestedLinks={() => setIsSuggestedLinksOpen(true)}
 
             onOpenVaultRestore={() => setIsVaultRestoreOpen(true)}
+            onOpenVaultConfig={() => setIsVaultConfigOpen(true)}
             onOpenExportShare={() => setIsUnifiedExportOpen(true)}
             onOpenGenreTagManager={() => setIsGenreTagManagerOpen(true)}
             onOpenMediaTypeManager={() => setIsMediaTypeManagerOpen(true)}
@@ -995,6 +996,7 @@ date_cataloged: "${new Date().toISOString()}"
             onOpenSpatialRoutine={() => setIsSpatialRoutineOpen(true)}
             onOpenPersonaCollector={() => setIsPersonaCollectorOpen(true)}
             onOpenMusicVault={() => setIsMusicVaultOpen(true)}
+            onOpenMyBlackBox={() => setActiveView('blackbox')}
             onOpenHtmlPublish={() => setIsHtmlPublishOpen(true)}
             onOpenCommunityHub={() => setActiveView('community')}
 

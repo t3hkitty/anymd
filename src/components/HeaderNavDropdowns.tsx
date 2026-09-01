@@ -39,6 +39,7 @@ interface HeaderNavDropdownsProps {
   onOpenSuggestedLinks?: () => void;
 
   onOpenVaultRestore: () => void;
+  onOpenVaultConfig?: () => void;
   onOpenExportShare: () => void;
   onOpenGenreTagManager: () => void;
   onOpenMediaTypeManager: () => void;
@@ -63,6 +64,7 @@ interface HeaderNavDropdownsProps {
   onOpenSpatialRoutine: () => void;
   onOpenPersonaCollector: () => void;
   onOpenMusicVault?: () => void;
+  onOpenMyBlackBox?: () => void;
   onOpenHtmlPublish: () => void;
   onOpenCommunityHub: () => void;
 
@@ -363,6 +365,17 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
             </button>
 
             <button
+              onClick={() => runAction(props.onOpenVaultConfig)}
+              className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-sky-300 font-semibold transition-colors"
+            >
+              <span>⚙️</span>
+              <div>
+                <div className="text-slate-100 font-bold">Vault Manager &amp; Config</div>
+                <div className="text-[10px] text-slate-400">Configure paths, sync &amp; active vault settings</div>
+              </div>
+            </button>
+
+            <button
               onClick={() => runAction(props.onOpenVaultRestore)}
               className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors"
             >
@@ -649,10 +662,23 @@ export const HeaderNavDropdowns: React.FC<HeaderNavDropdownsProps> = (props) => 
             >
               <Globe className="w-4 h-4 text-emerald-400" />
               <div>
-                <div className="text-slate-100 font-bold">Community Marketplace</div>
-                <div className="text-[10px] text-slate-400">Sidecar templates &amp; shared prompts</div>
+                <div className="text-slate-100 font-bold">Anymd Community Hub</div>
+                <div className="text-[10px] text-slate-400">Share templates, sidecars &amp; discussions</div>
               </div>
             </button>
+
+            {props.onOpenMyBlackBox && (
+              <button
+                onClick={() => runAction(props.onOpenMyBlackBox)}
+                className="flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800 text-emerald-300 font-semibold transition-colors bg-emerald-950/40 border border-emerald-500/30"
+              >
+                <span>⬛</span>
+                <div>
+                  <div className="text-emerald-200 font-bold">MBB Telemetry Engine Tool</div>
+                  <div className="text-[10px] text-slate-300">MyBlackBox somatic logs, hydration &amp; telemetry</div>
+                </div>
+              </button>
+            )}
           </div>
         )}
       </div>
