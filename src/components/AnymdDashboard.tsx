@@ -19,6 +19,7 @@ import {
 import { MyBlackboxMicrologPlugin, GoblinCrisisTtsPlugin, MicrologData } from './AnymdPlugins';
 import { GitHubVaultModal } from './GitHubVaultModal';
 import { GitHubVaultConfig, getSavedGitHubVaults, saveGitHubVaults, GitHubVaultService } from '../plugins/githubVaultPlugin';
+import { AnymdIcon } from './AnymdIcon';
 
 export interface AnymdDashboardProps {
   items?: any[];
@@ -28,6 +29,8 @@ export interface AnymdDashboardProps {
   selectedFiles?: Set<string> | string[];
   onSelectNote?: (note: any) => void;
   onCreateNote?: () => void;
+  onDeleteNote?: (noteId: string) => void;
+  onBatchDeleteNotes?: (selected: Set<string> | string[]) => void;
   [key: string]: any;
 }
 
@@ -39,6 +42,8 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
   selectedFiles = new Set<string>(),
   onSelectNote = () => {},
   onCreateNote = () => {},
+  onDeleteNote,
+  onBatchDeleteNotes,
   ...props
 }) => {
   // Safe defensive array resolution for filters and counts
@@ -261,8 +266,9 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
       {/* Sleek App Navigation */}
       <header className="border-b border-slate-800 pb-4 flex justify-between items-center mb-6 flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="bg-indigo-600/20 border border-indigo-500 text-indigo-400 p-2 rounded-md font-bold text-sm tracking-wider">
-            AN <span className="text-white">Y</span> MD
+          <div className="bg-indigo-600/20 border border-indigo-500/60 text-indigo-300 p-1.5 rounded-xl font-bold text-sm tracking-wider flex items-center gap-2">
+            <AnymdIcon className="w-6 h-6" />
+            <span>any<span className="text-white">md</span></span>
           </div>
           <span className="text-xs text-slate-400 font-mono">v3.8.0 / KawaiiNeko OS</span>
 
@@ -611,8 +617,18 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
                   <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={() => {
-                        if (props.onBatchDelete) props.onBatchDelete(selectedFiles);
-                        else showToastNotification(`Batch Deleted ${selectedCount} items!`);
+                        const targetIds = selectedFiles instanceof Set 
+                          ? Array.from(selectedFiles) 
+                          : (Array.isArray(selectedFiles) ? selectedFiles : []);
+                        if (targetIds.length === 0) return;
+                        if (confirm(`Are you sure you want to delete ${targetIds.length} selected note(s)?`)) {
+                          if (onBatchDeleteNotes) {
+                            onBatchDeleteNotes(selectedFiles);
+                          } else if (props.onBatchDelete) {
+                            props.onBatchDelete(selectedFiles);
+                          }
+                          showToastNotification(`Batch Deleted ${targetIds.length} items!`);
+                        }
                       }}
                       className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-all"
                     >
@@ -698,12 +714,31 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => onSelectNote(note)}
-                          className="px-2.5 py-1 bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] font-mono font-semibold rounded text-slate-300"
-                        >
-                          Open Note ➜
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => onSelectNote(note)}
+                            className="px-2.5 py-1 bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] font-mono font-semibold rounded text-slate-300"
+                          >
+                            Open Note ➜
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm(`Are you sure you want to delete "${note.title || note.name || 'this note'}"?`)) {
+                                if (onDeleteNote) {
+                                  onDeleteNote(noteId);
+                                } else if (props.onDelete) {
+                                  props.onDelete(noteId);
+                                }
+                                showToastNotification(`Deleted note: ${note.title || note.name || noteId}`);
+                              }
+                            }}
+                            className="px-2 py-1 bg-rose-950/40 border border-rose-800/60 hover:bg-rose-900/60 hover:border-rose-500 text-rose-300 text-xs font-bold rounded transition-all"
+                            title="Delete note"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </div>
                     );
                   })}

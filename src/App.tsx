@@ -95,6 +95,7 @@ import { parseInboundShareTarget, convertSharePayloadToBook } from './plugins/pw
 import { getActiveProfile, type UserProfile } from './plugins/profileManagementPlugin';
 import { SAMPLE_MEDIA_ITEMS } from './data/sampleMediaItems';
 import { BookcaseIcon } from './components/BookcaseIcon';
+import { AnymdIcon } from './components/AnymdIcon';
 import { HeaderNavDropdowns } from './components/HeaderNavDropdowns';
 
 // Plugins & Utilities
@@ -833,8 +834,8 @@ date_cataloged: "${new Date().toISOString()}"
           }`}
           title="Switch to anymd Library & Bookshelf"
         >
-          <BookcaseIcon className="w-4 h-4" />
-          <span>📚 anymd Library</span>
+          <AnymdIcon className="w-4 h-4" />
+          <span>anymd Library</span>
         </button>
 
         {/* Center: 👤 Account & Profile Manager Button */}
@@ -896,8 +897,8 @@ date_cataloged: "${new Date().toISOString()}"
             className="flex items-center space-x-3 cursor-pointer group"
             title="Click to view anymd Library"
           >
-            <div className="p-2 rounded-2xl bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-950 border border-indigo-500/40 shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <BookcaseIcon className="w-6 h-6" />
+            <div className="p-1.5 rounded-2xl bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-950 border border-indigo-500/40 shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+              <AnymdIcon className="w-8 h-8" />
             </div>
             <div>
               <h1 className="font-extrabold text-lg leading-tight tracking-tight flex items-center space-x-2">

@@ -1,7 +1,7 @@
 {
-  "name": "Library Companion MD - Meow Discovery Vault",
-  "short_name": "Anymd",
-  "description": "Local-first meow library companion, discovery vault, and 3D Grand Bookcase with Web Share Target mobile import.",
+  "name": "anymd — sovereign markdown workspace & MBB engine",
+  "short_name": "anymd",
+  "description": "Local-first sovereign markdown workspace, MBB telemetry engine, and media library.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -10,10 +10,20 @@
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "anymd-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     }
   ],
   "share_target": {
@@ -28,18 +38,18 @@
   },
   "shortcuts": [
     {
-      "name": "Grand Bookcase",
+      "name": "anymd Library",
       "short_name": "Library",
-      "description": "Open your meow Grand Bookcase library",
+      "description": "Open your anymd library",
       "url": "./#library",
-      "icons": [{ "src": "favicon.svg", "sizes": "any" }]
+      "icons": [{ "src": "anymd-icon.svg", "sizes": "any" }]
     },
     {
-      "name": "Trade Calculator",
-      "short_name": "Trade",
-      "description": "Open the Decimal Fair Trade Calculator",
-      "url": "./#trade",
-      "icons": [{ "src": "favicon.svg", "sizes": "any" }]
+      "name": "MBB Telemetry Engine",
+      "short_name": "MBB",
+      "description": "Open MyBlackBox telemetry dashboard",
+      "url": "./#blackbox",
+      "icons": [{ "src": "anymd-icon.svg", "sizes": "any" }]
     }
   ]
 }
