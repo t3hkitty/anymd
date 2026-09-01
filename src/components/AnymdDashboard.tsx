@@ -14,9 +14,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   Activity, Droplet, Users, Settings, Play, Volume2, 
   Trash2, RefreshCw, Plus, CheckCircle, ChevronLeft, ChevronRight,
-  Shield, FileText, Download, Cloud, Key, Terminal, ArrowLeft
+  Shield, FileText, Download, Cloud, Key, Terminal, ArrowLeft, Github, FolderGit2
 } from 'lucide-react';
 import { MyBlackboxMicrologPlugin, GoblinCrisisTtsPlugin, MicrologData } from './AnymdPlugins';
+import { GitHubVaultModal } from './GitHubVaultModal';
+import { GitHubVaultConfig, getSavedGitHubVaults, saveGitHubVaults, GitHubVaultService } from '../plugins/githubVaultPlugin';
 
 export interface AnymdDashboardProps {
   items?: any[];
@@ -57,12 +59,14 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
   const micrologPlugin = new MyBlackboxMicrologPlugin();
   const crisisPlugin = new GoblinCrisisTtsPlugin();
 
-  // State: General Workspace
+  // State: General Workspace & GitHub Vault
   const [activeTab, setActiveTab] = useState<'dashboard' | 'logs' | 'accounts' | 'crisis'>('dashboard');
   const [currentScene, setCurrentScene] = useState<'all' | 'work' | 'chow'>('all');
   const [logs, setLogs] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [inputText, setInputText] = useState<string>('');
+  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false);
+  const [githubVaults, setGithubVaults] = useState<GitHubVaultConfig[]>([]);
 
   // State: Hydration & Excretion
   const [totalWaterMl, setTotalWaterMl] = useState<number>(0);
@@ -97,9 +101,34 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
     if (savedPee) setPeeCount(parseInt(savedPee));
     if (savedPoo) setPooCount(parseInt(savedPoo));
 
+    setGithubVaults(getSavedGitHubVaults());
+
     addTerminalLog('System initialized successfully. Inode indexing finished.');
     addTerminalLog('Active profile: @lorik_admin. Invite code "meow" active.');
   }, []);
+
+  const addTerminalLog = (msg: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setLogs(prev => [`[${timestamp}] ${msg}`, ...prev.slice(0, 49)]);
+  };
+
+  const showToastNotification = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleGitHubVaultLinked = (vaultConfig: GitHubVaultConfig, fileCount: number) => {
+    const updated = [vaultConfig, ...githubVaults.filter((v) => v.id !== vaultConfig.id)];
+    setGithubVaults(updated);
+    addTerminalLog(`🐙 Mounted GitHub Repo Vault [${vaultConfig.name}] (${fileCount} notes fetched).`);
+    showToastNotification(`Mounted ${vaultConfig.name} (${fileCount} notes)!`);
+  };
+
+  const renderStatusIndicator = (status?: 'synced' | 'buffered' | 'offline') => {
+    if (status === 'buffered') return <span title="Buffered Commits">🟡</span>;
+    if (status === 'offline') return <span title="Offline">🔴</span>;
+    return <span title="Synced">🟢</span>;
+  };
 
   const addTerminalLog = (msg: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -273,21 +302,37 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
             >
               🌸 + New Litany Note
             </button>
+            <button
+              onClick={() => setIsGitHubModalOpen(true)}
+              className="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-indigo-500/40 hover:border-indigo-400 text-indigo-300 text-xs font-bold rounded-md flex items-center gap-1.5 transition-all shadow-sm"
+              title="Link a GitHub repository directly to sync markdown files"
+            >
+              <Github className="w-3.5 h-3.5 text-indigo-400" /> [ 🐙 Link GitHub Repo ]
+            </button>
           </div>
 
           {/* Safe vault rendering */}
-          {safeVaults.length > 0 && (
-            <div className="vault-tabs flex gap-1.5 font-mono text-xs">
-              {safeVaults.map((v: any, idx: number) => (
-                <button
-                  key={v.id || v.name || idx}
-                  className="px-2.5 py-1 bg-slate-900 border border-slate-700 text-slate-300 rounded hover:border-indigo-400"
-                >
-                  {v.name || v.id}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="vault-tabs flex gap-1.5 font-mono text-xs flex-wrap items-center">
+            {safeVaults.map((v: any, idx: number) => (
+              <button
+                key={v.id || v.name || idx}
+                className="px-2.5 py-1 bg-slate-900 border border-slate-700 text-slate-300 rounded hover:border-indigo-400"
+              >
+                {v.name || v.id}
+              </button>
+            ))}
+
+            {githubVaults.map((v) => (
+              <button
+                key={v.id}
+                className="px-2.5 py-1 bg-slate-900 border border-indigo-500/40 text-indigo-200 rounded hover:border-indigo-400 flex items-center gap-1.5 shadow-sm"
+              >
+                <FolderGit2 className="w-3 h-3 text-indigo-400" />
+                <span>{v.name}</span>
+                {renderStatusIndicator(v.status)}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex gap-1 bg-slate-900 p-1 border border-slate-800 rounded-md">
           <button 
@@ -792,6 +837,12 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
         <div>🐾 © 2026 KawaiiNeko Black Box & Library Companion MD • Open Source (MIT License)</div>
         <div className="hover:text-white cursor-pointer flex items-center gap-1">🚀 Host Your Own on GitHub</div>
       </footer>
+      {/* GitHub Vault Link Modal */}
+      <GitHubVaultModal
+        isOpen={isGitHubModalOpen}
+        onClose={() => setIsGitHubModalOpen(false)}
+        onVaultLinked={handleGitHubVaultLinked}
+      />
     </div>
   );
 };
