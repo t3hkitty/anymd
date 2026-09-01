@@ -14,6 +14,9 @@ interface MainContentViewportProps {
   onSelectFile: (file: VaultFile) => void;
   starredFiles: Record<string, boolean>;
   onToggleStar: (filename: string) => void;
+  selectedFileNames?: string[];
+  onToggleSelectFile?: (filename: string) => void;
+  onToggleSelectAll?: () => void;
 }
 
 export const MainContentViewport: React.FC<MainContentViewportProps> = ({
@@ -22,6 +25,9 @@ export const MainContentViewport: React.FC<MainContentViewportProps> = ({
   onSelectFile,
   starredFiles,
   onToggleStar,
+  selectedFileNames = [],
+  onToggleSelectFile,
+  onToggleSelectAll,
 }) => {
   if (files.length === 0) {
     return (
@@ -39,23 +45,35 @@ export const MainContentViewport: React.FC<MainContentViewportProps> = ({
 
   const renderCard = (file: VaultFile) => {
     const isStarred = !!starredFiles[file.name];
+    const isSelected = selectedFileNames.includes(file.name);
     return (
       <div
         key={file.name}
         onClick={() => onSelectFile(file)}
-        className="group relative bg-neutral-900 border border-neutral-800 hover:border-neutral-700 p-4 rounded-lg flex flex-col justify-between h-36 cursor-pointer transition-all duration-200"
+        className={`group relative bg-neutral-900 border ${
+          isSelected ? 'border-indigo-500 bg-indigo-950/20' : 'border-neutral-800 hover:border-neutral-700'
+        } p-4 rounded-lg flex flex-col justify-between h-36 cursor-pointer transition-all duration-200`}
       >
         <div>
-          <div className="flex items-start justify-between">
-            <h3 className="font-bold font-mono text-xs text-neutral-200 group-hover:text-sky-300 transition-colors line-clamp-1">
-              {file.name.replace('.md', '')}
-            </h3>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onClick={(e) => e.stopPropagation()}
+                onChange={() => onToggleSelectFile && onToggleSelectFile(file.name)}
+                className="accent-indigo-500 w-4 h-4 rounded cursor-pointer shrink-0"
+              />
+              <h3 className="font-bold font-mono text-xs text-neutral-200 group-hover:text-sky-300 transition-colors line-clamp-1">
+                {file.name.replace('.md', '')}
+              </h3>
+            </div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleStar(file.name);
               }}
-              className="text-neutral-500 hover:text-amber-400 transition-colors"
+              className="text-neutral-500 hover:text-amber-400 transition-colors shrink-0"
             >
               <Star size={12} fill={isStarred ? 'currentColor' : 'none'} className={isStarred ? 'text-amber-400' : ''} />
             </button>
@@ -77,52 +95,74 @@ export const MainContentViewport: React.FC<MainContentViewportProps> = ({
     </div>
   );
 
-  const renderList = () => (
-    <div className="p-6 overflow-x-auto">
-      <table className="w-full text-left font-mono text-xs border-collapse">
-        <thead>
-          <tr className="border-b border-neutral-800 text-neutral-500">
-            <th className="py-2.5 px-4">Name</th>
-            <th className="py-2.5 px-4">Snippet</th>
-            <th className="py-2.5 px-4 text-right">Modified</th>
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((file) => {
-            const isStarred = !!starredFiles[file.name];
-            return (
-              <tr
-                key={file.name}
-                onClick={() => onSelectFile(file)}
-                className="border-b border-neutral-900 hover:bg-neutral-900/40 cursor-pointer text-neutral-300 transition-colors group"
-              >
-                <td className="py-2.5 px-4 font-bold flex items-center space-x-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleStar(file.name);
-                    }}
-                    className="text-neutral-600 hover:text-amber-400"
-                  >
-                    <Star size={10} fill={isStarred ? 'currentColor' : 'none'} className={isStarred ? 'text-amber-400' : ''} />
-                  </button>
-                  <span className="group-hover:text-sky-300 line-clamp-1">
-                    {file.name.replace('.md', '')}
-                  </span>
-                </td>
-                <td className="py-2.5 px-4 text-neutral-500 line-clamp-1 max-w-md">
-                  {file.snippet}
-                </td>
-                <td className="py-2.5 px-4 text-right text-neutral-600">
-                  {file.lastModified}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
+  const renderList = () => {
+    const isAllSelected = files.length > 0 && selectedFileNames.length === files.length;
+    return (
+      <div className="p-6 overflow-x-auto">
+        <table className="w-full text-left font-mono text-xs border-collapse">
+          <thead>
+            <tr className="border-b border-neutral-800 text-neutral-500">
+              <th className="py-2.5 px-4 w-10">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={onToggleSelectAll}
+                  className="accent-indigo-500 w-4 h-4 rounded cursor-pointer"
+                />
+              </th>
+              <th className="py-2.5 px-4">Name</th>
+              <th className="py-2.5 px-4">Snippet</th>
+              <th className="py-2.5 px-4 text-right">Modified</th>
+            </tr>
+          </thead>
+          <tbody>
+            {files.map((file) => {
+              const isStarred = !!starredFiles[file.name];
+              const isSelected = selectedFileNames.includes(file.name);
+              return (
+                <tr
+                  key={file.name}
+                  onClick={() => onSelectFile(file)}
+                  className={`border-b border-neutral-900 ${
+                    isSelected ? 'bg-indigo-950/30' : 'hover:bg-neutral-900/40'
+                  } cursor-pointer text-neutral-300 transition-colors group`}
+                >
+                  <td className="py-2.5 px-4" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelectFile && onToggleSelectFile(file.name)}
+                      className="accent-indigo-500 w-4 h-4 rounded cursor-pointer"
+                    />
+                  </td>
+                  <td className="py-2.5 px-4 font-bold flex items-center space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleStar(file.name);
+                      }}
+                      className="text-neutral-600 hover:text-amber-400"
+                    >
+                      <Star size={10} fill={isStarred ? 'currentColor' : 'none'} className={isStarred ? 'text-amber-400' : ''} />
+                    </button>
+                    <span className="group-hover:text-sky-300 line-clamp-1">
+                      {file.name.replace('.md', '')}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-4 text-neutral-500 line-clamp-1 max-w-md">
+                    {file.snippet}
+                  </td>
+                  <td className="py-2.5 px-4 text-right text-neutral-600">
+                    {file.lastModified}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   const render3D = () => (
     <div className="p-12 flex justify-center items-center h-80 overflow-hidden relative">

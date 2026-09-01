@@ -18,7 +18,19 @@ import {
 } from 'lucide-react';
 import { MyBlackboxMicrologPlugin, GoblinCrisisTtsPlugin, MicrologData } from './AnymdPlugins';
 
-export const AnymdDashboard: React.FC = () => {
+export interface AnymdDashboardProps {
+  items?: any[];
+  notes?: any[];
+  vaults?: any[];
+  selectedFiles?: Set<string> | string[];
+}
+
+export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
+  items = [],
+  notes = [],
+  vaults = [],
+  selectedFiles = new Set(),
+}) => {
   // Engines
   const micrologPlugin = new MyBlackboxMicrologPlugin();
   const crisisPlugin = new GoblinCrisisTtsPlugin();
@@ -28,6 +40,7 @@ export const AnymdDashboard: React.FC = () => {
   const [currentScene, setCurrentScene] = useState<'all' | 'work' | 'chow'>('all');
   const [logs, setLogs] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [inputText, setInputText] = useState<string>('');
 
   // State: Hydration & Excretion
   const [totalWaterMl, setTotalWaterMl] = useState<number>(0);

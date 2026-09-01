@@ -152,6 +152,16 @@ export const VaultWorkspaceLayout: React.FC = () => {
     localStorage.setItem('anymd_vault_list_dynamic', JSON.stringify(vaultList));
   }, [vaultList]);
 
+  // Purge any legacy cached Scene_Draft_1 from localStorage on mount
+  useEffect(() => {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && key.includes('Scene_Draft_1')) {
+        localStorage.removeItem(key);
+      }
+    }
+  }, []);
+
   // Drawer / Modal states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -408,12 +418,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
         content: `---\ntitle: Pretentious Journal Spread\ntags: [bujo, excalidraw]\nstatus: ready\ntype: bujo_spread\n---\n# Pretentious Bullet Journal Spread\nUse this companion page alongside the Excalidraw canvas widget below.`
       }
     ],
-    'draft-playground': [
-      {
-        name: 'Scene_Draft_1.md',
-        content: `---\ntitle: Scene Draft 1\ntags: [draft, sandbox]\nstatus: ready\ntype: writing_note\n---\n# Scene Draft 1\nStart writing your chapter drafts here.`
-      }
-    ]
+    'draft-playground': []
   };
 
   const loadVaultFromLocalStorage = (vaultId: VaultId) => {
@@ -452,19 +457,10 @@ export const VaultWorkspaceLayout: React.FC = () => {
     setVaultFiles(prev => ({ ...prev, [vaultId]: files }));
     setSyncStatus('local_only');
 
-    // Auto-select first file to avoid blank editor screen on load
-    if (files.length > 0) {
-      const firstFile = files[0];
-      const text = localStorage.getItem(`${prefix}${firstFile.name}`) || '';
-      setSelectedFile(firstFile.name);
-      setSelectedFileContent(text.replace(/^---\r?\n([\s\S]*?)\r?\n---/, '').trim());
-      const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-      setSelectedFileMetadata(fmMatch ? fmMatch[1] : '');
-    } else {
-      setSelectedFile(null);
-      setSelectedFileContent('');
-      setSelectedFileMetadata('');
-    }
+    // Keep selectedFile strictly null on mount/load so no reading/draft modal opens automatically
+    setSelectedFile(null);
+    setSelectedFileContent('');
+    setSelectedFileMetadata('');
   };
 
   const loadVaultFolder = async (vaultId: VaultId, sourceOverride?: 'local_picker' | 'n8n_cloud' | 'local_storage') => {
@@ -661,6 +657,36 @@ export const VaultWorkspaceLayout: React.FC = () => {
       loadVaultFromLocalStorage(activeVault);
     } else {
       alert('Note template initialized in local cache buffer! Mount local storage to write to disk.');
+    }
+  };
+
+  const handleCreateNewNote = () => {
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const defaultTitle = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+    const inputTitle = prompt('Enter note title (or leave blank for Zettelkasten timestamp):', defaultTitle);
+    const title = (inputTitle !== null && inputTitle.trim() !== '') ? inputTitle.trim() : defaultTitle;
+    const cleanName = `${title.replace(/[^a-zA-Z0-9_\-]/g, '_')}.md`;
+    const template = `---\ntitle: ${title}\ndate: ${now.toISOString()}\ntags: [zettelkasten, note]\nstatus: ready\ntype: note\n---\n# ${title}\n\n`;
+    localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, template);
+    if (vaultLoadSource[activeVault] === 'local_storage') {
+      loadVaultFromLocalStorage(activeVault);
+    } else {
+      setVaultFiles(prev => {
+        const existing = prev[activeVault] || [];
+        if (existing.some(f => f.name === cleanName)) return prev;
+        return {
+          ...prev,
+          [activeVault]: [
+            {
+              name: cleanName,
+              snippet: `# ${title}`,
+              lastModified: new Date().toLocaleString()
+            },
+            ...existing
+          ]
+        };
+      });
     }
   };
 
@@ -1025,6 +1051,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
                   )}
 
                   <button
+                    onClick={handleCreateNewNote}
+                    className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400 rounded-lg text-[10px] font-mono text-white font-bold transition-all flex items-center space-x-1 cursor-pointer shadow-md"
+                  >
+                    <span>📝 + New Note</span>
+                  </button>
+
+                  <button
                     onClick={handleCreateNewLitanyNote}
                     className="px-3 py-1 bg-purple-900/60 hover:bg-purple-800 border border-purple-500/40 rounded-lg text-[10px] font-mono text-purple-200 transition-all flex items-center space-x-1 cursor-pointer"
                   >
@@ -1041,8 +1074,140 @@ export const VaultWorkspaceLayout: React.FC = () => {
                   onSelectFile={handleSelectFile}
                   starredFiles={starredFiles}
                   onToggleStar={handleToggleStar}
+                  selectedFileNames={selectedFileNames}
+                  onToggleSelectFile={(filename) => {
+                    setSelectedFileNames(prev => 
+                      prev.includes(filename) 
+                        ? prev.filter(f => f !== filename) 
+                        : [...prev, filename]
+                    );
+                  }}
+                  onToggleSelectAll={() => {
+                    const allFiles = (vaultFiles[activeVault] || []).map(f => f.name);
+                    if (selectedFileNames.length === allFiles.length) {
+                      setSelectedFileNames([]);
+                    } else {
+                      setSelectedFileNames(allFiles);
+                    }
+                  }}
                 />
               </div>
+
+              {/* FLOATING MULTI-SELECT BATCH ACTION BAR */}
+              {selectedFileNames.length > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border-2 border-indigo-500 shadow-[0_0_25px_rgba(99,102,241,0.4)] rounded-2xl px-5 py-3 flex items-center gap-3 text-xs font-mono backdrop-blur-lg animate-fade-in flex-wrap justify-center">
+                  <span className="font-bold text-indigo-300 flex items-center gap-1.5 border-r border-slate-700 pr-3">
+                    <span>🐾</span> {selectedFileNames.length} note{selectedFileNames.length > 1 ? 's' : ''} selected
+                  </span>
+
+                  {/* [ 🗑️ Delete Selected ] */}
+                  <button
+                    onClick={() => {
+                      if (confirm(`Delete ${selectedFileNames.length} selected files?`)) {
+                        selectedFileNames.forEach(fn => localStorage.removeItem(`anymd_file_${activeVault}_${fn}`));
+                        setSelectedFileNames([]);
+                        loadVaultFromLocalStorage(activeVault);
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-600 text-rose-200 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1"
+                  >
+                    🗑️ Delete Selected
+                  </button>
+
+                  {/* [ 🏷️ Batch Tag ] */}
+                  <button
+                    onClick={() => {
+                      const tag = prompt('Enter YAML tag to append to selected notes (e.g. zettel):');
+                      if (!tag) return;
+                      const cleanTag = tag.replace(/^#/, '').trim();
+                      selectedFileNames.forEach(fn => {
+                        const key = `anymd_file_${activeVault}_${fn}`;
+                        const old = localStorage.getItem(key) || '';
+                        if (old.startsWith('---')) {
+                          const updated = old.replace(/tags:\s*\[(.*?)\]/, (m, p1) => `tags: [${p1 ? p1 + ', ' : ''}${cleanTag}]`);
+                          localStorage.setItem(key, updated);
+                        } else {
+                          localStorage.setItem(key, `---\ntags: [${cleanTag}]\n---\n${old}`);
+                        }
+                      });
+                      loadVaultFromLocalStorage(activeVault);
+                      alert(`🏷️ Added tag #${cleanTag} to ${selectedFileNames.length} notes!`);
+                    }}
+                    className="px-3 py-1.5 bg-purple-950/80 hover:bg-purple-900 border border-purple-600 text-purple-200 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1"
+                  >
+                    🏷️ Batch Tag
+                  </button>
+
+                  {/* [ 📦 Export Selected (.zip / .md) ] */}
+                  <button
+                    onClick={async () => {
+                      if (selectedFileNames.length === 1) {
+                        const fn = selectedFileNames[0];
+                        const content = localStorage.getItem(`anymd_file_${activeVault}_${fn}`) || '';
+                        const blob = new Blob([content], { type: 'text/markdown' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fn;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      } else {
+                        const JSZip = (await import('jszip')).default;
+                        const zip = new JSZip();
+                        selectedFileNames.forEach(fn => {
+                          const content = localStorage.getItem(`anymd_file_${activeVault}_${fn}`) || '';
+                          zip.file(fn, content);
+                        });
+                        const blob = await zip.generateAsync({ type: 'blob' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `anymd-export-${activeVault}-${new Date().toISOString().slice(0, 10)}.zip`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-emerald-200 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1"
+                  >
+                    📦 Export Selected (.zip / .md)
+                  </button>
+
+                  {/* [ 📁 Move to Vault / Folder ] */}
+                  <button
+                    onClick={() => {
+                      const availableVaults = vaultList.map(v => `${v.id} (${v.name})`).join('\n');
+                      const targetInput = prompt(`Move ${selectedFileNames.length} files to vault:\n\nAvailable Vaults:\n${availableVaults}\n\nEnter vault ID:`, vaultList[0]?.id || 'anymd-main');
+                      if (!targetInput) return;
+                      const targetVaultObj = vaultList.find(v => v.id === targetInput || v.name.toLowerCase().includes(targetInput.toLowerCase())) || { id: targetInput.replace(/[^a-zA-Z0-9_\-]/g, '-').toLowerCase() };
+                      const targetVaultId = targetVaultObj.id;
+
+                      selectedFileNames.forEach(fn => {
+                        const oldKey = `anymd_file_${activeVault}_${fn}`;
+                        const newKey = `anymd_file_${targetVaultId}_${fn}`;
+                        const content = localStorage.getItem(oldKey) || '';
+                        localStorage.setItem(newKey, content);
+                        localStorage.removeItem(oldKey);
+                      });
+
+                      setSelectedFileNames([]);
+                      loadVaultFromLocalStorage(activeVault);
+                      alert(`📁 Moved ${selectedFileNames.length} files to vault "${targetVaultId}"!`);
+                    }}
+                    className="px-3 py-1.5 bg-sky-950/80 hover:bg-sky-900 border border-sky-600 text-sky-200 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1"
+                  >
+                    📁 Move to Vault / Folder
+                  </button>
+
+                  {/* [ ✖️ Deselect ] */}
+                  <button
+                    onClick={() => setSelectedFileNames([])}
+                    className="px-2 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl font-bold transition-all cursor-pointer ml-1"
+                    title="Clear selection"
+                  >
+                    ✖️
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

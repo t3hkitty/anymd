@@ -49,6 +49,7 @@ import { MeowPrivacyShieldModal } from './components/MeowPrivacyShieldModal';
 import { BlackBoxModal } from './components/BlackBoxModal';
 import { MyBlackBoxView } from './components/MyBlackBoxView';
 import { AnymdDashboard } from './components/AnymdDashboard';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { CommunityHubView } from './components/CommunityHubView';
 import { StackcpDeployModal } from './components/StackcpDeployModal';
 import { AntigravitySetupModal } from './components/AntigravitySetupModal';
@@ -1080,7 +1081,9 @@ date_cataloged: "${new Date().toISOString()}"
       <main className="flex-1 p-6 overflow-hidden max-w-[1600px] w-full mx-auto">
         {activeView === 'dashboard' && (
           <div className="h-[calc(100vh-120px)] overflow-y-auto">
-            <AnymdDashboard />
+            <ErrorBoundary>
+              <AnymdDashboard items={[]} notes={[]} vaults={[]} selectedFiles={new Set()} />
+            </ErrorBoundary>
           </div>
         )}
 
