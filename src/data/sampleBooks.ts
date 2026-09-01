@@ -444,7 +444,7 @@ tags: [meme, viral-history, the-dress, optical-illusion, internet-folklore, pop-
         progressPercent: 50.0,
         category: 'Internet Folklore & Meow Memes',
         presetTier: 'snot-cascade',
-        rawText: 'SUCH MEME. VERY SOVEREIGN. MUCH WOW. 100% WHOLESOME ENERGY.',
+        rawText: 'SUCH MEME. VERY MEOW. MUCH WOW. 100% WHOLESOME ENERGY.',
         cfi: 'meme://doge/chapter1',
         chapterTitle: 'Chapter 1: The Paws of Destiny',
         paragraphIndex: 0,

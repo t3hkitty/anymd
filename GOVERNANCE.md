@@ -1,6 +1,6 @@
 # Anymd Governance & Decentralized User Meow
 
-This project is built on the core principle of **Decentralized User Meow (Sovereignty)**. 
+This project is built on the core principle of **Decentralized User Meow (KawaiiNekoty)**. 
 All data, files, companion sidecars, and keys belong exclusively to the user and remain local-first.
 
 ## Legal Disclaimer & Liability

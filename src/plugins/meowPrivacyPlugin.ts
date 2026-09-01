@@ -8,7 +8,7 @@ export interface PrivacyAuditReport {
   meowPledge: string;
 }
 
-export const SOVEREIGN_PRIVACY_AUDIT: PrivacyAuditReport = {
+export const MEOW_PRIVACY_AUDIT: PrivacyAuditReport = {
   isZeroTelemetryCertified: true,
   activeAdTechTrackersFound: 0,
   dataStorageLocation: '100% Local Hardware / Self-Hosted Private Storage',

@@ -72,7 +72,7 @@ export function generateCroppedCardCover(
   // Meow stamp
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px monospace';
-  ctx.fillText('SOVEREIGN VAULT CROPPED COVER', 200, 515);
+  ctx.fillText('MEOW VAULT CROPPED COVER', 200, 515);
 
   return canvas.toDataURL('image/png');
 }

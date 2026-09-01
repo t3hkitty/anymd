@@ -10,7 +10,7 @@ export interface MeowUserAccount {
   allowedSidecarPaths: string[];
 }
 
-export const INITIAL_SOVEREIGN_ACCOUNTS: MeowUserAccount[] = [
+export const INITIAL_MEOW_ACCOUNTS: MeowUserAccount[] = [
   {
     username: 'lorik_admin',
     displayName: 'Lorik (Meow Admin)',
@@ -42,7 +42,7 @@ export function getSavedMeowAccounts(): MeowUserAccount[] {
   } catch (err) {
     console.warn('Failed to load meow accounts:', err);
   }
-  return INITIAL_SOVEREIGN_ACCOUNTS;
+  return INITIAL_MEOW_ACCOUNTS;
 }
 
 export function saveMeowAccounts(accounts: MeowUserAccount[]): void {

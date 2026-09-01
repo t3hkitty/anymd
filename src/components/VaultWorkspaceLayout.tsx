@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import { 
   Database, Edit3, Users, Activity, PieChart, Layers, 
   FileText, X, Plus, Settings, Cloud, Palette, User, 
   Puzzle, ShieldOff, PenTool, Sparkles, FolderOpen, 
-  HardDrive, Server, Zap, RefreshCw, Star 
+  HardDrive, Server, Zap, RefreshCw, Star, Sliders, CheckCircle2, AlertCircle, Play, Package, Trash2, Send, Terminal
 } from 'lucide-react';
 import { DynamicAtmosphericBackground } from '@lorik/shared-kawaii-ui';
 import { MotivationHelperWidget } from './MotivationHelperWidget';
@@ -157,6 +158,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
   const [isPluginManagerOpen, setIsPluginManagerOpen] = useState(false);
   const [isAddVaultOpen, setIsAddVaultOpen] = useState(false);
+
+  // Subfolder & Batch Selection states
+  const [subfolderPolicy, setSubfolderPolicy] = useState<'flatten' | 'create_subvaults' | 'ignore'>('flatten');
+  const [selectedFileNames, setSelectedFileNames] = useState<string[]>([]);
+  const [isCarouselEditing, setIsCarouselEditing] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [carouselContent, setCarouselContent] = useState('');
 
   // Plugin state
   const [pluginState, setPluginState] = useState<PluginState>(loadSavedPluginState);
@@ -907,18 +915,122 @@ export const VaultWorkspaceLayout: React.FC = () => {
           {activeTab === 'vaults' && (
             <div className={`h-full flex flex-col border overflow-hidden ${panelBg}`}>
               {/* View Switcher bar */}
-              <div className="flex justify-between items-center bg-neutral-900/40 border-b border-neutral-800 pr-4">
+              <div className="flex flex-wrap justify-between items-center bg-neutral-900/40 border-b border-neutral-800 px-4 py-2 gap-2">
                 <ViewSwitcherBar 
                   activeLayout={viewLayout}
                   onLayoutChange={setViewLayout}
                   noteCount={(vaultFiles[activeVault] || []).length}
                 />
-                <button
-                  onClick={handleCreateNewLitanyNote}
-                  className="px-3 py-1 bg-purple-900/50 hover:bg-purple-800 border border-purple-500/30 rounded-lg text-[10px] font-mono text-purple-200 transition-all flex items-center space-x-1"
-                >
-                  <span>🌸 + New Litany Note</span>
-                </button>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      const allFiles = (vaultFiles[activeVault] || []).map(f => f.name);
+                      if (selectedFileNames.length === allFiles.length) {
+                        setSelectedFileNames([]);
+                      } else {
+                        setSelectedFileNames(allFiles);
+                      }
+                    }}
+                    className="px-2.5 py-1 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 rounded text-[10px] font-mono cursor-pointer"
+                  >
+                    {selectedFileNames.length > 0 && selectedFileNames.length === (vaultFiles[activeVault] || []).length ? 'Deselect All' : `Select All (${selectedFileNames.length})`}
+                  </button>
+
+                  {selectedFileNames.length > 0 && (
+                    <>
+                      <button
+                        onClick={() => {
+                          const text = prompt('Text to PREPEND to selected files:');
+                          if (!text) return;
+                          selectedFileNames.forEach(fn => {
+                            const key = `anymd_file_${activeVault}_${fn}`;
+                            const old = localStorage.getItem(key) || '';
+                            localStorage.setItem(key, `${text}\n\n${old}`);
+                          });
+                          loadVaultFromLocalStorage(activeVault);
+                          alert(`Prepend complete for ${selectedFileNames.length} files!`);
+                        }}
+                        className="px-2.5 py-1 bg-sky-950 hover:bg-sky-900 border border-sky-700 text-sky-200 rounded text-[10px] font-mono cursor-pointer"
+                      >
+                        📝 Prepend
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          const text = prompt('Text to APPEND to selected files:');
+                          if (!text) return;
+                          selectedFileNames.forEach(fn => {
+                            const key = `anymd_file_${activeVault}_${fn}`;
+                            const old = localStorage.getItem(key) || '';
+                            localStorage.setItem(key, `${old}\n\n${text}`);
+                          });
+                          loadVaultFromLocalStorage(activeVault);
+                          alert(`Append complete for ${selectedFileNames.length} files!`);
+                        }}
+                        className="px-2.5 py-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-200 rounded text-[10px] font-mono cursor-pointer"
+                      >
+                        📝 Append
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          const tag = prompt('Add tag to Frontmatter YAML (e.g. #batch_edit):');
+                          if (!tag) return;
+                          selectedFileNames.forEach(fn => {
+                            const key = `anymd_file_${activeVault}_${fn}`;
+                            const old = localStorage.getItem(key) || '';
+                            const cleanTag = tag.replace(/^#/, '');
+                            if (old.startsWith('---')) {
+                              const updated = old.replace(/tags:\s*\[(.*?)\]/, (m, p1) => `tags: [${p1 ? p1 + ', ' : ''}${cleanTag}]`);
+                              localStorage.setItem(key, updated);
+                            } else {
+                              localStorage.setItem(key, `---\ntags: [${cleanTag}]\n---\n${old}`);
+                            }
+                          });
+                          loadVaultFromLocalStorage(activeVault);
+                          alert(`Updated YAML tags for ${selectedFileNames.length} files!`);
+                        }}
+                        className="px-2.5 py-1 bg-purple-950 hover:bg-purple-900 border border-purple-700 text-purple-200 rounded text-[10px] font-mono cursor-pointer"
+                      >
+                        🏷️ YAML Tag
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsCarouselEditing(true);
+                          setCarouselIndex(0);
+                          const firstFile = selectedFileNames[0];
+                          const content = localStorage.getItem(`anymd_file_${activeVault}_${firstFile}`) || '';
+                          setCarouselContent(content);
+                        }}
+                        className="px-2.5 py-1 bg-amber-950 hover:bg-amber-900 border border-amber-600 text-amber-200 rounded text-[10px] font-mono font-bold cursor-pointer shadow-sm"
+                      >
+                        🎠 Carousel Edit Mode
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (confirm(`Delete ${selectedFileNames.length} selected files?`)) {
+                            selectedFileNames.forEach(fn => localStorage.removeItem(`anymd_file_${activeVault}_${fn}`));
+                            setSelectedFileNames([]);
+                            loadVaultFromLocalStorage(activeVault);
+                          }
+                        }}
+                        className="px-2.5 py-1 bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-200 rounded text-[10px] font-mono cursor-pointer"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    onClick={handleCreateNewLitanyNote}
+                    className="px-3 py-1 bg-purple-900/60 hover:bg-purple-800 border border-purple-500/40 rounded-lg text-[10px] font-mono text-purple-200 transition-all flex items-center space-x-1 cursor-pointer"
+                  >
+                    <span>🌸 + New Litany Note</span>
+                  </button>
+                </div>
               </div>
 
               {/* Central Viewport */}
@@ -930,6 +1042,84 @@ export const VaultWorkspaceLayout: React.FC = () => {
                   starredFiles={starredFiles}
                   onToggleStar={handleToggleStar}
                 />
+              </div>
+            </div>
+          )}
+
+          {/* CAROUSEL 1-AT-A-TIME BATCH EDIT MODE MODAL */}
+          {isCarouselEditing && selectedFileNames.length > 0 && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+              <div className="bg-neutral-950 border-2 border-amber-500/60 rounded-3xl w-full max-w-3xl p-6 space-y-4 shadow-2xl font-mono text-xs text-neutral-100">
+                <div className="flex justify-between items-center border-b border-neutral-800 pb-3">
+                  <span className="font-bold text-amber-300 text-sm flex items-center space-x-2">
+                    <span>🎠 Carousel 1-at-a-Time Batch Edit Mode</span>
+                    <span className="text-[10px] bg-neutral-900 px-2 py-0.5 rounded text-neutral-400">
+                      File {carouselIndex + 1} of {selectedFileNames.length}
+                    </span>
+                  </span>
+                  <button 
+                    onClick={() => setIsCarouselEditing(false)}
+                    className="px-2 py-1 bg-neutral-900 hover:bg-neutral-800 rounded text-neutral-400 hover:text-white"
+                  >
+                    ✕ Close
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-neutral-400">Current Target File:</label>
+                  <span className="font-bold text-sky-300 text-sm block">{selectedFileNames[carouselIndex]}</span>
+                </div>
+
+                <textarea
+                  value={carouselContent}
+                  onChange={(e) => setCarouselContent(e.target.value)}
+                  rows={14}
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-neutral-200 focus:outline-none focus:border-amber-500 font-mono text-xs leading-relaxed"
+                />
+
+                <div className="flex justify-between items-center pt-2">
+                  <button
+                    disabled={carouselIndex === 0}
+                    onClick={() => {
+                      // Save current
+                      localStorage.setItem(`anymd_file_${activeVault}_${selectedFileNames[carouselIndex]}`, carouselContent);
+                      const prevIdx = carouselIndex - 1;
+                      setCarouselIndex(prevIdx);
+                      setCarouselContent(localStorage.getItem(`anymd_file_${activeVault}_${selectedFileNames[prevIdx]}`) || '');
+                    }}
+                    className="px-4 py-2 bg-neutral-900 disabled:opacity-40 border border-neutral-800 rounded-xl hover:bg-neutral-800 transition-all cursor-pointer"
+                  >
+                    ◄ Save &amp; Previous
+                  </button>
+
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        localStorage.setItem(`anymd_file_${activeVault}_${selectedFileNames[carouselIndex]}`, carouselContent);
+                        loadVaultFromLocalStorage(activeVault);
+                        setIsCarouselEditing(false);
+                        alert('Saved all carousel edits!');
+                      }}
+                      className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all cursor-pointer"
+                    >
+                      ✓ Save All &amp; Exit
+                    </button>
+
+                    <button
+                      disabled={carouselIndex === selectedFileNames.length - 1}
+                      onClick={() => {
+                        // Save current
+                        localStorage.setItem(`anymd_file_${activeVault}_${selectedFileNames[carouselIndex]}`, carouselContent);
+                        const nextIdx = carouselIndex + 1;
+                        setCarouselIndex(nextIdx);
+                        setCarouselContent(localStorage.getItem(`anymd_file_${activeVault}_${selectedFileNames[nextIdx]}`) || '');
+                      }}
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl transition-all cursor-pointer"
+                    >
+                      Save &amp; Next ►
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -1529,46 +1719,289 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
           {/* VAULT MANAGER VIEW */}
           {activeTab === 'vault-manager' && (
-            <div className={`h-full border overflow-hidden flex flex-col p-6 ${panelBg}`}>
-              <div className="flex items-start justify-between mb-4 border-b border-neutral-800/40 pb-4 shrink-0">
+            <div className={`h-full border overflow-hidden flex flex-col p-6 rounded-2xl ${panelBg}`}>
+              {/* Header & Status Ribbon */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 border-b border-neutral-800/60 pb-4 shrink-0 gap-3">
                 <div>
-                  <h3 className="text-lg font-bold text-sky-400 flex items-center">
-                    <Sliders className="mr-2" size={18} />
-                    <span>Vault Manager &amp; Workspace Connection Settings</span>
+                  <h3 className="text-lg font-bold text-sky-400 flex items-center space-x-2">
+                    <Sliders className="text-sky-400" size={20} />
+                    <span>Vault Manager &amp; MBB Flight Recorder Control Deck</span>
                   </h3>
                   <p className={`text-xs mt-1 ${textMuted}`}>
-                    Manage all local-first markdown vaults, directory connection streams, and webhook synchronization protocols.
+                    Manage local-first markdown vaults, Native File System Access handles, Port 3050 webhook ingress, and MBB microlog telemetry.
                   </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+                  <span className="px-2 py-0.5 rounded bg-pink-950/60 border border-pink-700/40 text-pink-300">🌸 [#litany]</span>
+                  <span className="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-700/40 text-purple-300">💜 [#zettelkasten]</span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-700/40 text-emerald-300">✨ [status: ready]</span>
+                  <span className="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-700/40 text-amber-300">🐾 [status: processing]</span>
+                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">🍙 [action: sweep]</span>
                 </div>
               </div>
 
               <div className="flex-1 overflow-auto space-y-6 pr-2">
-                <div className={`p-6 rounded-xl border space-y-4 ${panelInner}`}>
+                {/* 1. MBB (MY BLACK BOX) FLIGHT RECORDER & ONE-CLICK ACTIONS */}
+                <div className={`p-5 rounded-2xl border ${panelInner} space-y-4`}>
                   <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
-                    <span className="font-bold text-slate-200 text-sm">Active Vaults Registry</span>
+                    <span className="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                      <span>🐾 MBB (My Black Box) Flight Recorder — One-Click Control Panel</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                      Telemetry Active
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between bg-neutral-950 p-4 rounded-xl border border-neutral-900">
+                    <div className="text-[10px] text-neutral-400 font-mono">
+                      <pre className="leading-tight text-sky-300 font-bold">
+{`   /\\_/\\    MBB (My Black Box) Flight Recorder
+  ( o.o )   Tracing prompt failures, crash states,
+   > ^ <    and microlog companion telemetry.`}
+                      </pre>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={handleAddSamples}
+                        className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-emerald-950/50 hover:text-emerald-300 border border-neutral-800 hover:border-emerald-500/40 px-3 py-2 rounded-xl text-xs font-mono text-neutral-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                      >
+                        <Plus size={14} />
+                        <span>+ Microlog Samples</span>
+                      </button>
+                      <button
+                        onClick={handlePurgeAll}
+                        className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-rose-950/50 hover:text-rose-300 border border-neutral-800 hover:border-rose-500/40 px-3 py-2 rounded-xl text-xs font-mono text-neutral-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                      >
+                        <Trash2 size={14} />
+                        <span>🗑️ Purge All</span>
+                      </button>
+                      <button
+                        onClick={handleExportZip}
+                        className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-sky-950/50 hover:text-sky-300 border border-neutral-800 hover:border-sky-500/40 px-3 py-2 rounded-xl text-xs font-mono text-neutral-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                      >
+                        <Package size={14} />
+                        <span>📦 Export Vault ZIP</span>
+                      </button>
+                      <button
+                        onClick={handleDeployAgv}
+                        className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-purple-950/50 hover:text-purple-300 border border-neutral-800 hover:border-purple-500/40 px-3 py-2 rounded-xl text-xs font-mono text-neutral-200 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                      >
+                        <Send size={14} />
+                        <span>🚀 Deploy to AGV</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          try {
+                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                          } catch (e) {}
+                          const cleanName = `non_zero_victory_${Date.now()}.md`;
+                          const content = `---\ntitle: Make Today Non-Zero Victory\ntags: [mbb, non_zero, ryan4pillars]\nstatus: ready\ntype: microlog\n---\n# 🌸 Make Today Non-Zero Victory!\n- **Timestamp**: ${new Date().toISOString()}\n- **Vault**: ${activeVault}\n- **Pillars**: No Zero Days, Gratitude, Self-Forgiveness, Fueling.\n\nYou have taken action and made today count!`;
+                          localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, content);
+                          loadVaultFromLocalStorage(activeVault);
+                          alert('🌸 Dopamine Victory! Added Non-Zero Action Zettel note to active vault.');
+                        }}
+                        className="flex items-center space-x-1.5 bg-pink-950/60 hover:bg-pink-900 border border-pink-700/50 text-pink-200 px-3 py-2 rounded-xl text-xs font-mono transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                      >
+                        <Sparkles size={14} />
+                        <span>🌸 Make Today Non-Zero</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. C4 INTERACTION ENGINE — 1-TAP TELEMETRY TRIGGERS */}
+                <div className={`p-5 rounded-2xl border ${panelInner} space-y-4`}>
+                  <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                    <span className="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                      <Zap className="text-amber-400" size={16} />
+                      <span>C4 Engine — 1-Tap Telemetry Action Triggers</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-neutral-400">
+                      Instant 1-Tap Zettel Serialization
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    {[
+                      { label: '🛠️ Create', type: 'create', desc: 'Writing / Coding / Design', tag: '#create' },
+                      { label: '📖 Consume', type: 'consume', desc: 'Reading / Media / Video', tag: '#consume' },
+                      { label: '💬 Chat', type: 'chat', desc: 'AI / Companion / DM', tag: '#chat' },
+                      { label: '🤝 Collaborate', type: 'collaborate', desc: 'Teamwork / Sharing', tag: '#collaborate' },
+                      { label: '🍱 Chow Down', type: 'chow_down', desc: 'Fueling / Nourishment', tag: '#chow_down' },
+                      { label: '🧘 Calm', type: 'calm', desc: 'Bio-Telemetry / Box Breath', tag: '#calm' },
+                    ].map((btn) => (
+                      <button
+                        key={btn.type}
+                        onClick={() => {
+                          const title = prompt(`Enter title for ${btn.label} entry:`, `${btn.label.slice(3)} Event`);
+                          if (!title) return;
+                          const cleanName = `${btn.type}_log_${Date.now()}.md`;
+                          const content = `---\ntitle: ${title}\ntags: [mbb, ${btn.type}, telemetry]\nstatus: ready\ntype: microlog\n---\n# ${btn.label}\n- **Timestamp**: ${new Date().toISOString()}\n- **Category**: ${btn.desc}\n- **Vault**: ${activeVault}\n\nLog entry recorded via C4 One-Click Engine.`;
+                          localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, content);
+                          loadVaultFromLocalStorage(activeVault);
+                          alert(`Recorded ${btn.label} telemetry entry in active vault!`);
+                        }}
+                        className="flex flex-col items-center justify-center p-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 border border-neutral-800 hover:border-sky-500/40 text-center transition-all cursor-pointer group"
+                      >
+                        <span className="font-bold text-xs text-slate-200 group-hover:text-sky-300 font-mono">{btn.label}</span>
+                        <span className="text-[9px] text-neutral-500 mt-1">{btn.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. CHEESY CAT LOCAL FOLDER MOUNT PROTOCOL & WEBHOOK GATEWAY */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* CHEESY CAT LOCAL MOUNT PROTOCOL */}
+                  <div className={`p-5 rounded-2xl border ${panelInner} space-y-4`}>
+                    <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                      <span className="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                        <FolderOpen className="text-purple-400" size={16} />
+                        <span>Cheesy Cat Directory Mount Protocol</span>
+                      </span>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-neutral-950 border border-neutral-900 space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-neutral-400">
+                        <span>Active Vault Target:</span>
+                        <span className="text-sky-400 font-bold">{activeVault}</span>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-neutral-900/60 border border-neutral-800 text-[11px] text-neutral-300">
+                        {vaultFolders[activeVault] ? (
+                          <div className="flex items-center space-x-2 text-emerald-400">
+                            <CheckCircle2 size={14} />
+                            <span>Mounted Directory: {vaultFolders[activeVault]?.name || 'Local Folder'}</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between text-amber-300">
+                            <div className="flex items-center space-x-2">
+                              <AlertCircle size={14} />
+                              <span>Status: (=^.^=) UNMOUNTED_BUFFER_ZONE</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col space-y-1">
+                        <label className="text-[10px] text-neutral-400 font-bold uppercase">Subfolder Ingestion Policy:</label>
+                        <select
+                          value={subfolderPolicy}
+                          onChange={(e) => setSubfolderPolicy(e.target.value as any)}
+                          className="bg-neutral-900 border border-neutral-800 rounded-lg p-2 text-neutral-200 text-xs focus:outline-none focus:border-purple-500 font-mono"
+                        >
+                          <option value="flatten">Flatten All Subfolders into Single Vault</option>
+                          <option value="create_subvaults">Auto-Create Child Sub-Vaults for Each Subfolder</option>
+                          <option value="ignore">Ignore Subfolders (Root Files Only)</option>
+                        </select>
+                      </div>
+
+                      <button
+                        onClick={() => loadVaultFolder(activeVault, 'local_picker')}
+                        className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 bg-purple-950/70 hover:bg-purple-900 border border-purple-700/50 rounded-xl text-purple-200 font-mono text-xs transition-all cursor-pointer hover:scale-[1.01]"
+                      >
+                        <FolderOpen size={14} />
+                        <span>📁 Mount Local Folder (Native File System Access API)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* PORT 3050 LOCAL WEBHOOK GATEWAY */}
+                  <div className={`p-5 rounded-2xl border ${panelInner} space-y-4`}>
+                    <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                      <span className="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                        <Server className="text-sky-400" size={16} />
+                        <span>Port 3050 Local Webhook Gateway</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                        Express v5 Ingress
+                      </span>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-neutral-950 border border-neutral-900 space-y-3 font-mono text-xs">
+                      <div className="text-[11px] text-neutral-400">
+                        Endpoint: <code className="text-sky-300">http://localhost:3050/webhook/{activeVault}</code>
+                      </div>
+
+                      <div className="text-[10px] text-neutral-500">
+                        Receives incoming POST JSON payloads from Tasker, IFTTT, Chrome overlay extensions, and local web clippers.
+                      </div>
+
+                      <button
+                        onClick={async () => {
+                          const testPayload = {
+                            vault: activeVault,
+                            title: 'Web Clipper Microlog',
+                            tags: ['mbb', 'webhook', 'test'],
+                            content: '# Webhook Ingestion Test\n- Received via local Port 3050 gateway.\n- Timestamp: ' + new Date().toISOString()
+                          };
+                          try {
+                            const res = await fetch(`http://localhost:3050/webhook/${activeVault}`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify(testPayload)
+                            });
+                            if (res.ok) {
+                              alert(`⚡ Webhook success! Payload ingested into ${activeVault}`);
+                            } else {
+                              alert(`Webhook responded with status ${res.status}. Stored locally in sandbox.`);
+                            }
+                          } catch (e) {
+                            // Fallback local storage write
+                            const cleanName = `webhook_test_${Date.now()}.md`;
+                            localStorage.setItem(`anymd_file_${activeVault}_${cleanName}`, `---\ntitle: ${testPayload.title}\ntags: [mbb, webhook, test]\n---\n${testPayload.content}`);
+                            loadVaultFromLocalStorage(activeVault);
+                            alert(`⚡ Local Webhook Gateway Stand-in: Ingested test note into local sandbox vault "${activeVault}".`);
+                          }
+                        }}
+                        className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 bg-sky-950/70 hover:bg-sky-900 border border-sky-700/50 rounded-xl text-sky-200 font-mono text-xs transition-all cursor-pointer hover:scale-[1.01]"
+                      >
+                        <Zap size={14} />
+                        <span>⚡ Send Test POST Webhook Payload</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. ACTIVE VAULTS REGISTRY */}
+                <div className={`p-5 rounded-2xl border ${panelInner} space-y-4`}>
+                  <div className="flex justify-between items-center pb-2 border-b border-neutral-800/60">
+                    <span className="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                      <Database className="text-sky-400" size={16} />
+                      <span>Active Vaults &amp; Directory Connection Stream Registry</span>
+                    </span>
                     <button
                       onClick={() => setIsAddVaultOpen(true)}
-                      className="px-3 py-1 bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-300 font-mono text-[10px] rounded transition-all hover:scale-[1.02]"
+                      className="px-3 py-1.5 bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-300 font-mono text-xs rounded-xl transition-all hover:scale-[1.02] cursor-pointer"
                     >
-                      + Create/Link New Vault
+                      + Create / Link New Vault
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 gap-3">
                     {vaultList.map((v) => {
                       const currentSource = vaultLoadSource[v.id] || 'local_storage';
+                      const isMounted = !!vaultFolders[v.id];
                       return (
-                        <div key={v.id} className="flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg bg-neutral-950 border border-neutral-900 gap-3 text-xs">
+                        <div key={v.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl bg-neutral-950 border border-neutral-900 gap-4 text-xs font-mono">
                           <div className="space-y-1">
-                            <span className="font-bold text-slate-100">{v.name}</span>
-                            <span className="text-[10px] text-neutral-500 font-mono block">
-                              ID: {v.id} | Category: {v.category}
+                            <div className="flex items-center space-x-2">
+                              <span className="font-bold text-slate-100 text-sm">{v.name}</span>
+                              {isMounted ? (
+                                <span className="text-[10px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">🟢 Mounted</span>
+                              ) : (
+                                <span className="text-[10px] text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">(=^.^=) Unmounted</span>
+                              )}
+                            </div>
+                            <span className="text-[10px] text-neutral-500 block">
+                              ID: <code className="text-neutral-400">{v.id}</code> | Category: <span className="text-sky-400">{v.category}</span>
                             </span>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-3">
                             <div className="flex flex-col">
-                              <label className="text-[9px] text-neutral-500 font-mono uppercase">Connection Source</label>
+                              <label className="text-[9px] text-neutral-500 uppercase">Connection Stream</label>
                               <select
                                 value={currentSource}
                                 onChange={(e) => {
@@ -1578,13 +2011,29 @@ export const VaultWorkspaceLayout: React.FC = () => {
                                     loadVaultFolder(v.id, 'local_picker');
                                   }
                                 }}
-                                className="bg-neutral-900 border border-neutral-800 rounded px-2 py-1 outline-none text-neutral-300"
+                                className="bg-neutral-900 border border-neutral-800 rounded-lg px-2.5 py-1.5 outline-none text-neutral-200 text-xs mt-0.5"
                               >
                                 <option value="local_storage">Local Sandbox Storage</option>
                                 <option value="local_picker">Direct File System Folder</option>
                                 <option value="n8n_cloud">n8n Local Webhook Sync</option>
                               </select>
                             </div>
+
+                            <button
+                              onClick={() => loadVaultFolder(v.id, 'local_picker')}
+                              className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-lg text-neutral-300 hover:text-white transition-all text-xs cursor-pointer"
+                              title="Mount local directory handle"
+                            >
+                              📁 Mount Folder
+                            </button>
+
+                            <button
+                              onClick={handleExportZip}
+                              className="px-3 py-1.5 bg-neutral-900 hover:bg-sky-950/60 hover:text-sky-300 border border-neutral-800 rounded-lg text-neutral-300 transition-all text-xs cursor-pointer"
+                              title="Export encrypted ZIP backup"
+                            >
+                              📦 ZIP
+                            </button>
 
                             {v.id !== 'anymd-main' && v.id !== 'signalstack-discovery' && v.id !== 'storycraft-lore' && (
                               <button
@@ -1593,7 +2042,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
                                     setVaultList(prev => prev.filter(item => item.id !== v.id));
                                   }
                                 }}
-                                className="text-red-400 hover:text-red-300 font-mono text-[10px] mt-3"
+                                className="px-2.5 py-1.5 bg-rose-950/40 hover:bg-rose-900 border border-rose-800/40 text-rose-300 rounded-lg text-xs transition-all cursor-pointer"
                               >
                                 Remove
                               </button>

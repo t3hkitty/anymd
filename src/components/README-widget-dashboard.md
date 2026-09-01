@@ -16,7 +16,7 @@ While your native mobile app executes compiling sequences for actual **Kotlin + 
 
 ---
 
-## 🎨 Somatic Sovereignty: The Accidental Wipe & Edge Guard
+## 🎨 Somatic KawaiiNekoty: The Accidental Wipe & Edge Guard
 
 When navigating rehabilitation and physical recovery (such as post-stroke or post-seizure motor limits), holding a physical device and cleaning/wiping the screen glass are frequent sources of **accidental touch inputs**. Traditional mobile widgets arrange buttons on sterile, unyielding grids that trigger messy, duplicate logs when your hand brushes the edge of the glass.
 

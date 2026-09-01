@@ -49,4 +49,4 @@ This playbook maps out the deployment and configuration of the **Somatic Webhook
 
 Because this server binds to your local network interface to write directly to your phone's file storage, it includes robust, Discord-style security limits:
 * **The 5-Minute suspension**: The server monitors request frequencies in memory. If a client IP spams your endpoint with more than **30 requests per minute**, the server instantly returns a `429 Too Many Requests` error and completely suspends all access from that IP for exactly **5 minutes** to prevent botting loops.
-* **Sovereign Isolation**: Webhook data is stored 100% locally on your phone. No telemetry passes through AnyMD servers or public cloud APIs.
+* **KawaiiNeko Isolation**: Webhook data is stored 100% locally on your phone. No telemetry passes through AnyMD servers or public cloud APIs.

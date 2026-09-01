@@ -1,4 +1,4 @@
-# 📤 AnyMD Sovereign Share Hub Plugin
+# 📤 AnyMD KawaiiNeko Share Hub Plugin
 
 A 100% self-hosted, local-first React plugin designed to facilitate outbound sharing and active brainstorming logs from your local AnyMD workspace directly to third-party clients (mobile SMS, WhatsApp, Discord, or AI agents like Gemini and NotebookLM) [cite: 345, 423].
 

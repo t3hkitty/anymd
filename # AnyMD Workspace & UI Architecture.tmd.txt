@@ -1,0 +1,70 @@
+# AnyMD Workspace & UI Architecture Refactor
+
+## Global Header & Tab Bar
+
+* **Manila Hanging Folder Tabs**:
+* Staggered, physical folder-tab styling at the top left.
+* Dedicated chromatic accents per mode:
+* `Books`: Slate Indigo / Heather Blue
+* `Journal Vaults`: Warm Sage / Mint Slate
+* `Blueprints`: Manila Amber / Ochre Gold
+* `Sandboxes`: Vivid Iris / Amethyst Purple
+
+
+
+
+* **Vault Pills (Color-Inherited)**:
+* Dynamic inheritance: Active vault pills adopt the background and accent tones of their parent mode tab.
+* Instant peripheral visual anchoring to distinguish creative, logging, and blueprint contexts.
+
+
+* **Top-Center Active Task Anchor**:
+* High-contrast, persistent pill showing the current high-friction task or sprint goal.
+
+
+* **Top-Right Profile Switcher**:
+* Modular button to toggle active identity (ASCII mascot `( o.o )` vs. uploaded custom avatar).
+
+
+
+---
+
+## Vault-Level Configuration Profiles
+
+* **Auto-Load Defaults**:
+* Each vault stores its own default mode tab, primary tool, and default view on startup.
+
+
+* **Visual Isolation & Work Guardrails**:
+* Custom theme presets per vault (e.g., corporate deep navy/slate for work vaults to prevent context contamination; rich obsidian/purple for creative vaults).
+
+
+* **Telemetry Routing**:
+* Toggle whether micro-logs write to the vault's local file tree or route to global MBB telemetry.
+
+
+
+---
+
+## MBB 1-Click Widget & Side Panel
+
+* **Persistent Docked Widget**:
+* Moves heavy flight recorder elements off the primary workspace into a right-hand 1-click action dock or browser extension side panel.
+* Quick-fire triggers: `+ Sample`, `Trace Fail`, `Purge Logs`, `Deploy to AGV`.
+
+
+* **High-Contrast Chore Coach**:
+* Replaces low-contrast pale boxes with deep dark cards, vibrant purple/gold accents, and legible text.
+* Replaces flat static text inputs with clickable, modular pill builders for assemble-on-the-fly routines.
+
+
+
+---
+
+## Contextual Guidance & FAQ Overlays
+
+* **Non-Blocking Help System**:
+* Multi-tiered progressive disclosure replacing disruptive pop-ups.
+* **Tier 1 (Tooltips)**: Hover hints on action buttons (`Deploy to AGV`, `Purge All`).
+* **Tier 2 (Pill Flyouts)**: Inline `(?)` click chips next to complex mechanics (`Troll Interceptor`, `Companion Telemetry`).
+* **Tier 3 (Drawer Cheat Sheet)**: Pinned right-side slide-out FAQ with searchable field glossaries and keyboard shortcuts.

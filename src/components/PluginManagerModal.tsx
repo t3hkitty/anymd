@@ -386,7 +386,7 @@ export const PluginManagerModal: React.FC<PluginManagerModalProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 text-emerald-300 font-bold text-sm">
                     <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                    <span>SOVEREIGN FOSS & NO-COPYRIGHT COMPLIANCE GUARANTEE</span>
+                    <span>MEOW FOSS & NO-COPYRIGHT COMPLIANCE GUARANTEE</span>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
                     100% Open Source (Unlicense / MIT)

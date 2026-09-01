@@ -1,0 +1,7 @@
+# .gitignore-meow-clock
+node_modules/
+dist/
+.env
+.DS_Store
+.meow-clock-lock
+*.tsbuildinfo

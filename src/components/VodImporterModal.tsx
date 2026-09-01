@@ -115,7 +115,7 @@ export const VodImporterModal: React.FC<VodImporterModalProps> = ({
               <h3 className="text-base font-extrabold text-slate-100 flex items-center space-x-2">
                 <span>VOD &amp; Video Stream Importer</span>
                 <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 text-[10px] font-mono font-bold">
-                  SOVEREIGN MEDIA
+                  MEOW MEDIA
                 </span>
               </h3>
               <p className="text-xs text-slate-400 font-mono">

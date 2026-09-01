@@ -29,7 +29,7 @@ import java.util.*
  * Project: anymd (Android Native Client)
  * Role: Idle-State Screen Capture (MediaProjection) and Local ML-Kit OCR Text Harvester
  * 
- * 🐾 Somatic Sovereignty Watcher: 🐾
+ * 🐾 Somatic KawaiiNekoty Watcher: 🐾
  * Runs purely on-device during system idle states. Intercepts screen buffers, 
  * runs local ML Kit OCR, extracts high-value keywords (like webnovel names, 
  * code snippets, or task logs), and appends them to your local Markdown vault.

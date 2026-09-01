@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "command(*)",
+      "write_file(*)",
+      "read_file(*)",
+      "mcp(*)"
+    ],
+    "deny": []
+  },
+  "scopes": [
+    "C:\\Users\\lorik\\.gemini\\antigravity\\scratch\\Antigravity companion-studio-2026-08-24\\**",
+    "C:\\Users\\lorik\\.gemini\\antigravity\\scratch\\Antigravity companion-studio-2026-08-24\\android\\**",
+    "*"
+  ]
+}

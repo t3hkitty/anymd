@@ -3,7 +3,7 @@ import { generateZettelkastenSerial, formatZettelkastenLink, slugifyTitle } from
 
 /**
  * ============================================================================
- * 🧠 SOVEREIGN LOCAL AI PROCESSING ENGINE (Shared with StoryCraft AI)
+ * 🧠 MEOW LOCAL AI PROCESSING ENGINE (Shared with StoryCraft AI)
  * ============================================================================
  * Cross-Project Bridge:
  * This module provides 100% on-device AI metadata parsing, ethical provenance

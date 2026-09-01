@@ -36,7 +36,7 @@ export function setMeowInviteCode(newCode: string): void {
   }
 }
 
-export const SOVEREIGN_INVITE_CODE = getMeowInviteCode();
+export const MEOW_INVITE_CODE = getMeowInviteCode();
 
 export const DEFAULT_PROFILES: UserProfile[] = [
   {

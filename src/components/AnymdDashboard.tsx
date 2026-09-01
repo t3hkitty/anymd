@@ -1,5 +1,5 @@
 /**
- * AnymdDashboard.tsx - Sovereign Glassmorphic User Interface
+ * AnymdDashboard.tsx - KawaiiNeko Glassmorphic User Interface
  * React Component styled for high-density, low-friction, and zero-distraction.
  * 
  * Features:
@@ -139,7 +139,7 @@ export const AnymdDashboard: React.FC = () => {
           <div className="bg-indigo-600/20 border border-indigo-500 text-indigo-400 p-2 rounded-md font-bold text-sm tracking-wider">
             AN <span className="text-white">Y</span> MD
           </div>
-          <span className="text-xs text-slate-400 font-mono">v3.8.0 / Sovereign OS</span>
+          <span className="text-xs text-slate-400 font-mono">v3.8.0 / KawaiiNeko OS</span>
         </div>
         <div className="flex gap-1 bg-slate-900 p-1 border border-slate-800 rounded-md">
           <button 
@@ -283,7 +283,7 @@ export const AnymdDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Central Sovereign Vault placeholder info */}
+              {/* Central KawaiiNeko Vault placeholder info */}
               <div className="bg-slate-950 border border-slate-800 p-4 rounded-md flex flex-col justify-center items-center text-center py-8">
                 <Shield className="w-12 h-12 text-indigo-500 mb-3" />
                 <h3 className="text-sm font-semibold mb-1">Local-First Zettelkasten Active</h3>
@@ -362,7 +362,7 @@ export const AnymdDashboard: React.FC = () => {
 
           {activeTab === 'accounts' && (
             <section className="bg-slate-900/60 border border-slate-800 rounded-lg p-5 flex flex-col gap-4 flex-grow backdrop-blur-md">
-              <h2 className="text-sm font-semibold tracking-wider flex items-center gap-2 border-b border-slate-800 pb-3"><Cloud className="w-5 h-5 text-indigo-400" /> Sovereign Cloud & Mount settings</h2>
+              <h2 className="text-sm font-semibold tracking-wider flex items-center gap-2 border-b border-slate-800 pb-3"><Cloud className="w-5 h-5 text-indigo-400" /> KawaiiNeko Cloud & Mount settings</h2>
               
               <p className="text-xs text-slate-400 leading-relaxed">
                 Connect your cloud folders as "dumb pipes." Anymd reads and writes sidecars locally and streams changes over standard WebDAV or OAuth API endpoints.
@@ -407,7 +407,7 @@ export const AnymdDashboard: React.FC = () => {
 
       {/* Footer */}
       <footer className="mt-8 border-t border-slate-800 pt-4 flex justify-between items-center text-xs text-slate-400 font-mono">
-        <div>🐾 © 2026 Sovereign Black Box & Library Companion MD • Open Source (MIT License)</div>
+        <div>🐾 © 2026 KawaiiNeko Black Box & Library Companion MD • Open Source (MIT License)</div>
         <div className="hover:text-white cursor-pointer flex items-center gap-1">🚀 Host Your Own on GitHub</div>
       </footer>
     </div>

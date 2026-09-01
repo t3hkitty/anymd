@@ -1,0 +1,10 @@
+# anyMD Native Suite Build Ignored Files
+.gradle/
+build/
+bin/
+local.properties
+*.apk
+*.log
+.DS_Store
+.idea/
+/logs/ovum_hygiene_unredacted.mp4

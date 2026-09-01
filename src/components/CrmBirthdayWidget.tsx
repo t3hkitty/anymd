@@ -79,7 +79,7 @@ export const CrmBirthdayWidget: React.FC = () => {
   return (
     <WidgetPanel 
       title="🎂 CRM 'On This Day' Birthdays" 
-      badge="🎁 SOVEREIGN RELATIONSHIPS"
+      badge="🎁 MEOW RELATIONSHIPS"
       className="border-4 border-black shadow-[4px_4px_0_#000] bg-white p-3 rounded-none max-w-md"
     >
       <div className="flex flex-col gap-3">

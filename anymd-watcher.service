@@ -1,0 +1,6 @@
+[Unit]
+Description=Verify and Autorecover AnyMD Webhook Gateway Service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/ubuntu/app/text-webhook-gateway/verify-and-restart.sh

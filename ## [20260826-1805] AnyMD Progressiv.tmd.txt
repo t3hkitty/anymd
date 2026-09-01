@@ -1,0 +1,53 @@
+## [20260826-1805] AnyMD Progressive Disclosure & Contextual Tooltip Architecture
+
+# Tags: #zettelkasten #anymd #ux_design #progressive_disclosure #microcopy
+
+• Core Summary:
+
+* System suffers from high cognitive load and jargon density (e.g., AGV deployment, micrologging telemetry, companion states) without accessible, on-demand explanatory overlays.
+* Implement a multi-tiered **Contextual Guidance Framework**: hover micro-cards, `?` clicky trigger pills, and unified Slide-out Cheat Sheets instead of intrusive, heavy pop-up modals.
+* Keeps the interface uncluttered while ensuring every custom tool, toggle, and telemetry action has zero-friction, plain-English documentation within arm's reach.
+
+• Peripheral Nodes / Context:
+
+* Source Context: AnyMD UI/UX Onboarding & Explanatory Architecture
+* Design Pattern: Progressive disclosure, inline micro-glossaries, non-blocking drawer overlays
+
+• Raw Transcribed Text / Snippets:
+
+> Usability bottleneck: Missing modal/FAQ explanations for complex custom features and telemetry states.
+
+---
+
+**Progressive Disclosure Framework**
+
+| Guidance Tier | Trigger | Best Suited For | UI Component Style |
+| --- | --- | --- | --- |
+| **Tier 1: Micro-Hints** | Hover / Long-Press | Single action buttons (`Deploy to AGV`, `Purge All`) | Dark high-contrast tooltip with 1-sentence purpose + shortcut key |
+| **Tier 2: Feature Pills** | Click on inline `(?)` chip | Custom mechanics (`Troll Interceptor`, `Flight Recorder`) | Compact floating flyout card with quick definition & concrete example |
+| **Tier 3: Mode Cheat Sheet** | `F1` or Global `(?)` Tab | Full mode overviews (`Blueprints`, `Vault Profiles`) | Non-blocking slide-out right drawer with searchable FAQ & field glossary |
+
+---
+
+**Key Areas Requiring Immediate Context Cards**
+
+* **MBB Telemetry Actions**:
+* `Deploy to AGV`: Plain-English explanation of the build pipeline and where exported payloads land.
+* `Microlog Samples`: What telemetry parameters are tracked (prompt failures, crash loops, companion prompts).
+
+
+* **Coach / Interceptor Mechanics**:
+* Explain what the "AI Buddy / Troll Interceptor" does versus the selected "Coach Voice" so users know what triggers dynamic prompt injections.
+
+
+* **Vault Inheritance Rules**:
+* Quick inline explainer showing how custom colorways, default modes, and pill themes link together in the vault settings view.
+
+
+
+---
+
+**Implementation Spec**
+
+* **Non-Modal Drawers Over Popups**: Avoid center-screen blocking modals that disrupt the workflow; use soft-slide overlays or pinned side-panel tabs that let you read the explanation while looking directly at the UI element.
+* **Plain-English Glossary Format**: Keep each entry to a direct two-sentence formula: **What it is** + **What clicking it does right now**.

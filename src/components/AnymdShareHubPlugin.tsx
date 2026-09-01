@@ -4,7 +4,7 @@ import { useStickySetting } from '../state/harvesterState';
 /**
  * Zettelkasten ID: 20260826-1745
  * Project: anymd (AnyMD)
- * Role: Unified Outbound Web Share & Sovereign AI Dispatch Hub Plugin
+ * Role: Unified Outbound Web Share & KawaiiNeko AI Dispatch Hub Plugin
  * 
  * This plugin integrates a cohesive sharing panel inside AnyMD. It:
  * 1. Invokes the native Web Share API (navigator.share) to send active note text directly to system share sheets (iOS/Android).
@@ -109,7 +109,7 @@ ${mockNote.tags.map(tag => `  - "${tag}"`).join('\n')}
   // Dispatch Note directly to Gemini Web UI as an encoded prompt
   const dispatchToGemini = () => {
     const formattedText = getFormattedPayload();
-    const promptPrefix = "I am feeding you a brainstorm card from my AnyMD sovereign vault. Please analyze, categorize, and build on these thoughts:\n\n";
+    const promptPrefix = "I am feeding you a brainstorm card from my AnyMD meow vault. Please analyze, categorize, and build on these thoughts:\n\n";
     const fullPrompt = encodeURIComponent(promptPrefix + formattedText);
     const geminiUrl = `https://gemini.google.com/app?prompt=${fullPrompt}`;
     
@@ -144,7 +144,7 @@ ${mockNote.tags.map(tag => `  - "${tag}"`).join('\n')}
       <div className="flex justify-between items-center mb-4 border-b-2 border-slate-900 pb-2">
         <div className="flex items-center gap-2">
           <span className="text-sm">📤</span>
-          <h2 className="text-xs font-bold uppercase tracking-wider">AnyMD Sovereign Share Hub</h2>
+          <h2 className="text-xs font-bold uppercase tracking-wider">AnyMD KawaiiNeko Share Hub</h2>
         </div>
         <div className="flex gap-2">
           <button onClick={() => setIsFaqOpen(true)} className="px-2 py-0.5 bg-indigo-200 border border-slate-900 hover:bg-indigo-300 transition-colors">FAQ</button>
@@ -251,7 +251,7 @@ ${mockNote.tags.map(tag => `  - "${tag}"`).join('\n')}
       {isFaqOpen && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-40 p-4">
           <div ref={faqRef} className="bg-[#fffdf5] border-4 border-slate-900 p-6 max-w-sm w-full shadow-[4px_4px_0_0_#000000]">
-            <h3 className="text-xs font-bold mb-4 border-b-2 border-slate-900 pb-2 uppercase tracking-wider">FAQ: Sovereign Share Hub</h3>
+            <h3 className="text-xs font-bold mb-4 border-b-2 border-slate-900 pb-2 uppercase tracking-wider">FAQ: KawaiiNeko Share Hub</h3>
             <div className="space-y-3 leading-relaxed text-[11px]">
               <p><strong>Q: What is System Share?</strong><br/>A: It launches your phone or computer's native share drawer (iOS Share Sheet, Android Share Sheet, or Windows Share) so you can directly pipe text to Keep, Notes, or Messages without cloud servers.</p>
               <p><strong>Q: What does "Send to Gemini" do?</strong><br/>A: It compiles your Markdown Zettel card, pre-pends analytical prompts, and deep-links it directly into the Gemini prompt box.</p>

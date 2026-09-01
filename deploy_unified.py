@@ -51,7 +51,7 @@ def upload_directory_recursive(ftp, local_dir, remote_dir):
             print(f" -> Uploaded: {item} -> {remote_path}")
 
 def main():
-    print("=== UNIFIED SOVEREIGN FTP DEPLOYER ===")
+    print("=== UNIFIED MEOW FTP DEPLOYER ===")
     config = load_deployment_config()
     
     local_dist = Path(config["local_dist_dir"])

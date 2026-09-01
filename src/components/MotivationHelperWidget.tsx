@@ -31,6 +31,22 @@ export const MotivationHelperWidget: React.FC = () => {
   const [coachPersona, setCoachPersona] = useState<'hype_man' | 'drill_sergeant' | 'aerobics_instructor'>('hype_man');
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
 
+  // Idle Bro Helper Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [customIdleTasks, setCustomIdleTasks] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('anymd_idle_tasks');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return ['Sort & Fold Laundry', 'Sweep Kitchen Floor', 'Water Plants', 'Clean Desk', 'Stretch 5 Minutes'];
+  });
+  const [newTaskInput, setNewTaskInput] = useState('');
+
+  const saveIdleTasks = (tasks: string[]) => {
+    setCustomIdleTasks(tasks);
+    localStorage.setItem('anymd_idle_tasks', JSON.stringify(tasks));
+  };
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Curated list of cheesy ass motivation anthems
@@ -318,7 +334,15 @@ export const MotivationHelperWidget: React.FC = () => {
 
         {/* CURRENT TARGET INPUT */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-black uppercase text-gray-600">Active High-Friction Chore:</label>
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-black uppercase text-gray-600">Active High-Friction Chore:</label>
+            <button
+              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+              className="text-[10px] font-bold font-mono px-2 py-0.5 border-2 border-black bg-purple-200 hover:bg-purple-300 text-black cursor-pointer"
+            >
+              ⚙️ Idle Helper Settings
+            </button>
+          </div>
           <div className="flex gap-2">
             <input 
               type="text" 
@@ -335,11 +359,66 @@ export const MotivationHelperWidget: React.FC = () => {
               className="border-2 border-black p-1 text-xs font-bold"
               disabled={isRunning || coachActive}
             >
+              {customIdleTasks.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
               <option value="Sort & Fold Laundry">👕 Laundry</option>
               <option value="Default Chore">🔧 Custom / General</option>
             </select>
           </div>
         </div>
+
+        {/* IDLE BRO HELPER SETTINGS CARD */}
+        {isSettingsOpen && (
+          <div className="bg-purple-100 border-4 border-black p-3 my-1 font-mono text-xs shadow-[3px_3px_0_#000] space-y-2">
+            <div className="flex justify-between items-center border-b-2 border-black pb-1">
+              <span className="font-black text-xs text-purple-900 uppercase">⚙️ Idle Bro Task &amp; Routine Settings</span>
+              <button 
+                onClick={() => setIsSettingsOpen(false)}
+                className="font-bold text-xs bg-black text-white px-1.5 py-0.5"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-700 uppercase block">Custom Idle Task Queue:</label>
+              <div className="flex gap-1">
+                <input
+                  type="text"
+                  value={newTaskInput}
+                  onChange={(e) => setNewTaskInput(e.target.value)}
+                  placeholder="Add new idle task..."
+                  className="border-2 border-black p-1 text-xs flex-1 bg-white"
+                />
+                <button
+                  onClick={() => {
+                    if (!newTaskInput.trim()) return;
+                    saveIdleTasks([...customIdleTasks, newTaskInput.trim()]);
+                    setNewTaskInput('');
+                  }}
+                  className="border-2 border-black bg-black text-white px-2 text-xs font-bold"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-1 pt-1">
+                {customIdleTasks.map((task, idx) => (
+                  <span key={idx} className="bg-white border-2 border-black px-2 py-0.5 text-[10px] font-bold flex items-center gap-1">
+                    <span>{task}</span>
+                    <button
+                      onClick={() => saveIdleTasks(customIdleTasks.filter((_, i) => i !== idx))}
+                      className="text-red-600 font-bold hover:text-red-800"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* --- SECTION: COACH BOSS ACTIVE MODAL / CARD --- */}
         {coachActive && (

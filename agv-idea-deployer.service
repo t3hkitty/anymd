@@ -1,0 +1,18 @@
+[Unit]
+Description=🐾 Kawaii Neko Antigravity Remote Ingestion & Compilation Daemon 🐾
+After=network.target
+
+[Service]
+Type=simple
+# Path to your headless VPS application deployment folder [804, 850]
+WorkingDirectory=/home/ubuntu/app
+# ExecStart utilizes the virtual environment's isolated python executable [804, 1028]
+ExecStart=/home/ubuntu/app/venv/bin/python /home/ubuntu/app/agv_remote_idea_deployer.py
+Restart=on-failure
+RestartSec=5
+# Force unbuffered terminal stdout/stderr logs
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/home/ubuntu/app/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=default.target

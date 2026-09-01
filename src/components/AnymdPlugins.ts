@@ -57,8 +57,8 @@ export class SignalStackDiscoveryPlugin {
     return [
       {
         title: `Decentralized Metadata Architecture on Local Plain Text`,
-        url: `https://glaforge.dev/posts/2026/08/ sovereign-data`,
-        excerpt: `An exploration into how local markdown and atomic Zettelkasten files provide full data sovereignty.`,
+        url: `https://glaforge.dev/posts/2026/08/ meow-data`,
+        excerpt: `An exploration into how local markdown and atomic Zettelkasten files provide full data meowty.`,
         date: new Date().toISOString()
       },
       {

@@ -136,7 +136,7 @@ export const PersonaCollectorHubModal: React.FC<PersonaCollectorHubModalProps> =
               <h2 className="font-extrabold text-lg flex items-center space-x-2">
                 <span>Persona, Feed Engine &amp; Collector Tools</span>
                 <span className="px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10px] font-mono font-bold">
-                  SOVEREIGN SANCTUARY
+                  MEOW SANCTUARY
                 </span>
               </h2>
               <p className="text-xs text-slate-400 font-mono">

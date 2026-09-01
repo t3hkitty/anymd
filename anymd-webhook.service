@@ -1,0 +1,15 @@
+[Unit]
+Description=AnyMD Webhook Gateway Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/app/text-webhook-gateway
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production PORT=3050
+
+[Install]
+WantedBy=multi-user.target

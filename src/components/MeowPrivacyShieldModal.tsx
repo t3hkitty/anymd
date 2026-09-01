@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SOVEREIGN_PRIVACY_AUDIT, generateAntiScraperHtaccess } from '../plugins/meowPrivacyPlugin';
+import { MEOW_PRIVACY_AUDIT, generateAntiScraperHtaccess } from '../plugins/meowPrivacyPlugin';
 import { X, ShieldCheck, Lock, Terminal, Copy, Check, EyeOff } from 'lucide-react';
 
 interface MeowPrivacyShieldModalProps {
@@ -57,12 +57,12 @@ export const MeowPrivacyShieldModal: React.FC<MeowPrivacyShieldModalProps> = ({
                 <span className="font-extrabold text-emerald-200 text-base">Zero-Telemetry Audit Certificate</span>
               </div>
               <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold">
-                🟢 100% PRIVATE & SOVEREIGN
+                🟢 100% PRIVATE & MEOW
               </span>
             </div>
 
             <p className="text-slate-300 text-xs leading-relaxed font-sans">
-              "{SOVEREIGN_PRIVACY_AUDIT.meowPledge}"
+              "{MEOW_PRIVACY_AUDIT.meowPledge}"
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px] border-t border-emerald-500/20">

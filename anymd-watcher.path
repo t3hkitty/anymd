@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch AnyMD Gateway Directory for changes
+
+[Path]
+PathModified=/home/ubuntu/app/text-webhook-gateway/server.js
+Unit=anymd-watcher.service
+
+[Install]
+WantedBy=multi-user.target
