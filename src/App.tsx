@@ -821,52 +821,111 @@ date_cataloged: "${new Date().toISOString()}"
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
       
-      {/* Master Top Navigation Bar: anymd Library <-> User Account Profile <-> MBB Telemetry Engine */}
-      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2.5 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
+      {/* Master Top Navigation Bar: Manila Hanging Tabs + Top-Center Current Task Anchor + Top-Right Profile/Avatar Switcher */}
+      <div className="w-full bg-slate-950 border-b border-slate-800/90 px-6 py-2 flex items-center justify-between shadow-xl sticky top-0 z-50 flex-wrap gap-2 backdrop-blur-md">
         
-        {/* Left: 📚 anymd Library Tab */}
-        <button
-          onClick={() => setActiveView('library')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
-            activeView !== 'blackbox'
-              ? 'bg-indigo-600 text-white shadow-indigo-500/20 ring-2 ring-indigo-400/40'
-              : 'bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-indigo-500/30'
-          }`}
-          title="Switch to anymd Library & Bookshelf"
-        >
-          <AnymdIcon className="w-4 h-4" />
-          <span>anymd Library</span>
-        </button>
+        {/* Left: Manila Hanging Tabs */}
+        <div className="flex items-center space-x-1 font-mono text-xs select-none overflow-x-auto">
+          <button
+            onClick={() => setActiveView('library')}
+            className={`px-3 py-1.5 rounded-t-xl border-t border-x transition-all flex items-center space-x-1.5 ${
+              activeView === 'library' || activeView === 'reader'
+                ? 'bg-indigo-950/90 text-indigo-200 border-indigo-500/60 font-bold shadow-indigo-950/40 z-10'
+                : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+            title="Books & LCMD Markdown Core"
+          >
+            <AnymdIcon className="w-3.5 h-3.5 text-indigo-400" />
+            <span>📘 Books/LCMD</span>
+          </button>
 
-        {/* Center: 👤 Account & Profile Manager Button */}
-        <button
-          onClick={() => setIsProfileManagementOpen(true)}
-          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-400/50 text-amber-200 text-xs font-extrabold shadow-sm transition-all group"
-          title="Account Management, Cloud Auth & Switch Profile (Invite Code: meow)"
-        >
-          <span className="text-sm group-hover:scale-110 transition-transform">{activeUserProfile.avatarEmoji || '👤'}</span>
-          <span className="tracking-tight">@{activeUserProfile.username}</span>
-          <span className="px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 text-[10px] font-mono font-bold">Account</span>
-        </button>
+          <button
+            onClick={() => setActiveView('sidecar')}
+            className={`px-3 py-1.5 rounded-t-xl border-t border-x transition-all flex items-center space-x-1.5 ${
+              activeView === 'sidecar' || activeView === 'stream'
+                ? 'bg-emerald-950/90 text-emerald-200 border-emerald-500/60 font-bold shadow-emerald-950/40 z-10'
+                : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+            title="Journals & Zettelkasten Logs"
+          >
+            <span className="text-xs">💚</span>
+            <span>Journals</span>
+          </button>
 
-        {/* Right: ⬛ MBB (MyBlackBox Telemetry Engine) Tab */}
-        <button
-          onClick={() => setActiveView('blackbox')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
-            activeView === 'blackbox'
-              ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30 ring-2 ring-emerald-400/50 font-black'
-              : 'bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300'
-          }`}
-          title="Open MBB (MyBlackBox Telemetry Engine), Litany Pulse & WYD Timers"
+          <button
+            onClick={() => setActiveView('workshop')}
+            className={`px-3 py-1.5 rounded-t-xl border-t border-x transition-all flex items-center space-x-1.5 ${
+              activeView === 'workshop'
+                ? 'bg-amber-950/90 text-amber-200 border-amber-500/60 font-bold shadow-amber-950/40 z-10'
+                : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+            title="Blueprints & Author Bible"
+          >
+            <span className="text-xs">📙</span>
+            <span>Blueprints</span>
+          </button>
+
+          <button
+            onClick={() => {
+              handleSwitchVaultMode(vaultMode === 'sandbox' ? 'personal' : 'sandbox');
+            }}
+            className={`px-3 py-1.5 rounded-t-xl border-t border-x transition-all flex items-center space-x-1.5 ${
+              vaultMode === 'sandbox'
+                ? 'bg-purple-950/90 text-purple-200 border-purple-500/60 font-bold shadow-purple-950/40 z-10'
+                : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+            title="Toggle Sandbox Vault Mode"
+          >
+            <span className="text-xs">💜</span>
+            <span>Sandboxes [{vaultMode.toUpperCase()}]</span>
+          </button>
+        </div>
+
+        {/* Center: Top-Center Current Task Anchor */}
+        <div 
+          onClick={() => {
+            const newTask = prompt('Edit Active Task Anchor:', 'Build Vault Manager & MBB Telemetry');
+            if (newTask !== null && newTask.trim()) {
+              addTerminalLog(`🎯 Task Anchor updated: ${newTask.trim()}`);
+            }
+          }}
+          className="flex items-center space-x-2 bg-slate-900/90 hover:bg-slate-800 border border-sky-500/40 text-sky-300 font-mono text-xs px-3.5 py-1.5 rounded-full shadow-sm cursor-pointer transition-all hover:scale-[1.02]"
+          title="Top-Center Current Task Anchor (Click to edit active sprint task)"
         >
-          <span className="font-mono text-sm">⬛</span>
-          <span>MBB Telemetry &amp; WYD</span>
-          {loadRunningLitany().length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-950 text-[10px] font-black shadow-sm">
-              {loadRunningLitany().length}
-            </span>
-          )}
-        </button>
+          <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+          <span className="font-bold text-[11px] truncate max-w-[280px]">🎯 Unify LCMD+MBB Workspace &amp; Vault Config</span>
+        </div>
+
+        {/* Right: Top-Right Profile/Avatar Switcher & MBB Flight Recorder Launcher */}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setActiveView('blackbox')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm ${
+              activeView === 'blackbox'
+                ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30 ring-2 ring-emerald-400/50 font-black'
+                : 'bg-zinc-950 hover:bg-zinc-900 border border-emerald-500/50 text-emerald-400 shadow-emerald-500/10 hover:border-emerald-400'
+            }`}
+            title="MBB Telemetry Engine & Flight Recorder (✈️ / ⬛ / 📈)"
+          >
+            <span className="font-mono text-xs">✈️⬛📈</span>
+            <span className="hidden sm:inline">MBB Flight Deck</span>
+            {loadRunningLitany().length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-950 text-[10px] font-black shadow-sm">
+                {loadRunningLitany().length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setIsProfileManagementOpen(true)}
+            className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-400/50 text-amber-200 text-xs font-extrabold shadow-sm transition-all group"
+            title="Profile & Avatar Switcher (Click to switch profiles)"
+          >
+            <span className="text-sm group-hover:scale-110 transition-transform">{activeUserProfile.avatarEmoji || '👤'}</span>
+            <span className="tracking-tight hidden sm:inline">@{activeUserProfile.username}</span>
+          </button>
+        </div>
+
       </div>
 
       {/* Top Application Toolbar (Visible across all views with collapse toggle) */}
@@ -1050,17 +1109,8 @@ date_cataloged: "${new Date().toISOString()}"
             className="hidden"
           />
 
-          {/* Dedicated Mixtjis Bakery Trigger Button */}
-          <button
-            onClick={() => setIsMixtjiBakeryOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-extrabold text-xs shadow-md shadow-pink-500/20 transition-all hover:scale-105 active:scale-95"
-            title="Open Mixtji Bakery Recipe Mixer"
-          >
-            <span>🐱🎨 Mixtjis</span>
-          </button>
-
-          {/* View Switcher */}
-          <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center space-x-1 text-xs">
+          {/* Tool Ribbon / Switcher */}
+          <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center space-x-1 text-xs overflow-x-auto">
             <button
               onClick={() => setActiveView('dashboard')}
               className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
@@ -1068,19 +1118,30 @@ date_cataloged: "${new Date().toISOString()}"
               }`}
               title="MBB Dashboard & Telemetry Hub"
             >
-              <Activity className="w-3.5 h-3.5" />
+              <span className="text-xs">🗄️</span>
               <span className="text-[11px]">Dashboard</span>
             </button>
 
             <button
               onClick={() => setActiveView('library')}
               className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
-                activeView === 'library' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-300 hover:text-amber-200'
+                activeView === 'library' || activeView === 'reader' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-300 hover:text-amber-200'
               }`}
-              title="Bookshelf Library Grid View"
+              title="Bookshelf & Reader/LCMD View"
             >
-              <Grid className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Library</span>
+              <span className="text-xs">📖</span>
+              <span className="text-[11px]">Reader/LCMD</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('blackbox')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
+                activeView === 'blackbox' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-emerald-400 hover:text-emerald-300'
+              }`}
+              title="MBB Flight Deck & Telemetry Engine"
+            >
+              <span className="text-xs">⬛</span>
+              <span className="text-[11px]">MBB Flight Deck</span>
             </button>
 
             <button
@@ -1090,8 +1151,8 @@ date_cataloged: "${new Date().toISOString()}"
               }`}
               title="Writer's Workshop Studio"
             >
-              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="text-[11px]">Writer's Workshop</span>
+              <span className="text-xs">✍️</span>
+              <span className="text-[11px]">Workshop</span>
             </button>
 
             <button
@@ -1101,8 +1162,17 @@ date_cataloged: "${new Date().toISOString()}"
               }`}
               title="Artist Alley Studio"
             >
-              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+              <span className="text-xs">🎨</span>
               <span className="text-[11px]">Artist Alley</span>
+            </button>
+
+            <button
+              onClick={() => setIsMixtjiBakeryOpen(true)}
+              className="px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 text-pink-300 hover:text-pink-200"
+              title="Open Mixtjis Bakery"
+            >
+              <span className="text-xs">🐱🎨</span>
+              <span className="text-[11px]">Mixtjis</span>
             </button>
 
             <button
@@ -2140,7 +2210,7 @@ date_cataloged: "${new Date().toISOString()}"
         vaults={[{ id: vaultMode, name: vaultMode === 'sandbox' ? 'Sandbox Vault' : 'Private Vault' }]}
         activeVaultId={vaultMode}
         onSaveVaultConfig={(config) => {
-          console.log('Vault Config Saved:', config);
+          setIsVaultConfigOpen(false);
         }}
       />
 
