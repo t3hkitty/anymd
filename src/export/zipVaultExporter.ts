@@ -14,7 +14,7 @@ export async function deriveKeyFromPin(pin: string, salt: Uint8Array): Promise<C
   return window.crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt.buffer as ArrayBuffer,
       iterations: 100000,
       hash: 'SHA-256',
     },

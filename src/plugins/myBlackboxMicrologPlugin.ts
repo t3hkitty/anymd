@@ -12,6 +12,8 @@ export interface TelemetryLogEntry extends ResonanceEntry {
   context: 'work' | 'hobby' | 'rest' | 'social';
   cognitiveLoad: 'low' | 'medium' | 'high' | 'overload';
   symptoms: string[];
+  tags?: string[];
+  note?: string;
 }
 
 export function generateTelemetrySidecarMarkdown(log: TelemetryLogEntry): string {

@@ -22,7 +22,7 @@ export function getMeowInviteCode(): string {
   } catch (err) {
     console.warn('Failed to load custom invite code:', err);
   }
-  return (import.meta as any).env?.VITE_INVITE_CODE || 'meow';
+  return 'meow';
 }
 
 export function setMeowInviteCode(newCode: string): void {

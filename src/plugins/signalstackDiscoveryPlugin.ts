@@ -47,27 +47,22 @@ export function processDiscoveryFeedIntoBooks(feed: DiscoveryFeedItem[], subs = 
     const lateralTopic = getLateralPivot(matchedSub.keyword);
     const timestamp = new Date().toISOString();
     
-    // Create a synthesized Anymd Book/Sidecar object
     return {
       id: `signalstack-${Date.now()}-${idx}`,
       title: item.title,
       author: item.source,
-      coverUrl: '', 
-      filePath: item.url,
-      fileType: 'url',
-      genre: "Discovery Feed",
-      tags: ["#SignalStack", "#DiscoveryEngine", ...matchedSub.tags],
-      dateAdded: timestamp,
-      lastRead: timestamp,
-      rating: 0,
-      readStatus: 'unread',
-      isPubliclyShared: false,
+      coverColor: '#10B981',
+      totalChapters: 1,
+      currentChapterIndex: 0,
+      currentParagraphIndex: 0,
+      sidecarMarkdown: `# ${item.title}\n\nSource: ${item.source} (${item.url})\n\n${item.content}`,
       price: 0,
-      customMetadata: {
-        subscription_keyword: matchedSub.keyword,
-        lateral_expansion: lateralTopic,
-        snippet: item.content
-      }
+      resonanceStream: [],
+      chapters: [{
+        title: item.title,
+        cfiBase: 'epubcfi(/6/2!)',
+        paragraphs: [item.content]
+      }]
     };
   });
 }

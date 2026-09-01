@@ -80,6 +80,10 @@ import { VaultBackupRestoreModal } from './components/VaultBackupRestoreModal';
 import { VodImporterModal } from './components/VodImporterModal';
 import { GeminiSparkPluginModal } from './components/GeminiSparkPluginModal';
 import { MusicVaultPlayerModal } from './components/MusicVaultPlayerModal';
+import { VaultConfigModal, type VaultConfig } from './components/VaultConfigModal';
+import { WritersWorkshopView } from './components/WritersWorkshopView';
+import { ArtistAlleyView } from './components/ArtistAlleyView';
+import { MixtjiBakery } from './components/MixtjiBakery';
 import {
   loadSavedSuggestedLinks,
   saveSuggestedLinks,
@@ -128,8 +132,58 @@ export function App() {
     return hasJournal ? loaded : [todayJournal, ...loaded];
   });
   const [activeBookId, setActiveBookId] = useState<string>(() => books[0]?.id || SAMPLE_BOOKS[0].id);
-  const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox'>('dashboard');
+  const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'split' | 'reader' | 'stream' | 'sidecar' | 'community' | 'blackbox' | 'workshop' | 'artist-alley'>('dashboard');
   const [activeFilterTag, setActiveFilterTag] = useState<string | null>(null);
+
+  // Multi-select state
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+
+  const handleToggleSelectFile = (id: string) => {
+    setSelectedFiles(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleCreateNote = () => {
+    const newBook: Book = {
+      id: `note-${Date.now()}`,
+      title: `📝 New Note ${books.length + 1}`,
+      author: `@lorik`,
+      coverUrl: '',
+      coverColor: '#3B82F6',
+      totalChapters: 1,
+      currentChapterIndex: 0,
+      currentParagraphIndex: 0,
+      sidecarMarkdown: '# New Note\n\nFleeting zettelkasten note...',
+      resonanceStream: [],
+      price: 0
+    };
+    handleUpdateBooks(prev => [newBook, ...prev]);
+    setActiveBookId(newBook.id);
+    setActiveView('sidecar');
+  };
+
+  const handleCreateLitanyNote = () => {
+    const newBook: Book = {
+      id: `litany-${Date.now()}`,
+      title: `🌸 New Litany Note ${books.length + 1}`,
+      author: `@lorik`,
+      coverUrl: '',
+      coverColor: '#EC4899',
+      totalChapters: 1,
+      currentChapterIndex: 0,
+      currentParagraphIndex: 0,
+      sidecarMarkdown: '# 🌸 Litany Micro-Log\n\nFleeting somatic thought...',
+      resonanceStream: [],
+      price: 0
+    };
+    handleUpdateBooks(prev => [newBook, ...prev]);
+    setActiveBookId(newBook.id);
+    setActiveView('sidecar');
+  };
 
   // Switch between Sandbox Demo Vault and Personal Private Vault
   const handleSwitchVaultMode = (newMode: VaultMode) => {
@@ -357,6 +411,8 @@ export function App() {
   const [isVodImporterOpen, setIsVodImporterOpen] = useState(false);
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
   const [isMusicVaultOpen, setIsMusicVaultOpen] = useState(false);
+  const [isVaultConfigOpen, setIsVaultConfigOpen] = useState(false);
+  const [isMixtjiBakeryOpen, setIsMixtjiBakeryOpen] = useState(false);
 
   const [importedItemsForVerification, setImportedItemsForVerification] = useState<ImportedBookItem[]>([]);
   const [shareTargetEntry, setShareTargetEntry] = useState<ResonanceEntry | null>(null);
@@ -991,6 +1047,15 @@ date_cataloged: "${new Date().toISOString()}"
             className="hidden"
           />
 
+          {/* Dedicated Mixtjis Bakery Trigger Button */}
+          <button
+            onClick={() => setIsMixtjiBakeryOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-extrabold text-xs shadow-md shadow-pink-500/20 transition-all hover:scale-105 active:scale-95"
+            title="Open Mixtji Bakery Recipe Mixer"
+          >
+            <span>🐱🎨 Mixtjis</span>
+          </button>
+
           {/* View Switcher */}
           <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center space-x-1 text-xs">
             <button
@@ -1013,6 +1078,28 @@ date_cataloged: "${new Date().toISOString()}"
             >
               <Grid className="w-3.5 h-3.5" />
               <span className="text-[11px]">Library</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('workshop')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
+                activeView === 'workshop' ? 'bg-indigo-600 text-white font-bold' : 'text-indigo-300 hover:text-indigo-200'
+              }`}
+              title="Writer's Workshop Studio"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-[11px]">Writer's Workshop</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('artist-alley')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1 ${
+                activeView === 'artist-alley' ? 'bg-purple-600 text-white font-bold' : 'text-purple-300 hover:text-purple-200'
+              }`}
+              title="Artist Alley Studio"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+              <span className="text-[11px]">Artist Alley</span>
             </button>
 
             <button
@@ -1082,7 +1169,38 @@ date_cataloged: "${new Date().toISOString()}"
         {activeView === 'dashboard' && (
           <div className="h-[calc(100vh-120px)] overflow-y-auto">
             <ErrorBoundary>
-              <AnymdDashboard items={[]} notes={[]} vaults={[]} selectedFiles={new Set()} />
+              <AnymdDashboard
+                items={books}
+                notes={books}
+                vaults={[{ id: vaultMode, name: vaultMode === 'sandbox' ? 'Sandbox Vault' : 'Private Vault' }]}
+                selectedFiles={selectedFiles}
+                onToggleSelectFile={handleToggleSelectFile}
+                onCreateNote={handleCreateNote}
+                onCreateLitanyNote={handleCreateLitanyNote}
+                onOpenVaultConfig={() => setIsVaultConfigOpen(true)}
+                onSelectNote={(note) => {
+                  if (note && note.id) {
+                    setActiveBookId(note.id);
+                    setActiveView('sidecar');
+                  }
+                }}
+              />
+            </ErrorBoundary>
+          </div>
+        )}
+
+        {activeView === 'workshop' && (
+          <div className="h-[calc(100vh-120px)] overflow-hidden">
+            <ErrorBoundary>
+              <WritersWorkshopView />
+            </ErrorBoundary>
+          </div>
+        )}
+
+        {activeView === 'artist-alley' && (
+          <div className="h-[calc(100vh-120px)] overflow-y-auto">
+            <ErrorBoundary>
+              <ArtistAlleyView />
             </ErrorBoundary>
           </div>
         )}
@@ -1997,6 +2115,36 @@ date_cataloged: "${new Date().toISOString()}"
       <MusicVaultPlayerModal
         isOpen={isMusicVaultOpen}
         onClose={() => setIsMusicVaultOpen(false)}
+      />
+
+      {/* 16. Vault Configuration Modal */}
+      <VaultConfigModal
+        isOpen={isVaultConfigOpen}
+        onClose={() => setIsVaultConfigOpen(false)}
+        vaults={[{ id: vaultMode, name: vaultMode === 'sandbox' ? 'Sandbox Vault' : 'Private Vault' }]}
+        activeVaultId={vaultMode}
+        onSaveVaultConfig={(config) => {
+          console.log('Vault Config Saved:', config);
+        }}
+      />
+
+      {/* 17. Mixtji Bakery Emoji Mixer Modal */}
+      <MixtjiBakery
+        isOpen={isMixtjiBakeryOpen}
+        onClose={() => setIsMixtjiBakeryOpen(false)}
+        onInjectEmoji={(bakedEmoji) => {
+          if (activeBookId) {
+            handleUpdateBooks(prev => prev.map(b => {
+              if (b.id === activeBookId) {
+                return {
+                  ...b,
+                  sidecarMarkdown: `${b.sidecarMarkdown}\n\nBaked Mixtji: ${bakedEmoji}`
+                };
+              }
+              return b;
+            }));
+          }
+        }}
       />
 
       {/* ⚡ Idle Background Auto-Worker Toast Notice */}

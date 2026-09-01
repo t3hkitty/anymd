@@ -247,6 +247,34 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
             )}
           </div>
 
+          {/* Vault Settings Gear Button */}
+          <button
+            onClick={() => props.onOpenVaultConfig && props.onOpenVaultConfig()}
+            className="p-1.5 bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-300 hover:text-white rounded-md transition-colors"
+            title="Vault Configuration Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Universal New Note Triggers */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={onCreateNote}
+              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-md flex items-center gap-1 transition-all"
+            >
+              <Plus className="w-3.5 h-3.5" /> 📝 + New Note
+            </button>
+            <button
+              onClick={() => {
+                if (props.onCreateLitanyNote) props.onCreateLitanyNote();
+                else onCreateNote();
+              }}
+              className="px-3 py-1 bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold rounded-md flex items-center gap-1 transition-all"
+            >
+              🌸 + New Litany Note
+            </button>
+          </div>
+
           {/* Safe vault rendering */}
           {safeVaults.length > 0 && (
             <div className="vault-tabs flex gap-1.5 font-mono text-xs">
@@ -524,6 +552,116 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Wipe Example Cache & Reset
                   </button>
+                </div>
+              </div>
+
+              {/* Sticky Batch Action Bar when selectedFiles.size > 0 */}
+              {selectedCount > 0 && (
+                <div className="sticky top-0 z-40 bg-indigo-950 border-2 border-indigo-500/80 p-3 rounded-xl shadow-2xl flex items-center justify-between gap-3 animate-fadeIn backdrop-blur-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-indigo-300">
+                      {selectedCount} item(s) selected
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => {
+                        if (props.onBatchDelete) props.onBatchDelete(selectedFiles);
+                        else showToastNotification(`Batch Deleted ${selectedCount} items!`);
+                      }}
+                      className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-all"
+                    >
+                      🗑️ Batch Delete
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (props.onBatchTag) props.onBatchTag(selectedFiles);
+                        else showToastNotification(`Batch Tagged ${selectedCount} items!`);
+                      }}
+                      className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-all"
+                    >
+                      🏷️ Batch Tag
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (props.onBatchExport) props.onBatchExport(selectedFiles);
+                        else showToastNotification(`Exported ZIP for ${selectedCount} items!`);
+                      }}
+                      className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-all"
+                    >
+                      📦 Export ZIP
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (props.onBatchMove) props.onBatchMove(selectedFiles);
+                        else showToastNotification(`Moved ${selectedCount} items!`);
+                      }}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition-all"
+                    >
+                      📁 Move
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Note Explorer File List / Grid View with Row Checkboxes */}
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+                  <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">
+                    Vault Notes &amp; Sidecars ({filteredNotes.length})
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {filteredNotes.map((note: any, idx: number) => {
+                    const noteId = note.id || `note_${idx}`;
+                    const isSelected = selectedFiles instanceof Set 
+                      ? selectedFiles.has(noteId) 
+                      : (Array.isArray(selectedFiles) && selectedFiles.includes(noteId));
+
+                    return (
+                      <div
+                        key={noteId}
+                        className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                          isSelected
+                            ? 'bg-indigo-950/40 border-indigo-500/80 text-white'
+                            : 'bg-slate-950/60 border-slate-850 text-slate-300 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              if (props.onToggleSelectFile) {
+                                props.onToggleSelectFile(noteId);
+                              }
+                            }}
+                            className="w-4 h-4 accent-indigo-500 rounded cursor-pointer"
+                          />
+                          <div 
+                            onClick={() => onSelectNote(note)}
+                            className="cursor-pointer flex flex-col"
+                          >
+                            <div className="text-xs font-bold flex items-center gap-2">
+                              <span>🌸</span>
+                              <span>{note.title || note.name || `Note #${idx + 1}`}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                              {note.summary || note.author || 'Markdown zettelkasten note'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => onSelectNote(note)}
+                          className="px-2.5 py-1 bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] font-mono font-semibold rounded text-slate-300"
+                        >
+                          Open Note ➜
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
