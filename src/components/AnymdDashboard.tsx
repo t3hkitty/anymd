@@ -22,15 +22,37 @@ export interface AnymdDashboardProps {
   items?: any[];
   notes?: any[];
   vaults?: any[];
+  micrologs?: any[];
   selectedFiles?: Set<string> | string[];
+  onSelectNote?: (note: any) => void;
+  onCreateNote?: () => void;
+  [key: string]: any;
 }
 
 export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
   items = [],
   notes = [],
   vaults = [],
-  selectedFiles = new Set(),
+  micrologs = [],
+  selectedFiles = new Set<string>(),
+  onSelectNote = () => {},
+  onCreateNote = () => {},
+  ...props
 }) => {
+  // Safe defensive array resolution for filters and counts
+  const safeNotes = Array.isArray(notes) ? notes : (Array.isArray(items) ? items : []);
+  const safeVaults = Array.isArray(vaults) ? vaults : [];
+  const safeMicrologs = Array.isArray(micrologs) ? micrologs : [];
+
+  const filteredNotes = safeNotes.filter((note) => {
+    if (!note) return false;
+    const tags = Array.isArray(note.tags) ? note.tags : [];
+    return true;
+  });
+
+  const selectedCount = selectedFiles instanceof Set 
+    ? selectedFiles.size 
+    : (Array.isArray(selectedFiles) ? selectedFiles.length : 0);
   // Engines
   const micrologPlugin = new MyBlackboxMicrologPlugin();
   const crisisPlugin = new GoblinCrisisTtsPlugin();
@@ -208,12 +230,36 @@ export const AnymdDashboard: React.FC<AnymdDashboardProps> = ({
       )}
 
       {/* Sleek App Navigation */}
-      <header className="border-b border-slate-800 pb-4 flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
+      <header className="border-b border-slate-800 pb-4 flex justify-between items-center mb-6 flex-wrap gap-3">
+        <div className="flex items-center gap-3">
           <div className="bg-indigo-600/20 border border-indigo-500 text-indigo-400 p-2 rounded-md font-bold text-sm tracking-wider">
             AN <span className="text-white">Y</span> MD
           </div>
           <span className="text-xs text-slate-400 font-mono">v3.8.0 / KawaiiNeko OS</span>
+
+          {/* Safe counter rendering */}
+          <div className="flex items-center gap-2 text-xs font-mono text-purple-300 bg-purple-950/40 border border-purple-500/30 px-3 py-1 rounded-md">
+            <span>Showing {filteredNotes.length} items</span>
+            {selectedCount > 0 && (
+              <span className="bg-purple-900/60 px-2 py-0.5 rounded-full border border-purple-500/40 text-[10px] font-bold">
+                {selectedCount} selected
+              </span>
+            )}
+          </div>
+
+          {/* Safe vault rendering */}
+          {safeVaults.length > 0 && (
+            <div className="vault-tabs flex gap-1.5 font-mono text-xs">
+              {safeVaults.map((v: any, idx: number) => (
+                <button
+                  key={v.id || v.name || idx}
+                  className="px-2.5 py-1 bg-slate-900 border border-slate-700 text-slate-300 rounded hover:border-indigo-400"
+                >
+                  {v.name || v.id}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex gap-1 bg-slate-900 p-1 border border-slate-800 rounded-md">
           <button 
