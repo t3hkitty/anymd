@@ -32,6 +32,23 @@ Every structured entry and mapping index represents an effort to bring clarity, 
 
 ---
 
+## ⚖️ FOSS Compliance & Feature Integration Roadmap
+
+Keeping the fork strictly FOSS-compliant while integrating the full suite of automation, indexing, and vault management features ensures clean distribution and easy contribution back to the archival community.
+
+### Core Module Integration Checklist
+
+| Module | Purpose | Storage & Binding |
+| --- | --- | --- |
+| **Unified SQLite DB** | Centralizes records, streams, and queues | `Z:\kittlib\metadata.db` |
+| **Universal Seedbox Profiler** | Scans any remote mount/folder to cluster authors & genres | `directory_profiles` table |
+| **Acquisition & Reading Queues** | Managed input targets (`+ Add URL`) and shelves (`TBR`, `In-Progress`, etc.) | `acquisition_queue`, `reading_lists` |
+| **Taste Profile & Thumbs Up** | Trains recommendation weights via Super-Liked entries | `taste_profile` table |
+| **Zettelkasten Serializer** | Timestamps written stories/articles with Pacific Time anchors | `master_zettelkasten_index` + `S:\md\` |
+| **AI Contribution README** | Documents AI token assistance as a gift to the open archive | Root `README.md` |
+
+---
+
 ## 🏛️ Master Architecture & SQLite Vault (`Z:\kittlib\metadata.db`)
 
 ### Unified Table Definitions
