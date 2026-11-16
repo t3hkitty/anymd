@@ -1,13 +1,15 @@
-# (=^･ω･^=) AnyMD - KawaiiNeko Markdown Datastore & E-Reader Companion
+# (=^･ω･^=) AnyMD / Kittlibr: Words Are Magic Edition
 
 ```text
   /\_/\  
- ( ='.'= ) ANYMD MEOW ENGINE
- (")_(")  Pure Markdown Architecture • Kawaiianism v3.1
+ ( ='.'= ) KITTLIBR: WORDS ARE MAGIC EDITION
+ (")_(")  Pure Markdown Architecture • FOSS Archival Preservation • Kawaiianism v3.1
 ```
 
-## 🐾 Overview
-Local-first markdown database engine with WebDAV cloud indexer, OPDS catalog, FOSS plugin architecture, and standalone `OpenlibExtended` build pipelines.
+> *The decentralized metadata resolution, indexing, and vault pipeline for curated e-book libraries and open archival contribution.*
+
+## 🐾 Overview & About This Project
+**Kittlibr (Words Are Magic Edition)** combines automated SQLite tracking, Stale-While-Revalidate caching, universal seedbox profiling, and Calibre CLI integration to turn scrambled archival torrent dumps and remote network shares into pristine, searchable libraries.
 
 - **Platform:** `TypeScript / Python / Jetpack Compose / Flutter`
 - **Aesthetic:** KawaiiNeko Kawaiian Minimalist
@@ -15,18 +17,19 @@ Local-first markdown database engine with WebDAV cloud indexer, OPDS catalog, FO
 
 ---
 
-## 🌟 OpenlibExtended & Archival Contribution Engine
-
-> *A decentralized metadata resolution and indexing pipeline designed to turn scrambled, unindexed raw torrent dumps and seedbox archives into clean, structured, searchable records.*
-
-### 🤖 AI Token Contribution Statement
+## 🤖 AI Token Contribution Statement
 **This dataset, metadata structure, and associated tooling were generated, refined, and organized utilizing AI assistant tokens as a personal contribution to the world's most complete directory of written artifacts.** 
 
-Every structured entry and mapping index represents an effort to bring clarity, discoverability, and accessibility to open-source archival preservation.
+Every structured schema, parsing script, and mapping index represents an effort to bring clarity, discoverability, and accessibility to open-source archival preservation under FOSS/MIT licensing guidelines.
 
-### 🛠️ Core Features
-- **Universal Directory Watcher**: Scans local mounts, seedboxes, or network shares to profile and categorize files on demand.
-- **SQLite Mapping & Contribution Dumps**: Generates lightweight, queryable `.db` manifests linking file hashes, extracted metadata, and confidence scores.
+---
+
+## 🛠️ Core Modules & Features
+- **Universal Directory Profiler**: Scans remote seedboxes or local mounts (`universal_directory_profiler.py`) to cluster authors and genres on demand.
+- **Acquisition & Reading Queues**: Manages web serial ingest links, FanFicFare scraping targets, and shelf states (`TBR`, `In-Progress`, `Read`, `DNF`).
+- **Taste Profile Training**: Ingests Google Play Books "Thumbs Up" super-liked lists to prioritize future recommendations.
+- **Zettelkasten Temporal Indexing**: Timestamps all notes and literary sidecars with Pacific Time anchors (`YYYYMMDD-HHMM`).
+- **SQLite Mapping & Contribution Dumps**: Generates lightweight, queryable manifests linking file hashes, extracted metadata, and confidence scores.
 - **Selective Vault Filtering**: Automatically separates personal reading whitelist genres (LitRPG, Danmei, Romance, Sci-Fi/Fantasy) from archival contribution indexes to preserve storage.
 - **Calibre CLI & Sidecar Integration**: Automatically builds YAML frontmatter sidecars and maintains pristine EPUB structures.
 
