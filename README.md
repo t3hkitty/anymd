@@ -4,16 +4,19 @@
   /\_/\  
  ( ='.'= ) KITTLIBR: WORDS ARE MAGIC EDITION
  (")_(")  Pure Markdown Architecture • FOSS Archival Preservation • Kawaiianism v3.1
+ 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾
 ```
 
 > *The decentralized metadata resolution, indexing, and vault pipeline for curated e-book libraries and open archival contribution.*
 
-## 🐾 Overview & About This Project
-**Kittlibr (Words Are Magic Edition)** combines automated SQLite tracking, Stale-While-Revalidate caching, universal seedbox profiling, and Calibre CLI integration to turn scrambled archival torrent dumps and remote network shares into pristine, searchable libraries.
+---
 
-- **Platform:** `TypeScript / Python / Jetpack Compose / Flutter`
-- **Aesthetic:** KawaiiNeko Kawaiian Minimalist
-- **License:** FOSS / MIT
+## 🌸 About This Project & Relationship to Full Edition
+**Kittlibr (Words Are Magic Edition)** is a community-oriented, stripped-down public release of a larger personal reading, writing, and cognitive indexing system. Its primary mission is to **promote reading and writing**, lower barriers to personal library management, and facilitate open archival indexing.
+
+> [!NOTE]
+> 🐾 **Replication & Scaling Up to Full Edition:**
+> This repository contains the complete lite contribution architecture. By pairing **Google Antigravity (AGV)** with this repository and the master prompt instructions below, you can expand this lite edition back up toward the full personalized edition (complete with advanced webnovel continuous MTL translation, local Tasker webhooks, and automated multi-vault WebDAV replication).
 
 ---
 
@@ -24,31 +27,75 @@ Every structured schema, parsing script, and mapping index represents an effort 
 
 ---
 
-## 🛠️ Core Modules & Features
-- **Universal Directory Profiler**: Scans remote seedboxes or local mounts (`universal_directory_profiler.py`) to cluster authors and genres on demand.
-- **Acquisition & Reading Queues**: Manages web serial ingest links, FanFicFare scraping targets, and shelf states (`TBR`, `In-Progress`, `Read`, `DNF`).
-- **Taste Profile Training**: Ingests Google Play Books "Thumbs Up" super-liked lists to prioritize future recommendations.
-- **Zettelkasten Temporal Indexing**: Timestamps all notes and literary sidecars with Pacific Time anchors (`YYYYMMDD-HHMM`).
-- **SQLite Mapping & Contribution Dumps**: Generates lightweight, queryable manifests linking file hashes, extracted metadata, and confidence scores.
-- **Selective Vault Filtering**: Automatically separates personal reading whitelist genres (LitRPG, Danmei, Romance, Sci-Fi/Fantasy) from archival contribution indexes to preserve storage.
-- **Calibre CLI & Sidecar Integration**: Automatically builds YAML frontmatter sidecars and maintains pristine EPUB structures.
+## 🐾 Release Artifacts & Downloads (EXE & APK)
+
+Pre-built binaries are generated via the integrated GitHub Actions CI/CD pipeline and local build scripts:
+
+| Platform | Target Artifact | Build Script / Source | Release Artifact Location |
+| --- | --- | --- | --- |
+| **Windows 64-bit EXE** | `OpenlibExtended.exe` | `build_exe.py` (PyInstaller) | [GitHub Actions Artifacts](https://github.com/t3hkitty/anymd/actions) |
+| **Android APK** | `kittlibr_v1.0.11_release.apk` | Gradle Native (`assembleRelease`) | [GitHub Actions Artifacts](https://github.com/t3hkitty/anymd/actions) / GDrive |
 
 ---
 
-## ⚖️ FOSS Compliance & Feature Integration Roadmap
+## 🛠️ Build Instructions
 
-Keeping the fork strictly FOSS-compliant while integrating the full suite of automation, indexing, and vault management features ensures clean distribution and easy contribution back to the archival community.
+### 1. Building Windows Executable (`OpenlibExtended.exe`)
+Prerequisites: Python 3.11+, PyInstaller
 
-### Core Module Integration Checklist
+```powershell
+# Install PyInstaller
+pip install pyinstaller
 
-| Module | Purpose | Storage & Binding |
-| --- | --- | --- |
-| **Unified SQLite DB** | Centralizes records, streams, and queues | `Z:\kittlib\metadata.db` |
-| **Universal Seedbox Profiler** | Scans any remote mount/folder to cluster authors & genres | `directory_profiles` table |
-| **Acquisition & Reading Queues** | Managed input targets (`+ Add URL`) and shelves (`TBR`, `In-Progress`, etc.) | `acquisition_queue`, `reading_lists` |
-| **Taste Profile & Thumbs Up** | Trains recommendation weights via Super-Liked entries | `taste_profile` table |
-| **Zettelkasten Serializer** | Timestamps written stories/articles with Pacific Time anchors | `master_zettelkasten_index` + `S:\md\` |
-| **AI Contribution README** | Documents AI token assistance as a gift to the open archive | Root `README.md` |
+# Run standalone compiler
+python build_exe.py
+# Outputs: dist/OpenlibExtended.exe
+```
+
+### 2. Building Native Android APK (`kittlibr_v*.apk`)
+Prerequisites: JDK 17, Android SDK (API 34)
+
+```bash
+# Set execute permissions
+chmod +x gradlew
+
+# Assemble Release APK (outputs to app/build/outputs/apk/release/)
+./gradlew assembleRelease
+
+# Optional: Run automated Google Drive sync task
+./gradlew copyApkToDrive
+```
+
+### 3. Automated GitHub Actions Workflow
+Every push to `main` triggers `.github/workflows/release_builds.yml` which automatically compiles both the Windows one-file executable and the release APK, publishing them directly as downloadable workflow run artifacts.
+
+---
+
+## 🐾 Full-Edition AGV Replication Prompt
+
+Use the following prompt in **Google Antigravity (AGV)** to bootstrap and expand this repository into the full multi-engine edition:
+
+```markdown
+# Antigravity (AGV) Master Workspace Directive: Kittlibr Words Are Magic Full Edition
+
+## 1. Unified SQLite Master Architecture (Z:\kittlib\metadata.db)
+Hydrate and link all 9 master tables:
+* books: stem, title, author, extension, primary_tag, major_category (Fiction/Non-Fiction), pristine_status (pristine/broken/ai_identified/index_only), description, cover_path, md_path.
+* rss_feeds & rss_entries: Offline-first stream caching.
+* custom_lists: Custom curation groupings and stems.
+* acquisition_queue: Web serials, NovelUpdates, FanFicFare queue.
+* reading_lists: TBR, In Progress, Read, DNF progress tracking.
+* taste_profile: Google Play Books Thumbs Up super-liked scoring.
+* master_zettelkasten_index: Pacific Time anchors (YYYYMMDD-HHMM) with FIFO serials.
+* torrent_file_mapping: TorBox / torrent dump indexing.
+* directory_profiles: Heuristic author/genre classifier.
+
+## 2. Reading Engine & Contrast Themes
+* Dynamic RGB extraction with WCAG-compliant contrast modes (Solar Sunlight #FFF8DC/#281E0A, Night, High Contrast).
+
+## 3. Automation & Sidecar Watchers
+* Calibre CLI sync hooks, YAML frontmatter sidecar generator, and universal seedbox watcher.
+```
 
 ---
 
@@ -182,11 +229,27 @@ CREATE TABLE IF NOT EXISTS directory_profiles (
 
 ---
 
-## 🛠️ Build & CI/CD Pipelines
+## 🐾 Cat Paw Sign-off & Community Guarantee
+Every line of code and schema is permissive, FOSS/MIT licensed, and intended to keep words, stories, and wisdom decentralized and accessible.
 
-- **Windows Executable**: PyInstaller compilation via `build_exe.py` targeting `OpenlibExtended.exe`.
-- **Android APK**: Native Gradle pipeline exporting `${applicationId}_v${versionName}_${buildType}.apk` to Google Drive `G:\My Drive\myapks`.
-- **CI/CD**: GitHub Actions workflow `.github/workflows/release_builds.yml` automating cross-platform build artifacts.
+```text
+       _                        
+       \`*-.                    
+        )  _`-.                 
+       .  : `. .                
+       : _   '  \               
+       ; *` _.   `*-._          
+       `-.-'          `-.       
+         ;       `       `.     
+         :.       .        \    
+         . \  .   :   .-'   .   
+         '  `+.;  ;  '      :   
+         :  '  |    ;       ;-. 
+         ; '   : :`-:     _.`* ;
+      .*' /  .*' ; .*`- +'  `*' 
+      `*-*   `*-*  `*-*'        
+   🐾 🐾 🐾 WORDS ARE MAGIC 🐾 🐾 🐾
+```
 
----
-*Maintained with Antigravity AI Pair Programmer & Kawaiian KawaiiNekoty 🌸*
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
