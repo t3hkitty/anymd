@@ -15,6 +15,23 @@ Local-first markdown database engine with WebDAV cloud indexer, OPDS catalog, FO
 
 ---
 
+## 🌟 OpenlibExtended & Archival Contribution Engine
+
+> *A decentralized metadata resolution and indexing pipeline designed to turn scrambled, unindexed raw torrent dumps and seedbox archives into clean, structured, searchable records.*
+
+### 🤖 AI Token Contribution Statement
+**This dataset, metadata structure, and associated tooling were generated, refined, and organized utilizing AI assistant tokens as a personal contribution to the world's most complete directory of written artifacts.** 
+
+Every structured entry and mapping index represents an effort to bring clarity, discoverability, and accessibility to open-source archival preservation.
+
+### 🛠️ Core Features
+- **Universal Directory Watcher**: Scans local mounts, seedboxes, or network shares to profile and categorize files on demand.
+- **SQLite Mapping & Contribution Dumps**: Generates lightweight, queryable `.db` manifests linking file hashes, extracted metadata, and confidence scores.
+- **Selective Vault Filtering**: Automatically separates personal reading whitelist genres (LitRPG, Danmei, Romance, Sci-Fi/Fantasy) from archival contribution indexes to preserve storage.
+- **Calibre CLI & Sidecar Integration**: Automatically builds YAML frontmatter sidecars and maintains pristine EPUB structures.
+
+---
+
 ## 🏛️ Master Architecture & SQLite Vault (`Z:\kittlib\metadata.db`)
 
 ### Unified Table Definitions
@@ -114,6 +131,32 @@ CREATE TABLE IF NOT EXISTS master_zettelkasten_index (
     yaml_sidecar_path TEXT,
     content_hash TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 8. Torrent File Mapping & Contribution Engine
+CREATE TABLE IF NOT EXISTS torrent_file_mapping (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    torrent_hash TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    file_size INTEGER,
+    extracted_title TEXT,
+    extracted_author TEXT,
+    confidence_score REAL,
+    matched_genre TEXT,
+    status TEXT DEFAULT 'indexed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 9. Directory Profiler & Heuristic Classifier
+CREATE TABLE IF NOT EXISTS directory_profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_path TEXT UNIQUE NOT NULL,
+    filename TEXT,
+    inferred_author TEXT,
+    inferred_title TEXT,
+    detected_genre TEXT,
+    file_size_mb REAL,
+    status TEXT DEFAULT 'unprocessed'
 );
 ```
 
