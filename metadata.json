@@ -1,0 +1,6 @@
+{
+  "name": "Zettlr FOSS Workspace",
+  "description": "Zettlr-inspired professional open-source markdown editor and Zettelkasten research workspace",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

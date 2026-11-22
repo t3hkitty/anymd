@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Package, Trash2, Send, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Package, Trash2, Send, Plus, Zap } from 'lucide-react';
 
 interface MbbQuickActionZippyProps {
   onAddSamples: () => void;
   onPurgeAll: () => void;
   onExportZip: () => void;
   onDeployAgv: () => void;
+  onOpenZettlr?: () => void;
 }
 
 export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
@@ -13,6 +14,7 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
   onPurgeAll,
   onExportZip,
   onDeployAgv,
+  onOpenZettlr,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -23,7 +25,7 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
         className="w-full flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800 text-xs font-mono text-neutral-300 hover:text-neutral-100 transition-colors"
       >
         <span className="flex items-center space-x-2">
-          <span>🐾 MBB (My Black Box) Micrologging - "Why did the ship go down?" Event Telemetry</span>
+          <span>🐾 MBB (My Black Box) Micrologging & Zettlr FOSS Research Hub</span>
         </span>
         {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
@@ -32,12 +34,21 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
         <div className="p-4 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-neutral-950/20">
           <div className="text-[10px] text-neutral-500 font-mono hidden md:block">
             <pre className="leading-tight text-neutral-400">
-{`   /\\_/\\    MBB (My Black Box) Flight Recorder
-  ( o.o )   Tracing prompt failures, crash states,
-   > ^ <    and microlog companion telemetry.`}
+              {`   /\\_/\\    Zettlr FOSS & MBB Flight Recorder
+   ( o.o )   Academic Markdown, Citations & Telemetry
+    > ^ <    Open-Source Research Workspace.`}
             </pre>
           </div>
           <div className="flex flex-wrap gap-2">
+            {onOpenZettlr && (
+              <button
+                onClick={onOpenZettlr}
+                className="flex items-center space-x-1.5 bg-indigo-950/50 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer font-bold shadow-lg shadow-indigo-500/20"
+              >
+                <Zap size={12} />
+                <span>⚡ Zettlr FOSS Workspace</span>
+              </button>
+            )}
             <button
               onClick={onAddSamples}
               className="flex items-center space-x-1.5 bg-neutral-900 hover:bg-emerald-950/30 hover:text-emerald-400 border border-neutral-800 hover:border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-mono text-neutral-300 transition-all cursor-pointer"
@@ -72,3 +83,4 @@ export const MbbQuickActionZippy: React.FC<MbbQuickActionZippyProps> = ({
     </div>
   );
 };
+

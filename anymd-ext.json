@@ -1,0 +1,17 @@
+{
+  "extensionName": "AnyMD Core Extension Registry",
+  "version": "1.0.0",
+  "hooks": [
+    "onFileDiscovered",
+    "onSidecarWrite",
+    "onShardCompact",
+    "onQueryTranslate",
+    "onCloudSync"
+  ],
+  "registeredExtensions": [
+    "librmanage",
+    "plugin-vault-roomba",
+    "plugin-ocr-transcriber",
+    "plugin-n8n-bridge"
+  ]
+}

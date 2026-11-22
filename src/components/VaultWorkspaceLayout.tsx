@@ -48,6 +48,7 @@ import { PASourcingModal } from './PASourcingModal';
 import { BookmarkletModal } from './BookmarkletModal';
 import { CalibreImportModal } from './CalibreImportModal';
 import { VaultBackupRestoreModal } from './VaultBackupRestoreModal';
+import { ZettlrWorkspaceModal } from './ZettlrWorkspaceModal';
 import { CommunityHubView } from './CommunityHubView';
 import { Grid } from 'lucide-react';
 
@@ -278,6 +279,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [isCalibreImportOpen, setIsCalibreImportOpen] = useState(false);
   const [isVaultRestoreOpen, setIsVaultRestoreOpen] = useState(false);
   const [isExportShareOpen, setIsExportShareOpen] = useState(false);
+  const [isZettlrOpen, setIsZettlrOpen] = useState(false);
   const [showCommunityInline, setShowCommunityInline] = useState(false);
 
   // Synchronize bridge state changes
@@ -918,6 +920,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
           onPurgeAll={handlePurgeAll}
           onExportZip={handleExportZip}
           onDeployAgv={handleDeployAgv}
+          onOpenZettlr={() => setIsZettlrOpen(true)}
         />
 
         {/* Main tabs client view area */}
@@ -2603,6 +2606,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
       />
 
       <GeminiSparkPluginModal isOpen={isGeminiSparkOpen} onClose={() => setIsGeminiSparkOpen(false)} />
+      <ZettlrWorkspaceModal isOpen={isZettlrOpen} onClose={() => setIsZettlrOpen(false)} />
     </div>
   );
 };
