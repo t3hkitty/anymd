@@ -78,12 +78,13 @@ export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> =
 
   // Targeted rclone lsf State
   const [rcloneRawText, setRcloneRawText] = useState(
-    'Frank Herbert/Dune/Dune.epub;2411724;2026-08-15T14:22:00Z\n' +
-    'Brandon Sanderson/The_Way_of_Kings.epub;3518290;2026-08-14T09:15:00Z\n' +
-    'Dan Simmons/Hyperion.pdf;1842000;2026-07-20T12:00:00Z\n' +
-    'Martha Wells/All_Systems_Red.epub;824100;2026-08-10T11:45:00Z'
+    'Frank Herbert/Dune/Dune.epub;2411724;2026-08-15T14:22:00Z;e3b0c44298fc1c149afbf4c8996fb924;obj-901;;application/epub+zip;;Hot;{"publisher":"Chilton Books"}\n' +
+    'Brandon Sanderson/The_Way_of_Kings.epub;3518290;2026-08-14T09:15:00Z;c8b12f4581a0293d01823ab234c90182;obj-902;;application/epub+zip;;Hot;{"series":"The Stormlight Archive"}\n' +
+    'Dan Simmons/Hyperion.pdf;1842000;2026-07-20T12:00:00Z;d41d8cd98f00b204e9800998ecf8427e;obj-903;;application/pdf;;Cool;\n' +
+    'Martha Wells/All_Systems_Red.epub;824100;2026-08-10T11:45:00Z;7d793037a0760186574b0282f2f435e7;obj-904;;application/epub+zip;;Hot;{"series":"The Murderbot Diaries"}'
   );
   const [rcloneTargetRemote, setRcloneTargetRemote] = useState('gdrive-cold:AnyMD_Library');
+  const [rcloneFormatTokens, setRcloneFormatTokens] = useState('psthiomeTM');
   const [rcloneSeparator, setRcloneSeparator] = useState(';');
   const [rcloneDetectedCount, setRcloneDetectedCount] = useState<number | null>(null);
 
@@ -495,7 +496,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     setImportProgress(10);
 
     const bundleSerial = generateBundleSerial('RCLONE');
-    const parsedItems = parseRcloneLsfOutput(rcloneRawText, rcloneSeparator);
+    const parsedItems = parseRcloneLsfOutput(rcloneRawText, rcloneSeparator, rcloneFormatTokens);
     const validFiles = parsedItems.filter(i => !i.isDir);
     setRcloneDetectedCount(validFiles.length);
 
@@ -1219,7 +1220,7 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <div className="sm:col-span-2">
                   <label className="text-[11px] text-slate-400 block mb-1">Target Remote Path:</label>
                   <input
@@ -1228,6 +1229,16 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                     onChange={(e) => setRcloneTargetRemote(e.target.value)}
                     placeholder="gdrive-cold:Books or nextcloud:Library"
                     className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-slate-400 block mb-1">Format Tokens:</label>
+                  <input
+                    type="text"
+                    value={rcloneFormatTokens}
+                    onChange={(e) => setRcloneFormatTokens(e.target.value)}
+                    placeholder="psthimTeM"
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs"
                   />
                 </div>
                 <div>
@@ -1247,10 +1258,10 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-[11px] text-slate-400">
-                    Paste <code>rclone lsf</code> Output:
+                    Paste <code>rclone lsf</code> or <code>lsjson</code> Output:
                   </label>
                   <span className="text-[10px] text-slate-500">
-                    Format: <code>path;size;modTime</code>
+                    Tokens: <code>p:path, s:size, t:time, h:hash, i:id, m:mime, T:tier, M:meta</code>
                   </span>
                 </div>
                 <textarea
@@ -1264,9 +1275,9 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
 
               <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
                 <div className="text-[11px] text-slate-400">
-                  <span className="text-slate-300 font-bold">Suggested Shell Command:</span><br />
+                  <span className="text-slate-300 font-bold">Suggested Shell Command (Maximum Detail):</span><br />
                   <code className="text-amber-300 text-[10px]">
-                    rclone lsf "{rcloneTargetRemote}" --format "pst" --separator "{rcloneSeparator}" -R --files-only
+                    rclone lsf "{rcloneTargetRemote}" --format "{rcloneFormatTokens}" --separator "{rcloneSeparator}" -R --files-only
                   </code>
                 </div>
                 <button
