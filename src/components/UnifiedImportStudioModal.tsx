@@ -7,6 +7,13 @@ import { scanMultipleIndividualPhotos, convertScannedCardsToVaultItems } from '.
 import { importVaultZipArchive, type VaultZipImportResult } from '../plugins/vaultZipImportPlugin';
 import { verifyAndUnlockVaultSession } from '../plugins/vaultSessionLockPlugin';
 import { convertVodToVaultItem, detectPlatformAndThumbnail, type VodPlatform } from '../plugins/vodImporterPlugin';
+import { TimedProgressIndicator } from './TimedProgressIndicator';
+import {
+  parseRcloneLsfOutput,
+  generateSidecarsFromLsf,
+  type SidecarGenerationProgress
+} from '../core/rcloneLsfSidecarEngine';
+import { defaultHostInstance } from '../../contracts/libr-contract';
 import {
   X,
   Upload,
@@ -25,7 +32,9 @@ import {
   ListOrdered,
   Link as LinkIcon,
   Lock,
-  KeyRound
+  KeyRound,
+  Terminal,
+  Layers
 } from 'lucide-react';
 
 interface UnifiedImportStudioModalProps {
@@ -47,18 +56,36 @@ function generateBundleSerial(prefix: string = 'BUNDLE'): string {
 
 export const UnifiedImportStudioModal: React.FC<UnifiedImportStudioModalProps> = ({
   isOpen,
+  relLinkRoot = './Library',
+  accounts = [],
   onClose,
   onImportBooks,
   onProceedToVerification,
   onRestoreCloudAccounts
 }) => {
-  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'vod_streams' | 'vault_zip_restore'>('insurance');
+  const [activeTab, setActiveTab] = useState<'insurance' | 'cards' | 'annas_archive' | 'reading_lists' | 'novelupdates' | 'folder_scan' | 'rclone_lsf' | 'vod_streams' | 'vault_zip_restore'>('insurance');
   const zipBackupInputRef = useRef<HTMLInputElement | null>(null);
 
   // Processing & Progress Bar State
   const [isProcessing, setIsProcessing] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [processingStatusText, setProcessingStatusText] = useState('');
+  const [progressDetails, setProgressDetails] = useState<{ current: number; total: number; etaSeconds: number }>({
+    current: 0,
+    total: 0,
+    etaSeconds: 45
+  });
+
+  // Targeted rclone lsf State
+  const [rcloneRawText, setRcloneRawText] = useState(
+    'Frank Herbert/Dune/Dune.epub;2411724;2026-08-15T14:22:00Z\n' +
+    'Brandon Sanderson/The_Way_of_Kings.epub;3518290;2026-08-14T09:15:00Z\n' +
+    'Dan Simmons/Hyperion.pdf;1842000;2026-07-20T12:00:00Z\n' +
+    'Martha Wells/All_Systems_Red.epub;824100;2026-08-10T11:45:00Z'
+  );
+  const [rcloneTargetRemote, setRcloneTargetRemote] = useState('gdrive-cold:AnyMD_Library');
+  const [rcloneSeparator, setRcloneSeparator] = useState(';');
+  const [rcloneDetectedCount, setRcloneDetectedCount] = useState<number | null>(null);
 
   // 1. Home Insurance State
   const [insuranceRoom, setInsuranceRoom] = useState('Master Library & Study');
@@ -459,6 +486,66 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
     }, 1000);
   };
 
+  // 6B. Targeted rclone lsf Fast Sidecar Import Handler
+  const handleRcloneLsfImport = async () => {
+    if (!rcloneRawText.trim()) return;
+
+    setIsProcessing(true);
+    setProcessingStatusText('Parsing targeted rclone lsf listing...');
+    setImportProgress(10);
+
+    const bundleSerial = generateBundleSerial('RCLONE');
+    const parsedItems = parseRcloneLsfOutput(rcloneRawText, rcloneSeparator);
+    const validFiles = parsedItems.filter(i => !i.isDir);
+    setRcloneDetectedCount(validFiles.length);
+
+    defaultHostInstance.log({
+      level: 'info',
+      source: 'rclone-import',
+      stage: 'catalog_read',
+      message: `Targeted rclone lsf detected ${validFiles.length} files. Initiating fast .anymd sidecar generation.`,
+      meta: { detectedCount: validFiles.length, remote: rcloneTargetRemote }
+    });
+
+    try {
+      const generatedBooks = await generateSidecarsFromLsf(
+        parsedItems,
+        relLinkRoot,
+        (p: SidecarGenerationProgress) => {
+          setImportProgress(p.percent);
+          setProgressDetails({
+            current: p.currentProcessed,
+            total: p.totalDetected,
+            etaSeconds: p.etaSeconds
+          });
+          const mins = Math.ceil(p.etaSeconds / 60);
+          setProcessingStatusText(`Detected ${p.totalDetected} files • importing #${p.currentProcessed}/${p.totalDetected} (~${mins}m left)`);
+        }
+      );
+
+      // Append bundle serial tag to generated books
+      const taggedBooks = generatedBooks.map(b => ({
+        ...b,
+        sidecarMarkdown: b.sidecarMarkdown + `\n> [!note] ZK Import Bundle: \`${bundleSerial}\`\n`
+      }));
+
+      onImportBooks(taggedBooks, bundleSerial.toLowerCase());
+      defaultHostInstance.log({
+        level: 'info',
+        source: 'rclone-import',
+        stage: 'sidecar_gen',
+        message: `Imported ${taggedBooks.length} books into library with bundle tag ${bundleSerial.toLowerCase()}`,
+        meta: { count: taggedBooks.length, bundleSerial }
+      });
+
+      setIsProcessing(false);
+      onClose();
+    } catch (err: any) {
+      setIsProcessing(false);
+      alert(`Error during rclone lsf processing: ${err?.message || err}`);
+    }
+  };
+
   // 7. Vault Backup ZIP Import Handler
   const handleZipBackupUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -576,25 +663,17 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
           </button>
         </div>
 
-        {/* ⚡ ACTIVE PROCESSING PROGRESS BAR */}
+        {/* ⚡ ACTIVE PROCESSING PROGRESS BAR (Anti-Slop Timed Progressive Indicator) */}
         {isProcessing && (
-          <div className="px-6 py-3 bg-slate-950 border-b border-indigo-500/40 shadow-inner space-y-2 font-mono animate-fadeIn">
-            <div className="flex items-center justify-between text-indigo-300 font-bold text-xs">
-              <span className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-                <span>{processingStatusText || 'Synthesizing Sidecars & Zettelkasten Bundle Serials...'}</span>
-              </span>
-              <span className="text-amber-300 text-sm">{importProgress}%</span>
-            </div>
-            <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-800">
-              <div
-                className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 h-full rounded-full transition-all duration-300 shadow-md shadow-indigo-500/50"
-                style={{ width: `${importProgress}%` }}
-              />
-            </div>
-            <p className="text-[10px] text-slate-400">
-              Allocating identical Zettelkasten serial across all bundle sidecars &bull; Auto-filtering Library view upon completion.
-            </p>
+          <div className="px-6 py-3 bg-slate-950 border-b border-indigo-500/40 shadow-inner">
+            <TimedProgressIndicator
+              currentCount={progressDetails.current}
+              totalCount={progressDetails.total}
+              percent={importProgress}
+              statusText={processingStatusText || 'Synthesizing Sidecars & Zettelkasten Bundle Serials...'}
+              stageLabel="Targeted rclone lsf"
+              estimatedTotalSeconds={progressDetails.etaSeconds || 45}
+            />
           </div>
         )}
 
@@ -671,6 +750,18 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
           >
             <FolderPlus className="w-3.5 h-3.5 text-sky-400" />
             <span>📁 Local Folder Sync</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('rclone_lsf')}
+            className={`px-4 py-2 font-bold rounded-t-xl transition-all border-b-2 flex items-center space-x-1.5 ${
+              activeTab === 'rclone_lsf'
+                ? 'border-cyan-400 text-cyan-300 bg-slate-900'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+            <span>⚡ Rclone LSF Quick Sidecars</span>
           </button>
 
           <button
@@ -1110,6 +1201,81 @@ Local file size: ${(item.size / 1024 / 1024).toFixed(2)} MB
                   className="px-6 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-lg shadow-sky-600/20"
                 >
                   📁 Select Folder on Hard Drive
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6B: TARGETED RCLONE LSF QUICK SIDECARS */}
+          {activeTab === 'rclone_lsf' && (
+            <div className="space-y-4 animate-fadeIn font-mono text-xs">
+              <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-2 font-sans">
+                <span className="font-bold text-cyan-300 flex items-center space-x-1.5 text-xs font-mono">
+                  <Terminal className="w-4 h-4 text-cyan-400" />
+                  <span>Targeted Rclone LSF Quick Sidecar Generator</span>
+                </span>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Run <code>rclone lsf remote:path --format "pst" --separator ";"</code> in terminal or paste the listing below. Rapidly synthesizes <code>.anymd</code> YAML companion sidecars across thousands of items with live progress and zero freeze.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="text-[11px] text-slate-400 block mb-1">Target Remote Path:</label>
+                  <input
+                    type="text"
+                    value={rcloneTargetRemote}
+                    onChange={(e) => setRcloneTargetRemote(e.target.value)}
+                    placeholder="gdrive-cold:Books or nextcloud:Library"
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-cyan-300 font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-slate-400 block mb-1">Separator:</label>
+                  <select
+                    value={rcloneSeparator}
+                    onChange={(e) => setRcloneSeparator(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 font-mono text-xs"
+                  >
+                    <option value=";">Semicolon (;)</option>
+                    <option value=",">Comma (,)</option>
+                    <option value="\t">Tab</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[11px] text-slate-400">
+                    Paste <code>rclone lsf</code> Output:
+                  </label>
+                  <span className="text-[10px] text-slate-500">
+                    Format: <code>path;size;modTime</code>
+                  </span>
+                </div>
+                <textarea
+                  value={rcloneRawText}
+                  onChange={(e) => setRcloneRawText(e.target.value)}
+                  placeholder="Author/Title/Book.epub;1048576;2026-08-15T00:00:00Z"
+                  rows={6}
+                  className="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                <div className="text-[11px] text-slate-400">
+                  <span className="text-slate-300 font-bold">Suggested Shell Command:</span><br />
+                  <code className="text-amber-300 text-[10px]">
+                    rclone lsf "{rcloneTargetRemote}" --format "pst" --separator "{rcloneSeparator}" -R --files-only
+                  </code>
+                </div>
+                <button
+                  onClick={handleRcloneLsfImport}
+                  disabled={isProcessing || !rcloneRawText.trim()}
+                  className="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs shadow-md shadow-cyan-600/30 flex items-center space-x-1.5"
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>⚡ Fast-Generate Sidecars</span>
                 </button>
               </div>
             </div>

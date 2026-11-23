@@ -9,6 +9,7 @@ import {
   fetchWebDAVDirectoryItems
 } from '../plugins/webdavIndexerPlugin';
 import { RemoteCloudBrowserModal } from './RemoteCloudBrowserModal';
+import { TimedProgressIndicator } from './TimedProgressIndicator';
 import { X, Cloud, RefreshCw, Folder, FileText, Download, Upload, Server, AlertCircle, CheckCircle, FolderSync, Terminal, Activity, HardDrive, Copy, Sparkles, Puzzle, Trash2 } from 'lucide-react';
 
 interface WebDAVIndexerModalProps {
@@ -312,25 +313,14 @@ Filejump_Meow_Guide.pdf`);
             </div>
           </div>
 
-          {/* ⚡ Sims Loading Screen Reticulating Splines & Ragebait Announcer Ticker */}
+          {/* ⚡ Sims Loading Screen Reticulating Splines & Ragebait Announcer Ticker (Anti-Slop Timed Progressive Indicator) */}
           {isLoading && (
-            <div className="p-4 rounded-2xl bg-indigo-950/80 border border-indigo-500/60 space-y-2 animate-pulse">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-amber-300 flex items-center space-x-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-                  <span>{reticulatorMsg}</span>
-                </span>
-                <span className="text-slate-300">Elapsed: {elapsedSeconds}s (ETA: ~{Math.max(0.5, (12 - elapsedSeconds)).toFixed(1)}s)</span>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-indigo-500/40">
-                <div
-                  className="bg-gradient-to-r from-amber-400 via-rose-400 to-sky-400 h-2.5 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
+            <TimedProgressIndicator
+              percent={progressPercent}
+              statusText={reticulatorMsg}
+              stageLabel="WebDAV Ingest"
+              estimatedTotalSeconds={45}
+            />
           )}
 
           {/* Transparent Live Sync Action Console Log */}
