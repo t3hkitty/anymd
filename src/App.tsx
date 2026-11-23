@@ -116,6 +116,11 @@ import {
   type VaultMode
 } from './plugins/sandboxVaultPlugin';
 import { buildBlackBoxDailyJournalBook, loadRunningLitany } from './plugins/runningLitanyWatchdogPlugin';
+import {
+  getStoredReadingPosition,
+  saveReadingPosition,
+  migrateLegacyReadingProgressKeys
+} from './utils/readingProgressMigrator';
 
 // Icons
 import {
@@ -444,6 +449,30 @@ export function App() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const activeBook = books.find(b => b.id === activeBookId) || books[0] || SAMPLE_BOOKS[0];
+
+  // One-time startup migration of legacy URL-keyed progress to canonical IDs
+  useEffect(() => {
+    if (books && books.length > 0) {
+      migrateLegacyReadingProgressKeys(books);
+    }
+  }, []);
+
+  // Restore reading position when active book changes
+  useEffect(() => {
+    if (activeBook) {
+      const savedPos = getStoredReadingPosition(activeBook);
+      if (savedPos) {
+        if (typeof savedPos.chapterIndex === 'number' && savedPos.chapterIndex >= 0) {
+          const maxChapter = (activeBook.chapters?.length || 1) - 1;
+          setCurrentChapterIndex(Math.min(savedPos.chapterIndex, maxChapter));
+        }
+        if (typeof savedPos.paragraphIndex === 'number' && savedPos.paragraphIndex >= 0) {
+          setCurrentParagraphIndex(savedPos.paragraphIndex);
+        }
+      }
+    }
+  }, [activeBookId]);
+
   const currentChapter = activeBook?.chapters[currentChapterIndex] || activeBook?.chapters[0] || SAMPLE_BOOKS[0].chapters[0];
 
   // Calculate live progress percentage
@@ -469,6 +498,35 @@ export function App() {
       paragraphSnippet: currentChapter?.paragraphs[currentParagraphIndex] || ''
     };
   }, [currentCfi, liveProgressPercent, currentChapterIndex, currentChapter, currentParagraphIndex]);
+
+  const handleChapterChange = (idx: number) => {
+    setCurrentChapterIndex(idx);
+    setCurrentParagraphIndex(0);
+    if (activeBook) {
+      saveReadingPosition(activeBook, {
+        cfi: activeBook.chapters?.[idx]?.cfiBase || 'epubcfi(/6/2[chapter]!/4/1:0)',
+        progressPercent: liveProgressPercent,
+        chapterIndex: idx,
+        chapterTitle: activeBook.chapters?.[idx]?.title || `Chapter ${idx + 1}`,
+        paragraphIndex: 0,
+        paragraphSnippet: activeBook.chapters?.[idx]?.paragraphs?.[0] || ''
+      });
+    }
+  };
+
+  const handleParagraphSelect = (idx: number) => {
+    setCurrentParagraphIndex(idx);
+    if (activeBook) {
+      saveReadingPosition(activeBook, {
+        cfi: currentCfi,
+        progressPercent: liveProgressPercent,
+        chapterIndex: currentChapterIndex,
+        chapterTitle: currentChapter?.title || 'Chapter 1',
+        paragraphIndex: idx,
+        paragraphSnippet: currentChapter?.paragraphs[idx] || ''
+      });
+    }
+  };
 
   const handleOpenQuickCapture = (overridePos?: ReadingPosition) => {
     if (pluginState.localAccessMode === 'read-only') {
@@ -1337,11 +1395,8 @@ date_cataloged: "${new Date().toISOString()}"
                 activeTargetCfi={activeTargetCfi}
                 readerTheme={readerTheme}
                 fontSize={fontSize}
-                onChapterChange={(idx) => {
-                  setCurrentChapterIndex(idx);
-                  setCurrentParagraphIndex(0);
-                }}
-                onParagraphSelect={(idx) => setCurrentParagraphIndex(idx)}
+                onChapterChange={handleChapterChange}
+                onParagraphSelect={handleParagraphSelect}
                 onOpenQuickCapture={handleOpenQuickCapture}
                 onOpenAcquisitionModal={() => setIsAcquisitionModalOpen(true)}
                 onThemeChange={setReaderTheme}
@@ -1386,11 +1441,8 @@ date_cataloged: "${new Date().toISOString()}"
               activeTargetCfi={activeTargetCfi}
               readerTheme={readerTheme}
               fontSize={fontSize}
-              onChapterChange={(idx) => {
-                setCurrentChapterIndex(idx);
-                setCurrentParagraphIndex(0);
-              }}
-              onParagraphSelect={(idx) => setCurrentParagraphIndex(idx)}
+              onChapterChange={handleChapterChange}
+              onParagraphSelect={handleParagraphSelect}
               onOpenQuickCapture={handleOpenQuickCapture}
               onOpenAcquisitionModal={() => setIsAcquisitionModalOpen(true)}
               onThemeChange={setReaderTheme}

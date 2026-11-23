@@ -1,9 +1,14 @@
 import JSZip from 'jszip';
 import type { Book } from '../types/resonance';
-import { cleanMeowFilename, buildCompanionSidecarHeader } from '../utils/pathResolver';
+import { cleanMeowFilename, buildCompanionSidecarHeader, fetchEbookViaSafeProxy } from '../utils/pathResolver';
+import { defaultHostInstance } from '../../contracts/libr-contract';
 
-export async function parseEpubFile(file: File, relLinkRoot: string = './Library'): Promise<Book> {
-  const zip = await JSZip.loadAsync(file);
+export async function parseEpubBuffer(
+  buffer: ArrayBuffer,
+  fileName: string,
+  relLinkRoot: string = './Library'
+): Promise<Book> {
+  const zip = await JSZip.loadAsync(buffer);
   
   // 1. Locate container.xml
   const containerFile = zip.file('META-INF/container.xml');
@@ -19,7 +24,7 @@ export async function parseEpubFile(file: File, relLinkRoot: string = './Library
 
   // 2. Read OPF
   const opfFile = zip.file(opfPath);
-  let title = file.name.replace(/\.epub$/i, '');
+  let title = fileName.replace(/\.epub$/i, '');
   let author = 'Unknown Author';
   let coverColor = '#6366f1';
 
@@ -71,7 +76,7 @@ export async function parseEpubFile(file: File, relLinkRoot: string = './Library
       title: 'Chapter 1: Opening Narrative',
       cfiBase: 'epubcfi(/6/4[chap01]!',
       paragraphs: [
-        `Extracted from meow file ${file.name}.`,
+        `Extracted from meow file ${fileName}.`,
         'The journey begins with raw unfiltered reader resonance.'
       ]
     });
@@ -91,5 +96,73 @@ export async function parseEpubFile(file: File, relLinkRoot: string = './Library
     resonanceStream: [],
     sidecarMarkdown: sidecarHeader + `## Reader Resonance Stream\n`,
     chapters
+  };
+}
+
+export async function parseEpubFile(file: File, relLinkRoot: string = './Library'): Promise<Book> {
+  const buffer = await file.arrayBuffer();
+  return parseEpubBuffer(buffer, file.name, relLinkRoot);
+}
+
+/**
+ * Safely fetches remote or WebDAV EPUB via CORS proxy and parses it into a Book.
+ * Never throws unparsed '#' text into reader if CORS fails or host is unreachable.
+ */
+export async function loadRemoteEbookSafely(
+  url: string,
+  fileName: string = 'remote_ebook.epub',
+  relLinkRoot: string = './Library',
+  credentials?: { username?: string; password?: string; apiKey?: string }
+): Promise<Book> {
+  defaultHostInstance.log({
+    level: 'info',
+    source: 'epub-loader',
+    stage: 'fetch',
+    message: `Initiating safe proxy load for remote ebook: ${url}`,
+    meta: { url, fileName }
+  });
+
+  const res = await fetchEbookViaSafeProxy(url, credentials);
+
+  if (res.success && res.buffer) {
+    try {
+      const book = await parseEpubBuffer(res.buffer, fileName, relLinkRoot);
+      book.externalReaderUri = url;
+      return book;
+    } catch (parseErr: any) {
+      defaultHostInstance.log({
+        level: 'warn',
+        source: 'epub-loader',
+        stage: 'fallback_stub',
+        message: `EPUB zip unpack failed for ${url}: ${parseErr?.message || parseErr}. Returning clean fallback notice.`,
+        meta: { error: String(parseErr) }
+      });
+    }
+  }
+
+  // Graceful fallback structure (No raw '#' dumps!)
+  const cleanTitle = fileName.replace(/\.epub$/i, '') || 'Remote Ebook';
+  return {
+    id: `remote-${Date.now()}`,
+    title: cleanTitle,
+    author: 'Remote Library',
+    coverColor: '#0284c7',
+    externalReaderUri: url,
+    totalChapters: 1,
+    currentChapterIndex: 0,
+    currentParagraphIndex: 0,
+    resonanceStream: [],
+    sidecarMarkdown: res.content || `# ${cleanTitle}\n\nNotice: Remote asset at ${url} could not be loaded directly.\n`,
+    chapters: [
+      {
+        title: 'Status: Remote Asset Notice',
+        cfiBase: 'epubcfi(/6/2[status]!',
+        paragraphs: [
+          `Remote file at "${url}" is temporarily unavailable or blocked by CORS headers.`,
+          'Your bookmarks, reading positions, and annotations remain safely preserved in local storage.',
+          'Connect to local rclone loopback proxy or WebDAV bridge to stream content directly.'
+        ]
+      }
+    ]
   };
 }
