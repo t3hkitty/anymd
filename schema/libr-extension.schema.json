@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/t3hkitty/kittlibr-exts/main/schema/libr-extension.schema.json",
+  "title": "KittlibrExtensionManifest",
+  "description": "Formal extension capability and manifest contract for Kittlibr reader shell and AnyMD plugin bundles.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "name",
+    "version",
+    "description",
+    "category",
+    "entrypoint"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "contractVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Version of the Libr Extension Contract (e.g. 1.0.0)"
+    },
+    "minHostVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Minimum Kittlibr host shell version required"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-_]+$",
+      "description": "Unique extension identifier in kebab-case or snake_case"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "description": "Human-readable extension title"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "SemVer version of the extension"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or maintainer signature"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 280,
+      "description": "Brief summary of what the extension provides"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "librget",
+        "librfind",
+        "librmanage",
+        "libr_ai",
+        "shelves",
+        "bridge"
+      ],
+      "description": "Primary role of the extension in the Kittlibr ecosystem"
+    },
+    "entrypoint": {
+      "type": "string",
+      "description": "Relative script path (e.g. ./index.js) or valid https:// module URL"
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "quickbar",
+          "book-menu",
+          "settings-panel",
+          "shelf-rule-provider"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "UI mount points where this extension injects controls or widgets"
+    },
+    "hooks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Events and broadcast channels listened to or dispatched"
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "network",
+              "local_storage",
+              "indexeddb",
+              "fsa_handle",
+              "file_picker"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "gemini_ai",
+              "rclone_rcd",
+              "webdav_proxy",
+              "audio_tts"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "description": "Hardware and environment requirements with explicit degradation declaration"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "description": "SHA-256 hash of the entrypoint file for tamper verification"
+        }
+      }
+    }
+  }
+}

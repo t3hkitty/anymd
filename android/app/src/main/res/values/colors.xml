@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kawaiianism Theme Colors -->
+    <color name="colorPrimary">#2E1A47</color>
+    <color name="colorPrimaryDark">#1E1E2E</color>
+    <color name="colorAccent">#EC4899</color>
+</resources>

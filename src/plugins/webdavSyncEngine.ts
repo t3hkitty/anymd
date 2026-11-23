@@ -1,6 +1,7 @@
 import type { CloudAccount } from '../types/cloudAccounts';
 import { parseWebDAVDirectoryXml } from './webdavIndexerPlugin';
 import { normalizeCloudServerUrl } from './cloudAccountManager';
+import { defaultHostInstance } from '../../contracts/libr-contract';
 
 export interface WebDAVTestResult {
   success: boolean;
@@ -11,6 +12,13 @@ export interface WebDAVTestResult {
 }
 
 export async function testRealWebDAVConnection(account: CloudAccount): Promise<WebDAVTestResult> {
+  defaultHostInstance.log({
+    level: 'debug',
+    source: 'webdav-sync',
+    stage: 'fetch',
+    message: `Initiating connection test for "${account.name}" (${account.presetId})`,
+    meta: { presetId: account.presetId, serverUrl: account.serverUrl }
+  });
   try {
     const targetUrl = normalizeCloudServerUrl(account.serverUrl, account.presetId);
     const headers: Record<string, string> = {

@@ -30,7 +30,7 @@ Rather than forcing users to switch tabs or split screens manually, the **AnyMD 
   ┌────────────────────────────────────────────────────────┐┌────────────────────────┐
   │                                                        ││ 📱 AnyMD Side Panel   │
   │  Twitch VOD (undiisclosed) / YouTube Video            ││                        │
-  │  https://www.twitch.tv/videos/2847299726              ││ 📚 [Primary] [Signal]  │
+  │  https://www.twitch.tv/videos/[REDACTED_PHONE]              ││ 📚 [Primary] [Signal]  │
   │                                                        │├────────────────────────┤
   │  ┌──────────────────────────────────────────────────┐  ││ 📥 Grab Active Tab    │
   │  │                                                  │  │├────────────────────────┤

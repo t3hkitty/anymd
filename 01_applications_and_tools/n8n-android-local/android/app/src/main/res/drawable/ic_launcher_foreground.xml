@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Geometric Blossom Ring -->
+    <path
+        android:strokeColor="#e040fb"
+        android:strokeWidth="2.5"
+        android:strokeAlpha="0.5"
+        android:pathData="M54,22 L77,31 L86,54 L77,77 L54,86 L31,77 L22,54 L31,31 Z" />
+    <path
+        android:strokeColor="#e040fb"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8"
+        android:pathData="M54,28 L72,36 L80,54 L72,72 L54,80 L36,72 L28,54 L36,36 Z" />
+    <!-- Pulse Telemetry Waveform -->
+    <path
+        android:strokeColor="#e040fb"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M24,54 H36 L42,38 L48,70 L54,46 L60,60 L66,54 H84" />
+    <!-- Glowing Center Nodes -->
+    <path
+        android:fillColor="#e040fb"
+        android:pathData="M42,38 A3,3 0 1,0 48,38 A3,3 0 1,0 42,38 M45,70 A3,3 0 1,0 51,70 A3,3 0 1,0 45,70 M51,46 A3,3 0 1,0 57,46 A3,3 0 1,0 51,46" />
+</vector>

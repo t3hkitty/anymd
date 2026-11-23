@@ -107,7 +107,7 @@ def render_plump_bitmap(size=512):
     return img
 
 def main():
-    root = r"c:\Users\lorik\.gemini\antigravity\scratch\anymd"
+    root = r"./vault"
     public_dir = os.path.join(root, "public")
     os.makedirs(public_dir, exist_ok=True)
 

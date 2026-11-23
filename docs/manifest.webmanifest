@@ -1,0 +1,55 @@
+{
+  "name": "anymd — sovereign markdown workspace & MBB engine",
+  "short_name": "anymd",
+  "description": "Local-first sovereign markdown workspace, MBB telemetry engine, and media library.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "anymd-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "share_title",
+      "text": "share_text",
+      "url": "share_url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "anymd Library",
+      "short_name": "Library",
+      "description": "Open your anymd library",
+      "url": "./#library",
+      "icons": [{ "src": "anymd-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "MBB Telemetry Engine",
+      "short_name": "MBB",
+      "description": "Open MyBlackBox telemetry dashboard",
+      "url": "./#blackbox",
+      "icons": [{ "src": "anymd-icon.svg", "sizes": "any" }]
+    }
+  ]
+}

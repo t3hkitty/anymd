@@ -68,6 +68,9 @@ interface SettingsDrawerProps {
   // Plugin System Props
   pluginState: PluginState;
   onTogglePlugin: (id: PluginId) => void;
+
+  // Diagnostics
+  onOpenDiagnosticLogs?: () => void;
 }
 
 export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
@@ -102,6 +105,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
 
   pluginState,
   onTogglePlugin,
+  onOpenDiagnosticLogs,
 }) => {
   const [pluginRepos, setPluginRepos] = useState<string[]>(loadSavedRepos);
   const [newRepoUrl, setNewRepoUrl] = useState('');
@@ -335,7 +339,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
         <section className="space-y-3">
           <h3 className="text-sky-400 font-bold border-b border-neutral-900 pb-1 flex items-center space-x-1.5">
             <HardDrive size={14} />
-            <span>Sync & Storage</span>
+            <span>Sync & Storage (Local-First Baseline)</span>
           </h3>
           <div className="space-y-2">
             <label className="flex items-center justify-between cursor-pointer">
@@ -354,11 +358,32 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                 onChange={(e) => onVaultLoadSourceChange('anymd-main', e.target.value)}
                 className="w-full bg-neutral-900 border border-neutral-800 rounded px-2 py-1 text-neutral-200 outline-none"
               >
-                <option value="local_storage">Local Sandbox Storage</option>
-                <option value="local_picker">Direct File System Folder</option>
+                <option value="local_storage">Local Sandbox Storage (Zero-Cloud)</option>
+                <option value="local_picker">Direct File System Folder (FSA / SAF)</option>
                 <option value="n8n_cloud">n8n Cloud Webhook</option>
               </select>
             </div>
+            <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-400 space-y-1">
+              <span className="text-emerald-400 font-bold block">🐾 Standalone Local-First Mode</span>
+              <p>
+                Runs with laptop turned off. Flat .md notes with YAML frontmatter and .anymd sidecars are saved directly on-device. Optional rclone daemon can be enabled in Vault Config.
+              </p>
+            </div>
+
+            {onOpenDiagnosticLogs && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenDiagnosticLogs();
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 text-xs font-bold font-mono flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <span>🐾 Open Diagnostic Logs &amp; Telemetry</span>
+                </button>
+              </div>
+            )}
           </div>
         </section>
       </div>

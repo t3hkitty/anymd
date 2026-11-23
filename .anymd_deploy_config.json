@@ -2,6 +2,6 @@
   "host": "147.224.55.189",
   "user": "ubuntu",
   "key_path": "C:\\Users\\lorik/.ssh/id_ed25519_ocpkit",
-  "dest": "/home/ubuntu/app",
+  "dest": "./vault",
   "source": "./"
 }

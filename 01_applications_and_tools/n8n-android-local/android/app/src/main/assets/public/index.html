@@ -244,7 +244,9 @@
               </div>
               <div class="form-group">
                 <label for="wh-payload">JSON Payload</label>
-                <textarea id="wh-payload" rows="3" placeholder='{"source": "android-local", "event": "manual-test", "timestamp": [REDACTED_PHONE]}'></textarea>
+                <div class="kawaii-chip-selector-group" data-config="true">
+  <div class="kawaii-chip-editor"  id="wh-payload" rows="3" placeholder='{"source": "android-local", "event": "manual-test", "timestamp": [REDACTED_PHONE]}'></div>
+</div>
               </div>
               <div class="webhook-actions">
                 <button type="button" class="btn btn-secondary" id="btn-fire-webhook">Send Webhook Request</button>

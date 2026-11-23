@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument("--user", default="ubuntu", help="Remote username.")
     parser.add_argument("--key", default=os.path.expanduser("~/.ssh/id_ed25519_ocpkit"), help="Path to local private key.")
     parser.add_argument("--source", default="./", help="Local directory path to sync.")
-    parser.add_argument("--dest", default="/home/ubuntu/app", help="Remote destination path.")
+    parser.add_argument("--dest", default="./vault", help="Remote destination path.")
     parser.add_argument("--dry-run", action="store_true", help="Perform a dry run without modifying files.")
     return parser.parse_args()
 

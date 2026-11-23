@@ -1,0 +1,28 @@
+{
+  "$schema": "../../schema/libr-extension.schema.json",
+  "contractVersion": "1.0.0",
+  "minHostVersion": "1.0.0",
+  "id": "librfind-openlibrary",
+  "name": "OpenLibrary Metadata & Cover Finder",
+  "version": "1.0.0",
+  "author": "t3hkitty",
+  "description": "Searches OpenLibrary for book metadata, ISBN, author bios, and covers with safe offline cached fallback.",
+  "category": "librfind",
+  "entrypoint": "./index.js",
+  "slots": [
+    "quickbar",
+    "book-menu"
+  ],
+  "hooks": [
+    "kittlibr://capture",
+    "org.anymd.broadcast.UNIFIED_FIREHOSE"
+  ],
+  "capabilities": {
+    "required": [
+      "local_storage"
+    ],
+    "optional": [
+      "network"
+    ]
+  }
+}

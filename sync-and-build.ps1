@@ -1,41 +1,51 @@
-# sync-and-build.ps1
+﻿# sync-and-build.ps1
 # Automates the entire Capacitor sync and Android build process.
 # Place this script in your active AGV workspace scratch folder.
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🛸 Starting Autopilot Build & Sync Pipeline..." -ForegroundColor Cyan
+Write-Host "🐾 Starting Autopilot Build and Sync Pipeline..." -ForegroundColor Cyan
 
 # 1. Force clear dynamic lock files to prevent AGV thread stalls
-Write-Host "[1/4] Clearing stale AGV workspace cache locks..." -ForegroundColor Gray
-Remove-Item -Recurse -Force "*.lock" -ErrorAction SilentlyContinue
+Write-Host "[1/4] Clearing stale workspace cache locks..." -ForegroundColor Gray
+Get-ChildItem -Path . -Recurse -Filter "*.lock" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
 
 # 2. Compile Web Assets
-Write-Host "[2/4] Compiling React static assets (npm run build)..." -ForegroundColor Yellow
-npm run build
+Write-Host "[2/4] Compiling React static assets with Vite..." -ForegroundColor Yellow
+npx vite build
 
 # 3. Synchronize with Native Android wrapper
 Write-Host "[3/4] Syncing web assets with Capacitor Android project..." -ForegroundColor Yellow
 npx cap sync android
 
-# 4. Compile APK & Deploy to Google Drive Target
+# 4. Compile APK & Deploy
 Write-Host "[4/5] Compiling Android APK with Gradle..." -ForegroundColor Yellow
 if (Test-Path "android\gradlew.bat") {
-    Set-Location android
-    .\gradlew.bat assembleDebug
-    Set-Location ..
+    Push-Location android
+    try {
+        .\gradlew.bat assembleDebug
+    } finally {
+        Pop-Location
+    }
     
     $apkPath = "android\app\build\outputs\apk\debug\app-debug.apk"
     $targetDir = "G:\My Drive\myapks"
     if (Test-Path $apkPath) {
-        if (-not (Test-Path $targetDir)) {
-            New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+        try {
+            if (Test-Path "G:\") {
+                if (-not (Test-Path $targetDir)) {
+                    New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+                }
+                Copy-Item -Path $apkPath -Destination "$targetDir\anymd-mobile-telemetry.apk" -Force -ErrorAction SilentlyContinue
+                Write-Host "📦 APK copied to Google Drive: $targetDir\anymd-mobile-telemetry.apk" -ForegroundColor Green
+            } else {
+                Write-Host "📦 Standalone APK ready locally at: $apkPath (Drive G:\ offline)" -ForegroundColor Green
+            }
+        } catch {
+            Write-Host "📦 Standalone APK ready locally at: $apkPath" -ForegroundColor Green
         }
-        Copy-Item -Path $apkPath -Destination "$targetDir\anymd-mobile-telemetry.apk" -Force
-        Write-Host "📦 APK copied to G:\My Drive\myapks\anymd-mobile-telemetry.apk" -ForegroundColor Green
     }
 }
 
 # 5. Success Confirmation
-Write-Host "`n🌸 Build, Sync & APK Deployment completed successfully! (=^.^=)" -ForegroundColor Green
-Write-Host "👉 Mobile Telemetry Collector Service bundled and exported to G:\My Drive\myapks\anymd-mobile-telemetry.apk" -ForegroundColor Cyan
+Write-Host "`n🌸 Build, Sync, and APK compilation completed successfully! (=^.^=)" -ForegroundColor Green

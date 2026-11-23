@@ -61,7 +61,7 @@ export const DEFAULT_VPS_CRON_JOBS: CronJobTask[] = [
     humanReadable: 'Daily at 4:00 AM',
     enabled: false,
     targetAction: 'sidecar-backup',
-    vpsScriptCommand: 'rsync -avz --delete /opt/lc-md/vault/ [REDACTED_EMAIL]:/var/www/vault/',
+    vpsScriptCommand: 'rsync -avz --delete /opt/lc-md/vault/ [REDACTED_EMAIL]:./inbox',
     executionLogs: ['[STANDBY] Awaiting target server rsync credentials.']
   },
   {
@@ -73,7 +73,7 @@ export const DEFAULT_VPS_CRON_JOBS: CronJobTask[] = [
     humanReadable: 'Weekly on Sunday at midnight',
     enabled: true,
     targetAction: 'opds-rebuild',
-    vpsScriptCommand: 'node /opt/lc-md/scripts/rebuild_opds.js --out=/var/www/html/opds/feed.xml',
+    vpsScriptCommand: 'node /opt/lc-md/scripts/rebuild_opds.js --out=./inbox',
     executionLogs: ['[OK] Weekly OPDS catalog generation enabled.']
   },
   {

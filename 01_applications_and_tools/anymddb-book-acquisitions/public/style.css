@@ -432,7 +432,7 @@ body {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   font-size: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+  box-shadow: 4px 4px 0px #000;
 }
 
 /* Author Link Button */

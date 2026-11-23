@@ -1,13 +1,23 @@
 version: '3.8'
 
 services:
-  library-companion-md:
-    build: .
-    container_name: meow-blackbox-anymd
+  anymd-standalone:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: anymd-standalone:latest
+    container_name: anymd-standalone
     restart: unless-stopped
     ports:
       - "8080:80"
     environment:
+      - ANYMD_STORAGE_MODE=local_only
       - VITE_INVITE_CODE=meow
     volumes:
-      - ./vault:/data/vault
+      # Flat-file vault storage mount (zero-cloud baseline)
+      - ./sandbox_vault:/data/vault
+      - anymd_cache:/root/.cache/rclone
+
+volumes:
+  anymd_cache:
+    name: anymd_cache

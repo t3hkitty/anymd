@@ -81,7 +81,7 @@ export const AnymdWebdavBackupPlugin: React.FC = () => {
               value={vpsUsername}
               onChange={(e) => setVpsUsername(e.target.value)}
               className="w-full p-2 border-2 border-black bg-white focus:outline-none focus:bg-yellow-50"
-              placeholder="user@provider.com"
+              placeholder="[REDACTED_EMAIL]"
             />
           </div>
           <div>

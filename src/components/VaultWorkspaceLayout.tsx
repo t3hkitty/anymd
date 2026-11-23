@@ -48,6 +48,8 @@ import { PASourcingModal } from './PASourcingModal';
 import { BookmarkletModal } from './BookmarkletModal';
 import { CalibreImportModal } from './CalibreImportModal';
 import { VaultBackupRestoreModal } from './VaultBackupRestoreModal';
+import { defaultHostInstance } from '../../contracts/libr-contract';
+import { BundleDiagnosticLogsModal } from './BundleDiagnosticLogsModal';
 import { ZettlrWorkspaceModal } from './ZettlrWorkspaceModal';
 import { CommunityHubView } from './CommunityHubView';
 import { Grid } from 'lucide-react';
@@ -169,6 +171,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
   const [isGeminiSparkOpen, setIsGeminiSparkOpen] = useState(false);
   const [isPluginManagerOpen, setIsPluginManagerOpen] = useState(false);
   const [isAddVaultOpen, setIsAddVaultOpen] = useState(false);
+  const [isDiagnosticLogsOpen, setIsDiagnosticLogsOpen] = useState(false);
 
   // Subfolder & Batch Selection states
   const [subfolderPolicy, setSubfolderPolicy] = useState<'flatten' | 'create_subvaults' | 'ignore'>('flatten');
@@ -441,6 +444,13 @@ export const VaultWorkspaceLayout: React.FC = () => {
       }
     }
     if (!hasFiles) {
+      defaultHostInstance.log({
+        level: 'info',
+        source: 'vault-workspace',
+        stage: 'fallback_stub',
+        message: `No files found for vault "${vaultId}". Seeding default sample notes to local sandbox storage.`,
+        meta: { vaultId, stub: true }
+      });
       const defaults = DEFAULT_VAULT_FILES[vaultId] || [
         {
           name: 'Welcome.md',
@@ -2275,6 +2285,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
             return next;
           });
         }}
+        onOpenDiagnosticLogs={() => setIsDiagnosticLogsOpen(true)}
       />
 
       {/* Plugin Manager Modal */}
@@ -2316,6 +2327,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
             return next;
           });
         }}
+        onOpenDiagnosticLogs={() => setIsDiagnosticLogsOpen(true)}
       />
 
       {/* Add Vault Modal */}
@@ -2408,7 +2420,15 @@ export const VaultWorkspaceLayout: React.FC = () => {
         const type = typeMatch ? typeMatch[1].trim() : 'reading_note';
 
         const rendered = renderReadingMode(selectedFileContent);
+        defaultHostInstance.log({
+          level: 'debug',
+          source: 'reader-view',
+          stage: 'render',
+          message: `Rendered reading view for "${selectedFile}" (${rendered.toc.length} TOC entries)`,
+          meta: { selectedFile, tocCount: rendered.toc.length, length: selectedFileContent.length }
+        });
 
+        return (
           <div 
             onClick={(e) => {
               if (e.target === e.currentTarget) {
@@ -2607,6 +2627,7 @@ export const VaultWorkspaceLayout: React.FC = () => {
 
       <GeminiSparkPluginModal isOpen={isGeminiSparkOpen} onClose={() => setIsGeminiSparkOpen(false)} />
       <ZettlrWorkspaceModal isOpen={isZettlrOpen} onClose={() => setIsZettlrOpen(false)} />
+      <BundleDiagnosticLogsModal isOpen={isDiagnosticLogsOpen} onClose={() => setIsDiagnosticLogsOpen(false)} />
     </div>
   );
 };
