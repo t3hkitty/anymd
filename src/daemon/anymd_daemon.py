@@ -733,8 +733,46 @@ def trigger_vaultr_sync(req: Optional[VaultrTriggerRequest] = None):
         return result
     except BlockingIOError as e:
         raise HTTPException(status_code=409, detail=str(e))
+from fastapi.responses import StreamingResponse
+
+@app.get("/api/rclone/cat")
+def rclone_cat_file(remote: str = Query(...), path: str = Query(...)):
+    """
+    Stream remote file bytes directly through loopback (:3050) via rclone operations/cat.
+    Enables in-browser reader to unpack and read EPUB/MD books from WebDAV without CORS issues.
+    """
+    remote_fs = remote if remote.endswith(":") else f"{remote}:"
+    remote_path = path.strip("/\\")
+    endpoint = RCLONE_RCD_URL.rstrip("/")
+    
+    try:
+        # Use rclone operations/core/cat or direct operations/stat/cat
+        resp = requests.post(
+            f"{endpoint}/operations/core/cat",
+            json={"fs": remote_fs, "remote": remote_path},
+            stream=True,
+            timeout=60
+        )
+        if resp.status_code != 200:
+            # Fallback to operations/cat
+            resp = requests.post(
+                f"{endpoint}/operations/cat",
+                json={"fs": remote_fs, "remote": remote_path},
+                stream=True,
+                timeout=60
+            )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=f"rclone cat failed: {resp.text}")
+
+        def stream_iter():
+            for chunk in resp.iter_content(chunk_size=65536):
+                if chunk:
+                    yield chunk
+
+        content_type = resp.headers.get("Content-Type", "application/octet-stream")
+        return StreamingResponse(stream_iter(), media_type=content_type)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Streaming error: {str(e)}")
 
 
 if __name__ == "__main__":
