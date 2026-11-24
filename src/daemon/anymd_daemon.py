@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import uvicorn
 import re
 import os
@@ -210,7 +210,7 @@ class AnyMDEngine:
                 "shard_index": i,
                 "batch_size": len(batch),
                 "records": batch,
-                "updated_at": datetime.utcnow().isoformat()
+                "updated_at": datetime.now(timezone.utc).isoformat()
             }
             self.atomic_write_yaml(shard_path, shard_data)
             manifest_shards.append({
@@ -224,7 +224,7 @@ class AnyMDEngine:
             "total_shards": total_shards,
             "shard_batch_limit": SHARD_SIZE,
             "shards": manifest_shards,
-            "last_updated": datetime.utcnow().isoformat()
+            "last_updated": datetime.now(timezone.utc).isoformat()
         }
         self.atomic_write_yaml(anymd_dir / "manifest.yaml", manifest)
         return manifest
